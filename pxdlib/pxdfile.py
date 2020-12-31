@@ -67,6 +67,17 @@ class PXDFile:
         ]
         return layers[0]
 
-    def __del__(self):
-        self.db.commit()
+    def close(self):
         self.db.close()
+
+    def __enter__(self):
+        self.db.execute('PRAGMA journal_mode=DELETE')
+        self.db.execute('begin exclusive')
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.db.execute('commit')
+        return True
+
+    def __del__(self):
+        self.close()
