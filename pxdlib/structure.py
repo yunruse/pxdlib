@@ -34,7 +34,7 @@ def string_unpack(data):
 def string_pack(data):
     data = data.encode()
     buffer_bytes = -len(data) % 4
-    return _LENGTH.pack(len(data)) + data + '\x00' * buffer_bytes
+    return _LENGTH.pack(len(data)) + data + b'\x00' * buffer_bytes
 
 
 _FORMATS = {
