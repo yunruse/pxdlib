@@ -29,9 +29,18 @@ class Layer:
             f"select key, value from layer_info where layer_id = {ID};"
         ).fetchall())
 
-    @property
-    def name(self):
+    def _name_get(self):
         return blob(self._info['name'])
+
+    def _name_set(self, name):
+        self._setinfo('name', make_blob(b'nrtS', name))
+        # Manually setting a name means Pixelmator no longer auto-sets name,
+        # if a text layer
+        DYNAMIC = 'text-nameIsDynamic'
+        if DYNAMIC in self._info:
+            self._setinfo(DYNAMIC, make_blob(b'61IS', 0))
+
+    name = property(_name_get, _name_set)
 
     def children(self, recurse=False):
         return self._pxd.layers(self._uuid, recurse=recurse)
@@ -54,6 +63,9 @@ class Layer:
             data = make_blob(kind, *val)
         except TypeError:
             data = make_blob(kind, val)
+        self._setinfo(key, data)
+
+    def _setinfo(self, key, data):
         self._info[key] = data
         c = self._pxd.db.cursor()
         c.execute(
