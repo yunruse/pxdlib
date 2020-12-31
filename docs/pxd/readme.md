@@ -1,1 +1,79 @@
 # Pixelmator Pro `.pxd` format
+
+This is a description of the reverse-engineered format of Pixelmator Pro. It is correct as of December 31, 2020.
+
+## File format
+
+Pixelmator Pro makes use of files with the `.pxd` extension. In truth, these are sneakily folders in disguise, in the same vein as the `.app` files; macOS' Finder pleasantly treats them as if they are files, albeit with the "Show Package Contents" feature to get right into its contents"
+
+- `QuickLook`, a folder containing two auto-generated previews: `Icon.tiff` (small) and `Thumbnail.tiff` (medium);
+- `data`, an optional folder containing an amount of files with UUID names, each containing data corresponding to raster (image) layers;
+- a fairly large-ish `metadata.info` file.
+
+## SQL format
+
+The `metadata.info` file is an SQLite3 database. It has the following six tables:
+
+```sql
+CREATE TABLE document_meta (
+  key TEXT, value BLOB
+);
+CREATE TABLE document_info (
+  key text, value BLOB
+);
+CREATE TABLE document_layers (
+  id INTEGER,
+  identifier TEXT,
+  parent_identifier TEXT,
+  index_at_parent INTEGER,
+  type INTEGER
+);
+CREATE TABLE layer_tiles (
+  layer_id INTEGER REFERENCES document_layers(id),
+  identifier BLOB,
+  timestamp BLOB,
+  format BLOB,
+  size BLOB,
+  metadata BLOB
+);
+CREATE TABLE layer_info (
+  layer_id INTEGER REFERENCES document_layers(id),
+  key TEXT, value BLOB
+);
+CREATE TABLE storable_info (
+  identifier TEXT,
+  timestamp BLOB,
+  layer_identifier TEXT,
+  user_data BLOB,
+  options INTEGER
+);
+```
+
+This has the effective structure of:
+
+- metadata on the document, in the form of two key-value pairs (aka _dictionaries_), `document_meta` and `document_info`, and a table known as `storable_info`;
+- a series of layer objects in the form of `document_layers`, which may or may not have one `layer_tiles` entry attached, and which has a dictionary attached via `layer_info`.
+
+The details for the above can be found in the [Metadata](docs/pxd/metadata.md) and [Layer object](docs/pxd/layer.md) entries, respectively.
+
+<a id="structures"></a>
+## Data structures
+
+In the data described above, we may encounter certain structures seemingly unique to the `.pxd` format. They are referenced here.
+
+### Pixelmator blobs
+
+Various data blobs begin with the magic number `4-tP`. These are what we will call "Pixelmator blobs". They are little-endian, and have a twelve-byte header: 4 bytes for their magic number, 4 (ASCII) bytes for their type, and 4 bytes for an integer specifying the length of the blob. As the length is included, blobs are rarely concatenated in sequence.
+
+While some blobs' types appear only once (and are described where they are found), many of them are shared. Below ar common blob types:
+
+- `61IS` is a one-byte integer (“character”) followed by three garbage bytes.
+- `nrtS` is a string. This starts with 4 bytes for the number of characters, as 0 to 3 characters at the end may be garbage bytes to pad the blob.
+- `tPTP` or `zSTP` are a grid-based set of coordinates or sizes, respectively, with two double-precision floats for x and y. One pixel coordinates to an increase 0.5, so you have to double the, uh, double doubles.
+- `lFTP` is a double-precision float.
+
+### JSON structures
+
+- A **vercon**, or version container, is a dictionary containing version (nominally 1) and the contents inside versionSpecifiContainer [sic]; the latter is the actual contents.
+- A **verlist**, likewise, is a list: the version (nominally 1) followed by the contents.
+- A **color**, a verlist with a dict containing `m` (nominally 2), `csr` (nominally 0) and `c` (a 4-list of RGBA).
