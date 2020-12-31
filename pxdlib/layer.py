@@ -37,7 +37,7 @@ class Layer:
         return self._pxd.layers(self._uuid, recurse=recurse)
 
     def __repr__(self):
-        return f'<Layer {repr(self.name)}>'
+        return f'<{type(self).__name__} {repr(self.name)}>'
 
     def __getattr__(self, key):
         kind = self.KEYS.get(key)
