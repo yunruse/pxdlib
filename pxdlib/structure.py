@@ -44,6 +44,7 @@ _FORMATS = {
     b'lFTP': _bare('<d'),
     b'nrtS': (string_pack, string_unpack),
     b'cpOL': _bare('<H'),
+    b'61IS': _bare('<bxxx')
 }
 
 
