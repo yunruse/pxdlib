@@ -2,7 +2,11 @@
 Layer objects, bound to a PXD file.
 '''
 
-from .structure import blob, make_blob
+import json
+import plistlib
+import base64
+
+from .structure import blob, make_blob, vercon, verlist
 
 
 class Layer:
@@ -70,7 +74,19 @@ class RasterLayer(Layer):
 
 
 class TextLayer(Layer):
-    pass
+    def __init__(self, pxd, ID):
+        Layer.__init__(self, pxd, ID)
+        data = vercon(json.loads(self._info['text-stringData']))
+        data = base64.b64decode(data['stringNSCodingData'])
+        self._text = plistlib.loads(data)['$objects']
+
+    def getText(self):
+        '''
+        Get (unformatted) text contents.
+        '''
+
+        pText = self._text[1]['NSString']
+        return self._text[pText]['NS.string']
 
 
 _LAYER_TYPES = {
