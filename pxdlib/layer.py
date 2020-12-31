@@ -29,7 +29,9 @@ class Layer:
             f"select key, value from layer_info where layer_id = {ID};"
         ).fetchall())
 
-        self.name = blob(self._info['name'])
+    @property
+    def name(self):
+        return blob(self._info['name'])
 
     def children(self, recurse=False):
         return self._pxd.layers(self._uuid, recurse=recurse)
