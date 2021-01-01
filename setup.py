@@ -16,9 +16,13 @@ setuptools.setup(
     url="https://github.com/yunruse/pxdlib",
     packages=packages,
     classifiers=[
-        # TODO: add classifier, keywords
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Topic :: Multimedia :: Graphics :: Editors",
     ],
-    keywords="?",
+    keywords="Pixelmator pxd file image raster vector",
     python_requires='>=3.6',
     install_requires=[],
 )
