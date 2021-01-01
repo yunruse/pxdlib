@@ -1,6 +1,4 @@
-# Pixelmator Pro (.pxd) format
-
-## Metadata
+# Pixelmator Pro (.pxd) format: Metadata
 
 The [`document_meta`](/docs/pxd/#sql) table is a dictionary with two pairs known:
 
