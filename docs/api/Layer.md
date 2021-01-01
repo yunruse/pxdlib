@@ -9,6 +9,10 @@ A layer will never be a direct `Layer` object, but rather one of its four subcla
 <a id="Layer"></a>
 ## Layer
 
+Layers contain the following attributes:
+
+- `name`, the layer's given visible name.
+
 <a id="GroupLayer"></a>
 ## GroupLayer
 
