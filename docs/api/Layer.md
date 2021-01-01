@@ -20,6 +20,7 @@ Layers contain the following attributes:
 - `position`, a tuple of the x,y coordinates of the centre of the layer, defined in pixels such that the origin is the bottom-left.
 - `size`,  a tuple of the w,h size of the layer defined in pixels.
 - `angle`, a float in degrees in the range [0, 360). Nominally 0 except for text layers.
+- `blendMode` is an enumerable from the `pxdlib.BlendMode`.
 
 <a id="GroupLayer"></a>
 ## GroupLayer

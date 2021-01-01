@@ -5,7 +5,7 @@ Layer objects, bound to a PXD file.
 import json
 import plistlib
 import base64
-from enum import IntFlag
+from enum import IntFlag, Enum
 from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
@@ -17,6 +17,36 @@ class LayerFlag(IntFlag):
     clipping = 1 << 3
     mask = 1 << 4
     raster = 1 << 6
+
+
+class BlendMode(Enum):
+    passThrough = 'pass'
+    normal = 'norm'
+    darken = 'dark'
+    multiply = 'mul '
+    colorBurn = 'idiv'
+    linearBurn = 'lbrn'
+    darkerColor = 'dkCl'
+    lighten = 'lite'
+    screen = 'scrn'
+    colorDodge = 'div '
+    linearDodge = 'lddg'
+    lighterColor = 'lgCl'
+    overlay = 'over'
+    softLight = 'sLit'
+    hardLight = 'hLit'
+    vividLight = 'vLit'
+    linearLight = 'lLit'
+    pinLight = 'pLit'
+    hardMix = 'hMix'
+    difference = 'diff'
+    exclusion = 'smud'
+    subtract = 'fmud'
+    divide = 'fdiv'
+    hue = 'hue '
+    saturation = 'sat '
+    color = 'colr'
+    luminosity = 'lum '
 
 
 class Layer:
@@ -115,6 +145,19 @@ class Layer:
     @angle.setter
     def angle(self, angle):
         self._setinfo('angle', make_blob(b'PTFl', angle % 360))
+
+    @property
+    def blendMode(self) -> BlendMode:
+        '''
+        The blending mode of the layer.
+        '''
+        return BlendMode(blob(self._info['blendMode']))
+
+    @blendMode.setter
+    def blendMode(self, blend):
+        if not isinstance(blend, BlendMode):
+            raise TypeError('Blend mode must be a BlendMode.')
+        self._setinfo('blendMode', make_blob(b'Blnd', str(blend)))
 
     # Flags
 

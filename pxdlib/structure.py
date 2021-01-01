@@ -71,6 +71,14 @@ def array_pack(blobs: list) -> bytes:
     )
 
 
+def kind_unpack(data: bytes) -> str:
+    return data[::-1].decode()
+
+
+def kind_pack(data: str) -> bytes:
+    return data[::-1].encode()
+
+
 _FORMATS = {
     b'PTPt': _bare('>dd', mul=2),
     b'PTSz': _bare('>dd', mul=2),
@@ -82,6 +90,7 @@ _FORMATS = {
     b'Arry': (array_pack, array_unpack),
     b'Guid': _bare('<hih'),
     b'UI64': _bare('<Q'),
+    b'Blnd': (kind_pack, kind_unpack),
 }
 
 
