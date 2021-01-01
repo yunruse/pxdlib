@@ -33,12 +33,13 @@ class Layer:
         return blob(self._info['name'])
 
     def _name_set(self, name):
-        self._setinfo('name', make_blob(b'nrtS', name))
+        name = name or "Layer"
+        self._setinfo('name', make_blob(b'Strn', name))
         # Manually setting a name means Pixelmator no longer auto-sets name,
         # if a text layer
         DYNAMIC = 'text-nameIsDynamic'
         if DYNAMIC in self._info:
-            self._setinfo(DYNAMIC, make_blob(b'61IS', 0))
+            self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
 
     name = property(_name_get, _name_set)
 
