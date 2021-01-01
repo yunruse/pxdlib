@@ -40,7 +40,7 @@ Every layer will have the following attributes:
 - `transform` (`Trns`), (unknown).
 - `user-info-data`, a UTF-8 encoded PLIST file, nominally empty.
 
-Optionally present are the `styles-data`, `color-adjustments` and `effects-data` attributes (unknown).
+Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`color-adjustments`](/docs/pxd/styles.md#color-adjustments) and [`effects-data`](/docs/pxd/styles.md#effects-data) attributes (unknown).
 
 ## Raster layers
 
