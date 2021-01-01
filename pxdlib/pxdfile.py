@@ -76,12 +76,12 @@ class PXDFile:
     def children(self):
         return self._layers()
 
-    def all_layers(self):
+    def all_layers(self) -> list:
         return self._layers(recurse=True)
 
     # Database management
 
-    def open(self):
+    def open(self) -> None:
         '''
         Starts a transaction to modify the document.
 
@@ -93,7 +93,7 @@ class PXDFile:
         self._db.execute('begin exclusive')
         self._closed = False
 
-    def close(self):
+    def close(self) -> None:
         '''
         Closes a transaction and commits any changes made.
         '''
@@ -135,6 +135,13 @@ class PXDFile:
 
     @property
     def guides(self):
+        '''
+        A list of the guides used for visual alignment.
+
+        Given as a list of two-tuples (is_vertical, r).
+        For example, the guide _y=10_ would be `(True, 10)`
+        and _x=-4_ would be `(False, -4)`.
+        '''
         data = [blob(b) for b in blob(self._info['guides'])]
         return [
             (bool(is_vertical), r)

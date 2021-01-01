@@ -8,15 +8,15 @@ _MAGIC = b'4-tP'
 _LENGTH = Struct('<i')
 
 
-def _bare(fmt, mul=None):
+def _bare(fmt: str, mul=None) -> tuple:
     fmt = Struct(fmt)
 
-    def packer(*data):
+    def packer(*data) -> bytes:
         if mul is not None:
             data = [x / mul for x in data]
         return fmt.pack(*data)
 
-    def unpacker(data):
+    def unpacker(data: bytes):
         result = fmt.unpack(data)
         if mul is not None:
             result = [x * mul for x in result]
@@ -26,18 +26,18 @@ def _bare(fmt, mul=None):
     return packer, unpacker
 
 
-def string_unpack(data):
+def string_unpack(data: bytes) -> str:
     length, = _LENGTH.unpack(data[:4])
     return data[4:4+length].decode().replace('\x00', '')
 
 
-def string_pack(data):
+def string_pack(data: str) -> bytes:
     data = data.encode()
     buffer_bytes = -len(data) % 4
     return _LENGTH.pack(len(data)) + data + b'\x00' * buffer_bytes
 
 
-def array_unpack(data):
+def array_unpack(data: bytes) -> list:
     length, = _LENGTH.unpack(data[4:8])
     data = data[8:]
     starts = data[:4*length]
@@ -57,7 +57,7 @@ def array_unpack(data):
     return blobs
 
 
-def array_pack(blobs):
+def array_pack(blobs: list) -> bytes:
     pos = 0
     starts = []
     for blob in blobs:
@@ -81,10 +81,11 @@ _FORMATS = {
     b'SI16': _bare('<hxx'),
     b'Arry': (array_pack, array_unpack),
     b'Guid': _bare('<hih'),
+    b'UI64': _bare('<Q'),
 }
 
 
-def blob(blob):
+def blob(blob: bytes) -> object:
     if not len(blob) > 12:
         raise TypeError('Pixelmator blobs are more than 12 bytes! ')
 
@@ -103,7 +104,7 @@ def blob(blob):
     return unpacker(data)
 
 
-def make_blob(kind, *data):
+def make_blob(kind: bytes, *data) -> bytes:
     if kind not in _FORMATS:
         raise TypeError(f'Unknown blob type {kind}.')
     packer, unpacker = _FORMATS[kind]
@@ -119,11 +120,11 @@ def _assertver(kind, want, found):
         raise ValueError(f"Expected {kind} version {want}, got {found}")
 
 
-def vercon(data, version=1):
+def vercon(data: dict, version=1):
     _assertver('vercon', version, data['version'])
     return data['versionSpecifiContainer']
 
 
-def verlist(data, version=1):
+def verlist(data: list, version=1):
     _assertver('verlist', version, data[0])
     return data[1]
