@@ -8,7 +8,7 @@ The [`document_meta`](/docs/pxd/#sql) table is a dictionary with two pairs known
 Inside the [`document_info`](/docs/pxd/#sql) table, we likewise have:
 
 - `date` is, quite literally, the date and time – though the format is still a little Byzantine to me. If the last 8 bytes are interpreted as an `unsigned long long`, it is 100% linear to the modification time of metadata.info, but it’s not to any standard I recognise.
-- `version` (unknown)
+- `version`, a `DcVr`, which (unknown) somehow points to five [`Strn`](/docs/pxd/#blobs) entries: the name of the application ('Pixelmator Pro'), the Pixelmator version, a hex blob (unknown), the version of Mac used, and the macOS version.
 - `no-preview` (unknown)
 - `format` (unknown)
 - `content-id` (unknown)
