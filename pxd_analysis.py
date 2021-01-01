@@ -60,7 +60,11 @@ if __name__ == '__main__':
                 hexdump(path)
             else:
                 print()
-                display(l.children, s+1)            
+                display(l.children, s+1)
+
+            with pxd:
+                x, y = l.position
+                l.position = (x+20, y-20)
 
             # Layer debugging here
 

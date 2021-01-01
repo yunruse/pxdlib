@@ -20,12 +20,6 @@ class LayerFlag(IntFlag):
 
 
 class Layer:
-    # Info layers with known types that can be modified and removed.
-    KEYS = {
-        'position': b'PTPt',
-        'size': b'PTSz'
-    }
-
     def __init__(self, pxd, ID):
         self._pxd = pxd
         self._id = ID
@@ -40,23 +34,6 @@ class Layer:
 
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
-
-    def __getattr__(self, key):
-        kind = self.KEYS.get(key)
-        if not kind:
-            raise AttributeError
-        return blob(self._info[key])
-
-    def __setattr__(self, key, val):
-        kind = self.KEYS.get(key)
-        if not kind:
-            return object.__setattr__(self, key, val)
-
-        try:
-            data = make_blob(kind, *val)
-        except TypeError:
-            data = make_blob(kind, val)
-        self._setinfo(key, data)
 
     def _setinfo(self, key, data):
         if self._pxd.closed:
@@ -103,18 +80,28 @@ class Layer:
             raise TypeError('Opacity must be an integer in range [0, 100].')
 
     @property
-    def opacity(self) -> int:
+    def position(self) -> tuple:
         '''
-        The layer's opacity, from 0 to 100.
+        The position of the layer (defined as its centre).
         '''
-        return blob(self._info['opacity'])
+        return tuple(blob(self._info['position']))
 
-    @opacity.setter
-    def opacity(self, opacity):
-        if isinstance(opacity, int) and 0 <= opacity <= 100:
-            self._setinfo('opacity', make_blob(b'LOpc', opacity))
-        else:
-            raise TypeError('Opacity must be an integer in range [0, 100].')
+    @position.setter
+    def position(self, pos):
+        x, y = pos
+        self._setinfo('position', make_blob(b'PTPt', x, y))
+
+    @property
+    def size(self) -> int:
+        '''
+        The position of the layer (defined as its centre).
+        '''
+        return tuple(blob(self._info['size']))
+
+    @size.setter
+    def size(self, size):
+        w, h = size
+        self._setinfo('size', make_blob(b'PTSz', w, h))
 
     # Flags
 
