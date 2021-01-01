@@ -154,3 +154,15 @@ class PXDFile:
             for (is_vertical, r) in guides
         ])
         self._set('guides', data)
+
+    @property
+    def rulerOrigin(self):
+        '''
+        The origin of the (visual) ruler.
+        '''
+        return blob(self._info['rulers-origin'])
+
+    @rulerOrigin.setter
+    def rulerOrigin(self, origin):
+        x, y = origin
+        self._set('rulers-origin', make_blob(b'PTPt', x, y))

@@ -19,3 +19,4 @@ For accessing layers:
 The following metadata may be read from and written to:
 
 - `guides` is a list of the guides used for visual alignment. They are given as a list of two-tuples (is_vertical, r): for example, the guide _y=10_ would be `(True, 10)` and _x=-4_ would be `(False, -4)`.
+- `rulerOrigin` is the x,y coordinate of the origin of the (visual) ruler.
