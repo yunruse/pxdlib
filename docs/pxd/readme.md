@@ -1,6 +1,6 @@
 # Pixelmator Pro `.pxd` format
 
-This is a description of the reverse-engineered format of Pixelmator Pro. It is correct as of December 31, 2020.
+This is a description of the reverse-engineered format of Pixelmator Pro. It is not 100% complete, but will be updated as features are added; the text _(unknown)_ indicates data that needs to be further deciphered.
 
 ## File format
 
