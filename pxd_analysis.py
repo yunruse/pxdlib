@@ -33,7 +33,8 @@ if __name__ == '__main__':
 
             print(f"{' ' * s}{l._id}( {x:4d}, {y:4d}) {l.name:<20} ", end='')
             if isinstance(l, pxdlib.RasterLayer):
-                print('raster', l._uuid)
+                uuid = l._uuid.split('-')[0]
+                print('raster', uuid)
 
             elif isinstance(l, pxdlib.TextLayer):
                 print('text: ', end='')
