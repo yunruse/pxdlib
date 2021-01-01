@@ -5,9 +5,18 @@ Layer objects, bound to a PXD file.
 import json
 import plistlib
 import base64
+from enum import IntFlag
 from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
+
+
+class LayerFlag(IntFlag):
+    visible = 1 << 0
+    locked = 1 << 1
+    clipping = 1 << 3
+    mask = 1 << 4
+    raster = 1 << 6
 
 
 class Layer:
@@ -29,23 +38,6 @@ class Layer:
         self._info = dict(pxd._db.execute(
             f"select key, value from layer_info where layer_id = {ID};"
         ).fetchall())
-
-    @property
-    def name(self):
-        '''
-        The layer's given visible name.
-        '''
-        return blob(self._info['name'])
-
-    @name.setter
-    def name(self, name):
-        name = name or "Layer"
-        self._setinfo('name', make_blob(b'Strn', name))
-        # Manually setting a name means Pixelmator no longer auto-sets name,
-        # if a text layer
-        DYNAMIC = 'text-nameIsDynamic'
-        if DYNAMIC in self._info:
-            self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
 
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
@@ -77,6 +69,33 @@ class Layer:
             'where layer_id = ? and key = ?',
             (data, self._id, key)
         )
+
+    # Attributes
+
+    @property
+    def name(self) -> str:
+        '''
+        The layer's given visible name.
+        '''
+        return blob(self._info['name'])
+
+    @name.setter
+    def name(self, name: str):
+        name = name or "Layer"
+        self._setinfo('name', make_blob(b'Strn', name))
+        # Manually setting a name means Pixelmator no longer auto-sets name,
+        # if a text layer
+        DYNAMIC = 'text-nameIsDynamic'
+        if DYNAMIC in self._info:
+            self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
+
+    @property
+    def _flags(self) -> LayerFlag:
+        return LayerFlag(blob(self._info['flags']))
+
+    @_flags.setter
+    def _flags(self, val: LayerFlag):
+        self._setinfo('flags', make_blob(b'UI64', int(val)))
 
 
 class GroupLayer(Layer):
