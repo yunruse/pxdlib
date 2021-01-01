@@ -22,11 +22,11 @@ class Layer:
         self._pxd = pxd
         self._id = ID
 
-        self._uuid, = pxd.db.execute(
+        self._uuid, = pxd._db.execute(
             f"select identifier from document_layers where id = {ID};"
         ).fetchone()
 
-        self._info = dict(pxd.db.execute(
+        self._info = dict(pxd._db.execute(
             f"select key, value from layer_info where layer_id = {ID};"
         ).fetchall())
 
@@ -71,7 +71,7 @@ class Layer:
         if self._pxd.closed:
             raise UnsupportedOperation('not writable')
         self._info[key] = data
-        c = self._pxd.db.cursor()
+        c = self._pxd._db.cursor()
         c.execute(
             'update layer_info set value = ?'
             'where layer_id = ? and key = ?',

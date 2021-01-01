@@ -16,11 +16,11 @@ class PXDFile:
 
     def __init__(self, path):
         self.path = Path(path)
-        self.db = sqlite3.connect(self.path / 'metadata.info')
+        self._db = sqlite3.connect(self.path / 'metadata.info')
         self._closed = True
 
         def keyval(table):
-            return dict(self.db.execute(
+            return dict(self._db.execute(
                 f"select key, value from {table};"
             ).fetchall())
         self._meta = keyval('document_meta')
@@ -29,7 +29,7 @@ class PXDFile:
     # Layer management
 
     def _layer(self, ID):
-        typ, = self.db.execute(
+        typ, = self._db.execute(
             f"select type from document_layers where id = {ID};"
         ).fetchone()
         return _LAYER_TYPES[typ](self, ID)
@@ -50,7 +50,7 @@ class PXDFile:
         else:
             raise TypeError('ID must be a layer, UUID or None.')
 
-        children = [self._layer(ID) for (ID, ) in self.db.execute(
+        children = [self._layer(ID) for (ID, ) in self._db.execute(
             "select id from document_layers"
             f" where parent_identifier {cond}"
             " order by index_at_parent asc;",
@@ -89,8 +89,8 @@ class PXDFile:
         '''
         if not self._closed:
             return
-        self.db.execute('PRAGMA journal_mode=DELETE')
-        self.db.execute('begin exclusive')
+        self._db.execute('PRAGMA journal_mode=DELETE')
+        self._db.execute('begin exclusive')
         self._closed = False
 
     def close(self):
@@ -100,7 +100,7 @@ class PXDFile:
         if self._closed:
             return
         self._closed = True
-        self.db.execute('commit')
+        self._db.execute('commit')
 
     @property
     def closed(self):
@@ -115,7 +115,7 @@ class PXDFile:
         return True
 
     def __del__(self):
-        self.db.close()
+        self._db.close()
 
     def _set(self, key, data, is_meta=False):
         if self.closed:
@@ -124,7 +124,7 @@ class PXDFile:
         store = self._meta if is_meta else self._info
 
         store[key] = data
-        c = self.db.cursor()
+        c = self._db.cursor()
         c.execute(
             f'update {table} '
             'set value = ? where key = ?',
