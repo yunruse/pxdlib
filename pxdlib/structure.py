@@ -37,6 +37,40 @@ def string_pack(data):
     return _LENGTH.pack(len(data)) + data + b'\x00' * buffer_bytes
 
 
+def array_unpack(data):
+    length, = _LENGTH.unpack(data[4:8])
+    data = data[8:]
+    starts = data[:4*length]
+    data = data[4*length:]
+
+    blobs = []
+    for i in range(length):
+        i *= 4
+        start, = _LENGTH.unpack(starts[i:i+4])
+        end = starts[i+4:i+8]
+        if end:
+            end, = _LENGTH.unpack(end)
+        else:
+            end = None
+        blob = data[start:end]
+        blobs.append(blob)
+    return blobs
+
+
+def array_pack(blobs):
+    pos = 0
+    starts = []
+    for blob in blobs:
+        starts.append(pos)
+        pos += len(blob)
+
+    return (
+        _LENGTH.pack(1) + _LENGTH.pack(len(blobs)) +
+        b''.join([_LENGTH.pack(i) for i in starts]) +
+        b''.join(blobs)
+    )
+
+
 _FORMATS = {
     b'PTPt': _bare('>dd', mul=2),
     b'PTSz': _bare('>dd', mul=2),
@@ -44,7 +78,8 @@ _FORMATS = {
     b'PTFl': _bare('<d'),
     b'Strn': (string_pack, string_unpack),
     b'LOpc': _bare('<H'),
-    b'SI16': _bare('<hxx')
+    b'SI16': _bare('<hxx'),
+    b'Arry': (array_pack, array_unpack),
 }
 
 
