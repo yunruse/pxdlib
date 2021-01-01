@@ -22,7 +22,6 @@ class LayerFlag(IntFlag):
 class Layer:
     # Info layers with known types that can be modified and removed.
     KEYS = {
-        'opacity': b'LOpc',
         'position': b'PTPt',
         'size': b'PTSz'
     }
@@ -88,6 +87,20 @@ class Layer:
         DYNAMIC = 'text-nameIsDynamic'
         if DYNAMIC in self._info:
             self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
+
+    @property
+    def opacity(self) -> int:
+        '''
+        The layer's opacity, from 0 to 100.
+        '''
+        return blob(self._info['opacity'])
+
+    @opacity.setter
+    def opacity(self, opacity):
+        if isinstance(opacity, int) and 0 <= opacity <= 100:
+            self._setinfo('opacity', make_blob(b'LOpc', opacity))
+        else:
+            raise TypeError('Opacity must be an integer in range [0, 100].')
 
     # Flags
 
