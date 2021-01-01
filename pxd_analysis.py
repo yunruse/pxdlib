@@ -35,7 +35,7 @@ if __name__ == '__main__':
             if isinstance(l, pxdlib.RasterLayer):
                 print('raster', l._uuid)
 
-            elif isinstance(l, pxdlib.TextLayer):                    
+            elif isinstance(l, pxdlib.TextLayer):
                 print('text: ', end='')
                 string = l.getText()
                 if len(string) > 30:
@@ -58,13 +58,13 @@ if __name__ == '__main__':
                 print()
                 print(len(path))
                 hexdump(path)
-
-            display(l.children(), s+1)
+            else:
+                print()
+                display(l.children, s+1)            
 
             # Layer debugging here
 
-    display(pxd.layers())
+    display(pxd.children)
 
     # PXD debugging here
-    pxd.closed = False
 

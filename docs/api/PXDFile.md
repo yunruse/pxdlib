@@ -4,8 +4,15 @@ The `PXDFile` object contains a variety of metadata about the Pixelmator documen
 
 ## Methods
 
+For editing purposes:
+
 - `open()`. Starts a transaction to modify the document. Changes will only be made on `close()`.
 - `close()`. Closes a transaction and commits any changes made. `open()` and `close()` are useful in certain edge cased, but it is recommended to use a `with pxd` block.
+
+For accessing layers:
+
+- `children` is a list of the top-level layers, ordered as seen in the document.
+- `all_layers()` provides a list of _all_ layers in the document, ordered as seen in the document.
 
 ## Metadata
 

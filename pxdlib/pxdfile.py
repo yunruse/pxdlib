@@ -34,7 +34,7 @@ class PXDFile:
         ).fetchone()
         return _LAYER_TYPES[typ](self, ID)
 
-    def layers(self, parent=None, recurse=False):
+    def _layers(self, parent=None, recurse=False):
         '''
         Return a list of layers that are children of the ID given.
         Give no ID to get the top-level layers.
@@ -59,7 +59,7 @@ class PXDFile:
             tree = []
             for child in children:
                 tree.append(child)
-                tree += self.layers(child._uuid, recurse=True)
+                tree += self._layers(child._uuid, recurse=True)
             return tree
         else:
             return children
@@ -67,10 +67,17 @@ class PXDFile:
     def layer_with_name(self, name):
         '''Get the first layer found with the given name.'''
         layers = [
-            l for l in self.layers(recurse=True)
+            l for l in self._layers(recurse=True)
             if l.name == name
         ]
         return layers[0]
+
+    @property
+    def children(self):
+        return self._layers()
+
+    def all_layers(self):
+        return self._layers(recurse=True)
 
     # Database management
 

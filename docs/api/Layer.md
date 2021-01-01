@@ -12,6 +12,11 @@ A layer will never be a direct `Layer` object, but rather one of its four subcla
 <a id="GroupLayer"></a>
 ## GroupLayer
 
+A `GroupLayer` contains nothing other than its children; its coordinates and size are only given as reference. Identical to `PXDFile`, the following methods and attributes are given:
+
+- `children` is a list of the top-level layers, ordered as seen in the document.
+- `all_layers()` provides a list of _all_ layers in the document, ordered as seen in the document.
+
 <a id="VectorLayer"></a>
 ## VectorLayer
 

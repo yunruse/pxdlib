@@ -44,10 +44,6 @@ class Layer:
 
     name = property(_name_get, _name_set)
 
-    def children(self, recurse=False):
-        # TODO: move this to GroupLayer and use something else for masking!
-        return self._pxd.layers(self._uuid, recurse=recurse)
-
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
 
@@ -81,7 +77,16 @@ class Layer:
 
 
 class GroupLayer(Layer):
-    pass
+    @property
+    def children(self):
+        '''
+        The children of the group layer.
+        '''
+        # TODO: avoid giving the mask, if any
+        return self._pxd._layers(self)
+
+    def all_layers(self):
+        return self._pxd._layers(self, recurse=True)
 
 
 class VectorLayer(Layer):
