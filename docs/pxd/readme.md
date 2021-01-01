@@ -10,6 +10,7 @@ Pixelmator Pro makes use of files with the `.pxd` extension. In truth, these are
 - `data`, an optional folder containing an amount of files with UUID names, each containing data corresponding to raster (image) layers;
 - a fairly large-ish `metadata.info` file.
 
+<a id="sql"></a>
 ## SQL format
 
 The `metadata.info` file is an SQLite3 database. It has the following six tables:
@@ -56,7 +57,6 @@ This has the effective structure of:
 
 The details for the above can be found in the [Metadata](docs/pxd/metadata.md) and [Layer object](docs/pxd/layer.md) entries, respectively.
 
-<a id="structures"></a>
 ## Data structures
 
 In the data described above, we may encounter certain structures seemingly unique to the `.pxd` format. They are referenced here.
@@ -68,6 +68,7 @@ Various "Pixelmator blobs" may be encountered in the `.pxd` format. They are lit
 - 4 bytes for their type, specified as an ASCII string given in reverse order;
 - 4 bytes for an integer specifying the length of the blob in bytes. The end may contain garbage bytes, as this is always padded to the nearest 4 bytes.
 
+<a id="blobs"></a>
 While some blobs' types appear only once (and are described where they are found), many of them are shared. Below are common blob types:
 
 - `SI16` is a short integer of 16 bits, followed by two garbage bytes.
@@ -76,6 +77,7 @@ While some blobs' types appear only once (and are described where they are found
 - `PTFl` is a double-precision float.
 - `Arry` is an array of other blobs – notably, its length will include these other blobs. It first contains two integers, the first nominally 1 and the second, _n_, the number of items in the array. The array is then followed by _n_ integers giving the starting positions of each entry after this header (i.e. the first is 0).
 
+<a id="json"></a>
 ### JSON structures
 
 - A **vercon**, or version container, is a dictionary containing version (nominally 1) and the contents inside versionSpecifiContainer [sic]; the latter is the actual contents.
