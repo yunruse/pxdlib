@@ -103,6 +103,19 @@ class Layer:
         w, h = size
         self._setinfo('size', make_blob(b'PTSz', w, h))
 
+    @property
+    def angle(self) -> float:
+        '''
+        The angle of a (text) layer in degrees.
+
+        A float in the range [0, 360).
+        '''
+        return blob(self._info['angle']) % 360
+
+    @angle.setter
+    def angle(self, angle):
+        self._setinfo('angle', make_blob(b'PTFl', angle % 360))
+
     # Flags
 
     @property

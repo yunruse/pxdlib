@@ -62,10 +62,6 @@ if __name__ == '__main__':
                 print()
                 display(l.children, s+1)
 
-            with pxd:
-                x, y = l.position
-                l.position = (x+20, y-20)
-
             # Layer debugging here
 
     display(pxd.children)
