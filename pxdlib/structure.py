@@ -38,13 +38,13 @@ def string_pack(data):
 
 
 _FORMATS = {
-    b'tPTP': _bare('>dd', mul=2),
-    b'zSTP': _bare('>dd', mul=2),
-    b'zSDB': _bare('<qq'),
-    b'lFTP': _bare('<d'),
-    b'nrtS': (string_pack, string_unpack),
-    b'cpOL': _bare('<H'),
-    b'61IS': _bare('<bxxx')
+    b'PTPt': _bare('>dd', mul=2),
+    b'PTSz': _bare('>dd', mul=2),
+    b'BDSz': _bare('<qq'),
+    b'PTFl': _bare('<d'),
+    b'Strn': (string_pack, string_unpack),
+    b'LOpc': _bare('<H'),
+    b'SI16': _bare('<hxx')
 }
 
 
@@ -56,7 +56,7 @@ def blob(blob):
     if not magic == _MAGIC:
         raise TypeError('Pixelmator blobs start with the magic number "4-tP".')
 
-    kind = blob[4:8]
+    kind = blob[4:8][::-1]
     if kind in _FORMATS:
         packer, unpacker = _FORMATS[kind]
     else:
@@ -73,7 +73,7 @@ def make_blob(kind, *data):
     packer, unpacker = _FORMATS[kind]
     data = packer(*data)
     length = _LENGTH.pack(len(data))
-    return _MAGIC + kind + length + data
+    return _MAGIC + kind[::-1] + length + data
 
 
 def _assertver(kind, want, found):

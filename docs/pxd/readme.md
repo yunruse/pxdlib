@@ -63,14 +63,14 @@ In the data described above, we may encounter certain structures seemingly uniqu
 
 ### Pixelmator blobs
 
-Various data blobs begin with the magic number `4-tP`. These are what we will call "Pixelmator blobs". They are little-endian, and have a twelve-byte header: 4 bytes for their magic number, 4 (ASCII) bytes for their type, and 4 bytes for an integer specifying the length of the blob. As the length is included, blobs are rarely concatenated in sequence.
+Various data blobs begin with the magic number `4-tP`. These are what we will call "Pixelmator blobs". They are little-endian, and have a twelve-byte header: 4 bytes for their magic number, 4 (ASCII) bytes for their type, and 4 bytes for an integer specifying the length of the blob. Their type is given in reverse order; it is sometimes clear as to their purpose.
 
 While some blobs' types appear only once (and are described where they are found), many of them are shared. Below ar common blob types:
 
-- `61IS` is a one-byte integer (“character”) followed by three garbage bytes.
-- `nrtS` is a string. This starts with 4 bytes for the number of characters, as 0 to 3 characters at the end may be garbage bytes to pad the blob.
-- `tPTP` or `zSTP` are a grid-based set of coordinates or sizes, respectively, with two double-precision floats for x and y. One pixel coordinates to an increase 0.5, so you have to double the, uh, double doubles.
-- `lFTP` is a double-precision float.
+- `SI16` is a one-byte integer (“character”) followed by three garbage bytes.
+- `Strn` is a string. This starts with 4 bytes for the number of characters, as 0 to 3 characters at the end may be garbage bytes to pad the blob.
+- `PTPt` and `PTSz` are a grid-based set of points or sizes, respectively, with two double-precision floats for x and y. One pixel coordinates to an increase 0.5, so you have to double the, uh, double doubles.
+- `PTFl` is a double-precision float.
 
 ### JSON structures
 

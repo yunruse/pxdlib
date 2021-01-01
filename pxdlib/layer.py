@@ -12,9 +12,9 @@ from .structure import blob, make_blob, vercon, verlist
 class Layer:
     # Info layers with known types that can be modified and removed.
     KEYS = {
-        'opacity': b'cpOL',
-        'position': b'tPTP',
-        'size': b'zSTP'
+        'opacity': b'LOpc',
+        'position': b'PTPt',
+        'size': b'PTSz'
     }
 
     def __init__(self, pxd, ID):
