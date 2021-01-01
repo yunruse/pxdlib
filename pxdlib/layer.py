@@ -43,6 +43,7 @@ class Layer:
     name = property(_name_get, _name_set)
 
     def children(self, recurse=False):
+        # TODO: move this to GroupLayer and use something else for masking!
         return self._pxd.layers(self._uuid, recurse=recurse)
 
     def __repr__(self):
