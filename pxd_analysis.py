@@ -66,4 +66,5 @@ if __name__ == '__main__':
     display(pxd.layers())
 
     # PXD debugging here
+    pxd.closed = False
 

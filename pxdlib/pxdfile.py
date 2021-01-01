@@ -4,6 +4,7 @@ PXDFile class, handling most database access.
 
 from pathlib import Path
 import sqlite3
+from io import UnsupportedOperation
 
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
@@ -16,6 +17,7 @@ class PXDFile:
     def __init__(self, path):
         self.path = Path(path)
         self.db = sqlite3.connect(self.path / 'metadata.info')
+        self._closed = True
 
         def keyval(table):
             return dict(self.db.execute(
@@ -72,22 +74,45 @@ class PXDFile:
 
     # Database management
 
-    def close(self):
-        self.db.close()
+    def open(self):
+        '''
+        Starts a transaction to modify the document.
 
-    def __enter__(self):
+        Changes will only be made on `close()`.
+        '''
+        if not self._closed:
+            return
         self.db.execute('PRAGMA journal_mode=DELETE')
         self.db.execute('begin exclusive')
+        self._closed = False
+
+    def close(self):
+        '''
+        Closes a transaction and commits any changes made.
+        '''
+        if self._closed:
+            return
+        self._closed = True
+        self.db.execute('commit')
+
+    @property
+    def closed(self):
+        return self._closed
+
+    def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        self.db.execute('commit')
+        self.close()
         return True
 
     def __del__(self):
-        self.close()
+        self.db.close()
 
     def _set(self, key, data, is_meta=False):
+        if self.closed:
+            raise UnsupportedOperation('not writable')
         table = 'document_meta' if is_meta else 'document_info'
         store = self._meta if is_meta else self._info
 

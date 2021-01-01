@@ -5,6 +5,7 @@ Layer objects, bound to a PXD file.
 import json
 import plistlib
 import base64
+from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
 
@@ -68,6 +69,8 @@ class Layer:
         self._setinfo(key, data)
 
     def _setinfo(self, key, data):
+        if self._pxd.closed:
+            raise UnsupportedOperation('not writable')
         self._info[key] = data
         c = self._pxd.db.cursor()
         c.execute(
