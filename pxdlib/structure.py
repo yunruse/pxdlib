@@ -80,6 +80,7 @@ _FORMATS = {
     b'LOpc': _bare('<H'),
     b'SI16': _bare('<hxx'),
     b'Arry': (array_pack, array_unpack),
+    b'Guid': _bare('<hih'),
 }
 
 

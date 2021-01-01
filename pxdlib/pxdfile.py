@@ -6,6 +6,7 @@ from pathlib import Path
 import sqlite3
 
 from .layer import _LAYER_TYPES, Layer
+from .structure import blob, make_blob
 
 
 class PXDFile:
@@ -22,6 +23,8 @@ class PXDFile:
             ).fetchall())
         self._meta = keyval('document_meta')
         self._info = keyval('document_info')
+
+    # Layer management
 
     def _layer(self, ID):
         typ, = self.db.execute(
@@ -67,6 +70,8 @@ class PXDFile:
         ]
         return layers[0]
 
+    # Database management
+
     def close(self):
         self.db.close()
 
@@ -81,3 +86,32 @@ class PXDFile:
 
     def __del__(self):
         self.close()
+
+    def _set(self, key, data, is_meta=False):
+        table = 'document_meta' if is_meta else 'document_info'
+        store = self._meta if is_meta else self._info
+
+        store[key] = data
+        c = self.db.cursor()
+        c.execute(
+            f'update {table} '
+            'set value = ? where key = ?',
+            (data, key)
+        )
+
+    # Metadata
+
+    @property
+    def guides(self):
+        data = [blob(b) for b in blob(self._info['guides'])]
+        return [
+            (bool(is_vertical), r)
+            for _, r, is_vertical in data]
+
+    @guides.setter
+    def guides(self, guides):
+        data = make_blob(b'Arry', [
+            make_blob(b'Guid', 1, r, int(is_vertical))
+            for (is_vertical, r) in guides
+        ])
+        self._set('guides', data)
