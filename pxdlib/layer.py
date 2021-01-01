@@ -126,7 +126,7 @@ class Layer:
     def is_clipping(self):
         return bool(self._flags & LayerFlag.clipping)
 
-    @clipping.setter
+    @is_clipping.setter
     def is_clipping(self, val):
         self._flag_set(LayerFlag.clipping, bool(val))
 
