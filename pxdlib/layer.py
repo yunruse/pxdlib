@@ -8,7 +8,7 @@ import base64
 from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
-from .enums import LayerFlag, BlendMode
+from .enums import LayerFlag, BlendMode, LayerTag
 
 
 class Layer:
@@ -120,6 +120,20 @@ class Layer:
         if not isinstance(blend, BlendMode):
             raise TypeError('Blend mode must be a BlendMode.')
         self._setinfo('blendMode', make_blob(b'Blnd', str(blend)))
+
+    @property
+    def tag(self) -> LayerTag:
+        '''
+        The blending mode of the layer.
+        '''
+        return LayerTag(self._info['color-value'])
+
+    @tag.setter
+    def tag(self, tag):
+        blend = blend or LayerTag.none
+        if not isinstance(blend, LayerTag):
+            raise TypeError('Tag must be a LayerTag.')
+        self._setinfo('color-value', int(tag))
 
     # Flags
 
