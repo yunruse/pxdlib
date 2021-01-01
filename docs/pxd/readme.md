@@ -63,14 +63,18 @@ In the data described above, we may encounter certain structures seemingly uniqu
 
 ### Pixelmator blobs
 
-Various data blobs begin with the magic number `4-tP`. These are what we will call "Pixelmator blobs". They are little-endian, and have a twelve-byte header: 4 bytes for their magic number, 4 (ASCII) bytes for their type, and 4 bytes for an integer specifying the length of the blob. Their type is given in reverse order; it is sometimes clear as to their purpose.
+Various "Pixelmator blobs" may be encountered in the `.pxd` format. They are little-endian, and have a twelve-byte header:
+- 4 bytes for their magic number, `4-tP`.
+- 4 bytes for their type, specified as an ASCII string given in reverse order;
+- 4 bytes for an integer specifying the length of the blob in bytes. The end may contain garbage bytes, as this is always padded to the nearest 4 bytes.
 
-While some blobs' types appear only once (and are described where they are found), many of them are shared. Below ar common blob types:
+While some blobs' types appear only once (and are described where they are found), many of them are shared. Below are common blob types:
 
-- `SI16` is a one-byte integer (“character”) followed by three garbage bytes.
-- `Strn` is a string. This starts with 4 bytes for the number of characters, as 0 to 3 characters at the end may be garbage bytes to pad the blob.
-- `PTPt` and `PTSz` are a grid-based set of points or sizes, respectively, with two double-precision floats for x and y. One pixel coordinates to an increase 0.5, so you have to double the, uh, double doubles.
+- `SI16` is a short integer of 16 bits, followed by two garbage bytes.
+- `Strn` is a string. This starts with 4 bytes for the number of characters, followed by the characters. (There may be garbage bytes at the end.)
+- `PTPt` and `PTSz` are two double-precision floats representing the x and y dimensions of a point or size, respectively. An increase in one pixel corresponds to an increase by 0.5, so you have to double the, uh, double doubles.
 - `PTFl` is a double-precision float.
+- `Arry` is an array of other blobs – notably, its length will include these other blobs. It first contains two integers, the first nominally 1 and the second, _n_, the number of items in the array. The array is then followed by _n_ integers giving the starting positions of each entry after this header (i.e. the first is 0).
 
 ### JSON structures
 
