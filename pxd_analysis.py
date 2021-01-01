@@ -11,9 +11,11 @@ import struct
 import pxdlib as pxdlib
 from pxdlib import blob, vercon, verlist
 
+def hexes(data):
+    return binascii.hexlify(data).decode()
 
 def hexdump(data):
-    data = binascii.hexlify(data).decode()
+    data = hexes(data)
     line = ''
     while data:
         buf, data = data[:8], data[8:]
