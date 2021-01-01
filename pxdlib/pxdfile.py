@@ -44,7 +44,7 @@ class PXDFile:
         if parent is None:
             cond = 'is null'
         elif isinstance(parent, Layer):
-            cond = f' = "{layer.uuid}"'
+            cond = f' = "{parent._uuid}"'
         elif isinstance(parent, str):
             cond = f' = "{parent}"'
         else:
