@@ -12,6 +12,10 @@ A layer will never be a direct `Layer` object, but rather one of its four subcla
 Layers contain the following attributes:
 
 - `name`, the layer's given visible name.
+- `is_visible`, a boolean which specifies if the layer is visible.
+- `is_locked`, a boolean. This is only a convenience for the UI – it does not affect whether `pxdlib` can modify the layer!
+- `is_mask`, a boolean. If true, the layer is the mask for its parent.
+- `is_clipping`, a boolean. If true, the layer is a clipping mask; it clips onto the layer below it.
 
 <a id="GroupLayer"></a>
 ## GroupLayer

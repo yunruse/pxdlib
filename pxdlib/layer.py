@@ -89,6 +89,8 @@ class Layer:
         if DYNAMIC in self._info:
             self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
 
+    # Flags
+
     @property
     def _flags(self) -> LayerFlag:
         return LayerFlag(blob(self._info['flags']))
@@ -96,6 +98,45 @@ class Layer:
     @_flags.setter
     def _flags(self, val: LayerFlag):
         self._setinfo('flags', make_blob(b'UI64', int(val)))
+
+    def _flag_set(self, flag, truth):
+        past_truth = bool(self._flags & flag)
+        print(truth, past_truth)
+        if truth != past_truth:
+            # flip the bit
+            self._flags ^= flag
+
+    @property
+    def is_visible(self):
+        return bool(self._flags & LayerFlag.visible)
+
+    @is_visible.setter
+    def is_visible(self, val):
+        self._flag_set(LayerFlag.visible, bool(val))
+
+    @property
+    def is_locked(self):
+        return bool(self._flags & LayerFlag.locked)
+
+    @is_locked.setter
+    def is_locked(self, val):
+        self._flag_set(LayerFlag.locked, bool(val))
+
+    @property
+    def is_clipping(self):
+        return bool(self._flags & LayerFlag.clipping)
+
+    @clipping.setter
+    def is_clipping(self, val):
+        self._flag_set(LayerFlag.clipping, bool(val))
+
+    @property
+    def is_mask(self):
+        return bool(self._flags & LayerFlag.mask)
+
+    @is_mask.setter
+    def is_mask(self, val):
+        self._flag_set(LayerFlag.mask, bool(val))
 
 
 class GroupLayer(Layer):
