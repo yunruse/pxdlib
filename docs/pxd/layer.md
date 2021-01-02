@@ -70,4 +70,8 @@ The `text-stringData` is a PLIST file. (unknown)
 
 ## Vector layers
 
-(unknown)
+In addition to almost certainly containing a [`styles-data`](/docs/pxd/styles.md#styles-data) tag, vector layers contain one added `shape-shapeData`, a vercon containing the following tags:
+
+- `identifier` and `content-identifier`, both UUIDs;
+- `geometry` (unknown),
+- `pathCodableWrappers`, a vercon (unknown)
