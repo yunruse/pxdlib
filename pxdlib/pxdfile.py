@@ -5,12 +5,9 @@ PXDFile class, handling most database access.
 from pathlib import Path
 import sqlite3
 from io import UnsupportedOperation
-from collections import namedtuple
 
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
-
-guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 
 class PXDFile:
@@ -141,22 +138,20 @@ class PXDFile:
         '''
         A list of the guides used for visual alignment.
 
-        Given as the list of horizontal guides (0 = left)
-        followed by vertical guides (0 = top).
+        Given as a list of two-tuples (is_vertical, r).
+        For example, the guide _y=10_ would be `(True, 10)`
+        and _x=-4_ would be `(False, -4)`.
         '''
         data = [blob(b) for b in blob(self._info['guides'])]
-        return guides(
-            [r for _, r, vert in data if not vert],
-            [r for _, r, vert in data if vert]
-        )
+        return [
+            (bool(is_vertical), r)
+            for _, r, is_vertical in data]
 
     @guides.setter
     def guides(self, guides):
-        hor, ver = guides
-        guides = [(0, r) for r in hor] + [(1, r) for r in ver]
         data = make_blob(b'Arry', [
-            make_blob(b'Guid', 1, int(r), vert)
-            for (vert, r) in guides
+            make_blob(b'Guid', 1, r, int(is_vertical))
+            for (is_vertical, r) in guides
         ])
         self._set('guides', data)
 
