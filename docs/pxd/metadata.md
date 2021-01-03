@@ -15,7 +15,7 @@ Inside the [`document_info`](/docs/pxd/#sql) table, we likewise have:
 - `metadata-data` (unknown)
 - `print-info-data` (unknown)
 - `rulers-origin`, [`PTPt`](/docs/pxd/#blobs), the origin of the ruler for visual display purposes.
-- `guides` is an [`Arry`](/docx/pxd/#blobs) of `Guid` blobs. Each `Guid` blob contains a short (nominally 1), an integer (the coordinate of the guide) and a short (0 if horizontal, 1 if vertical.)
+- `guides` is an [`Arry`](/docx/pxd/#blobs) of `Guid` blobs. Each `Guid` blob contains a short (nominally 1), an integer (the coordinate of the guide) and a short (0 if horizontal, 1 if vertical.) The coordinates are given relative to the top-left of the document, rather than the bottom-left as coordinates are given in.
 - `slices-data`, a list of slices specified in JSON. (unknown).
 
 The [`storable_info`](/docs/pxd/#sql) table has the following keys:
