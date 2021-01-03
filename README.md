@@ -27,3 +27,17 @@ with PXDFile('graph.pxd') as pxd:
         if l.name in COORDS:
             l.position = COORDS[l.name]
 ```
+
+## Development
+
+As `pxdlib` is available on PyPI, it will be updated in `production` only when a new version is available. The reverse-engineering document, however, will be kept up-to-date in `production` as behaviour is confirmed.
+
+Until the library is considered "done", it will not be confirmed to work on any specific Pixelmator version other than "the latest". I will consider `pxdlib` "done" when:
+
+- raster layers are accessible in a format which is compatible with a good raster-manipulating API;
+- vector layers are fully modifiable;
+- text layers can be modified, at least with the common formatting capabilities;
+- all effects and filters are documented and available;
+- layers can be created and destroyed;
+
+and all of the above is formally tested with a specially-created document.
