@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### 0.0.2
+
+- `PXDFile.guides` returns and accepts `([x...], [y...])` rather than `[(is_vertical, r)...]`
+
 ### 0.0.1
 
 - First public release.
