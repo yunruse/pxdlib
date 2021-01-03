@@ -41,3 +41,5 @@ Until the library is considered "done", it will not be confirmed to work on any 
 - layers can be created and destroyed;
 
 and all of the above is formally tested with a specially-created document.
+
+A changelog is available [here](/docs/changelog.md).
