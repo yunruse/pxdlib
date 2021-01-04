@@ -15,7 +15,7 @@ guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 class PXDFile:
     def __repr__(self):
-        return f"PXDFile({self.path})"
+        return f"PXDFile({repr(str(self.path))})"
 
     def __init__(self, path):
         self.path = Path(path)
