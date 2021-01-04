@@ -115,7 +115,6 @@ class PXDFile:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
-        return True
 
     def __del__(self):
         self._db.close()
