@@ -8,7 +8,7 @@ packages = setuptools.find_packages()
 setuptools.setup(
     name="pxdlib",
     description="Pixelmator Pro file (.pxd) library",
-    version="0.0.1",
+    version="0.0.2",
     author="Mia yun Ruse",
     author_email="mia@yunru.se",
     long_description=long_description,

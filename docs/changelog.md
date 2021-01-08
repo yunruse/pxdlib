@@ -4,6 +4,7 @@
 
 ### 0.0.2
 
+- Various bug fixes.
 - `PXDFile.guides` returns and accepts `([x...], [y...])` rather than `[(is_vertical, r)...]`
 
 ### 0.0.1
