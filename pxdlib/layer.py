@@ -74,7 +74,7 @@ class Layer:
     @property
     def position(self) -> tuple:
         '''
-        The position of the layer (defined as its centre).
+        The position of the layer (defined as its center).
         '''
         return tuple(blob(self._info['position']))
 
@@ -86,7 +86,7 @@ class Layer:
     @property
     def size(self) -> int:
         '''
-        The position of the layer (defined as its centre).
+        The position of the layer (defined as its center).
         '''
         return tuple(blob(self._info['size']))
 
