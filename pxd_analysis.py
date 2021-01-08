@@ -47,28 +47,16 @@ if __name__ == '__main__':
 
             elif isinstance(l, pxdlib.VectorLayer):
                 print('vector')
-                if False:
-                    data = vercon(json.loads(l._info['shape-shapeData'].decode()))
-                    data = vercon(data['pathCodableWrappers'][0])
-                    data = vercon(data['shapePathUnkeyedContainer'][0])
-                    data = vercon(data['backingStorage'])
-                    path = base64.b64decode(
-                        vercon(data['bezierPath'])['dataFromCGPath']
-                    )
-                    print()
-                    print(path)
-                    print()
-                    print(len(path))
-                    hexdump(path)
+                data = json.loads(l._info['shape-shapeData'])
+                data = vercon(data)
+                data = {}
+                for k, v in data.items():
+                    print('-', k, v)
             else:
                 print()
                 display(l.children, s+1)
 
             # Layer debugging here
-
-            data = verlist(json.loads(l._info['effects-data']))
-            for k, v in data.items():
-                print(k, v)
 
     display(pxd.children)
 
