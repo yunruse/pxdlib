@@ -10,12 +10,12 @@ All of the three are UTF-8 encoded JSON dictionaries. ([Structures](/docs/pxd/re
 The `styles-data` key is a verlist. The dictionary inside contains six keys:
 
 - `csr`, nominally 0
-- `ctx`, a verlist containing what appears to be data on the colour profile. It appears to be consistent on my device, so I think it's benign if we leave it (unknown)
+- `ctx`, a verlist containing what appears to be data on the color profile. It appears to be consistent on my device, so I think it's benign if we leave it (unknown)
 - `f` (fill), `s` (stroke), `S` (shadow) and `i` (inner shadow).
 
 The four single-letter keys above are each lists of their respective style effects (as you can have more than one). Each style effect is a verlist containing a dictionary.
 
-Style effects have the following shared properties:
+Style effects have the following properties:
 
 - `id`, a UUID;
 - `E`, which is 0 if disabled and 1 if enabled;

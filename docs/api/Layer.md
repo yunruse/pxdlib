@@ -21,7 +21,7 @@ Layers contain the following attributes:
 - `size`,  a tuple of the w,h size of the layer defined in pixels.
 - `angle`, a float in degrees in the range [0, 360). Nominally 0 except for text layers.
 - `blendMode` is an enumerable from `pxdlib.BlendMode`.
-- `tag` is an enumerable from `pxdlib.LayerTag` (or, an integer from 0 through 7) representing a colour tag for user convenience. It is truthy if a tag is applied to the layer.
+- `tag` is an enumerable from `pxdlib.LayerTag` (or, an integer from 0 through 7) representing a color tag for user convenience. It is truthy if a tag is applied to the layer.
 
 <a id="GroupLayer"></a>
 ## GroupLayer
