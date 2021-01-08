@@ -13,8 +13,17 @@ class LayerFlag(enum.IntFlag):
 
 
 class BlendMode(enum.Enum):
+    '''
+    The blend mode for a layer or style.
+
+    (The string value is the encoded string used for layers.)
+    '''
+    # All strings used correspond to the layer's blend modes.
     passThrough = 'pass'
     normal = 'norm'
+
+    # The keys listed below are that which can be applied to styles.
+    sourceOver = 'norm'
     darken = 'dark'
     multiply = 'mul '
     colorBurn = 'idiv'
