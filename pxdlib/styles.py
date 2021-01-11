@@ -1,8 +1,19 @@
 from math import pi
 from uuid import uuid1
 
+from .helpers import dicts
 from .enums import BlendMode
 
+_STYLE_TAGS = {
+    'E': 'enabled',
+    'o': 'opacity',
+    'B': 'blendMode',
+    'b': 'blur',
+    'd': 'distance',
+    'a': 'angle',
+    'gEP': 'gradientStart',
+    'gSP': 'gradientEnd',
+}
 
 
 class Style:
@@ -26,7 +37,13 @@ class Style:
             self._dict['id'] = uuid1()
 
     def __repr__(self):
-        return f'{type(self).__name__}({repr(self._dict)})'
+        args = ', '.join([
+            f'{_STYLE_TAGS[k]}={getattr(self, _STYLE_TAGS[k])}'
+            for k, v in self._dict.items()
+            if self._dict[k] != self._defaults[k]
+            and k in _STYLE_TAGS
+        ])
+        return f'{type(self).__name__}({args})'
 
     @classmethod
     def _from_layer(cls, data):
@@ -50,7 +67,7 @@ class Style:
         self._dict['o'] = float(val)
 
 
-class _StyleWithBlend:
+class _Blend:
     # Mixin for blend modes
     @property
     def blendMode(self):
@@ -58,11 +75,9 @@ class _StyleWithBlend:
         return getattr(BlendMode, self._dict['B'])
 
 
-'''
-- `b` is the blur (in pixels);
-- `d` is the distance (in pixels);
-- `a` is the angle used for distance (in radians, from 0 through 2pi);
-'''
+class _Fill:
+    # Mixin for gradients
+    pass
 
 
 class _Shadow:
@@ -78,25 +93,69 @@ class _Shadow:
         return self._dict['d']
 
     @property
-    def angle(self):
+    def angle(self) -> float:
         '''The angle of the shadow's distance in degrees clockwise from north.'''
         angle_ccw_E = self._dict['a'] * 180 / pi
         return (90 - angle_ccw_E) % 360
 
 
-class Fill(Style, _StyleWithBlend):
+_STYLE_DEFAULT = {
+    'id': None,
+    'V': 1,
+    'C': 1,
+    'E': 1,
+    'o': 1,
+    'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0.20392156862745098, 0.47058823529411764, 0.9647058823529412, 1], 0]], [1, [[0.3254901960784314, 0.7137254901960784, 0.9764705882352941, 1], 1]]], 't': 0}],
+    'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
+    'gSP': [0, 0.5],
+    'gEP': [1, 0.5],
+}
+
+_BLEND_DEFAULT = {
+    'B': 'sourceOver',
+}
+_FILL_DEFAULT = {
+    'fT': 0,
+}
+_SHADOW_DEFAULT = {
+    'b': 5,
+    'd': 2,
+}
+
+
+class Fill(Style, _Fill, _Blend):
+    _defaults = dicts(
+        _STYLE_DEFAULT, _BLEND_DEFAULT, _FILL_DEFAULT
+    )
     _tag = 'f'
 
 
-class Stroke(Style, _StyleWithBlend):
+class Stroke(Style, _Fill, _Blend):
+    _defaults = dicts(
+        _STYLE_DEFAULT, _BLEND_DEFAULT, _FILL_DEFAULT, {
+            'sT': 0,
+            'sP': 1,
+            'sW': 3,
+        }
+    )
     _tag = 's'
 
 
-class Shadow(Style, _Shadow, _StyleWithBlend):
+class Shadow(Style, _Shadow, _Blend):
+    _defaults = dicts(
+        _STYLE_DEFAULT, _BLEND_DEFAULT, _SHADOW_DEFAULT, {
+            'a': pi * 1.5,
+        }
+    )
     _tag = 'S'
 
 
 class InnerShadow(Style, _Shadow):
+    _defaults = dicts(
+        _STYLE_DEFAULT, _SHADOW_DEFAULT, {
+            'a': pi * 0.5,
+        }
+    )
     _tag = 'i'
 
 
