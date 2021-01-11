@@ -22,11 +22,6 @@ class Style(dict):
     def _from_layer(cls, data):
         return cls(data)
 
-    # TODO: make it so that Style has an optional callback to its layer,
-    # so that if a Style was extracted from a layer and is modified,
-    # it actually is reflected in the layer.
-    # (Obviously this won't happen for manually-created styles.)
-
 
 class _StyleWithBlend:
     # Mixin for blend modes

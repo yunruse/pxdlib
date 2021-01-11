@@ -189,6 +189,12 @@ class Layer:
     def styles(self):
         '''
         A list of Style objects applied to the layer, in the order applied.
+
+        Note that this must be extracted and set. For example:
+
+            layer.styles[0].opacity = 0
+
+        would not have any effect.
         '''
         data = self._info.get('styles-data')
         if data is None:
