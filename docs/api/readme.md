@@ -18,3 +18,5 @@ with pxd:
     pass # Modifications
 # Modifications will be immediately applied as soon as block closes
 ```
+
+Note that the only way to modify a Pixelmator file is to directly set a property on `PXDFile` or `Layer` by `a.b = c` (or `+=`, `-=` etc for numeric properties). If such a property is a list or dictionary, you have to extract that property, modify it, then re-add it. (Otherwise it gets a little hazy.)
