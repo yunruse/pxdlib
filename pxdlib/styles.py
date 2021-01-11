@@ -1,4 +1,5 @@
 from math import pi
+from uuid import uuid1
 
 from .enums import BlendMode
 
@@ -20,6 +21,9 @@ class Style:
         _dict.update(self._defaults)
         _dict.update(kwargs)
         self._dict = _dict
+
+        if self._dict.get('id') is None:
+            self._dict['id'] = uuid1()
 
     def __repr__(self):
         return f'{type(self).__name__}({repr(self._dict)})'
