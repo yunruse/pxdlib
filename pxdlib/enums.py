@@ -60,3 +60,15 @@ class LayerTag(enum.IntEnum):
     blue = 5
     purple = 6
     gray = 7
+
+
+class StrokeType(enum.IntEnum):
+    regular = 0
+    dashed = 1
+    dotted = 2
+
+
+class StrokePosition(enum.IntEnum):
+    inside = 0
+    center = 1
+    outside = 2

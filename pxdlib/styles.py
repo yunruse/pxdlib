@@ -2,7 +2,7 @@ from math import pi
 from uuid import uuid1
 
 from .helpers import dicts
-from .enums import BlendMode
+from .enums import BlendMode, StrokeType, StrokePosition
 
 _STYLE_TAGS = {
     'E': 'enabled',
@@ -13,6 +13,9 @@ _STYLE_TAGS = {
     'a': 'angle',
     'gEP': 'gradientStart',
     'gSP': 'gradientEnd',
+    'sT': 'strokeType',
+    'sP': 'strokePosition',
+    'sW': 'strokeWidth',
 }
 
 
@@ -139,6 +142,32 @@ class Stroke(Style, _Fill, _Blend):
         }
     )
     _tag = 's'
+
+    @property
+    def strokeType(self) -> StrokeType:
+        return StrokeType(self._dict['sT'])
+
+    @strokeType.setter
+    def strokeType(self, val: StrokeType):
+        assert val in [0, 1, 2]
+        self._dict['sT'] = int(val)
+
+    @property
+    def strokePosition(self) -> StrokePosition:
+        return StrokePosition(self._dict['sP'])
+
+    @strokePosition.setter
+    def strokePosition(self, val: StrokePosition):
+        assert val in [0, 1, 2]
+        self._dict['sP'] = int(val)
+
+    @property
+    def strokeWidth(self) -> float:
+        return self._dict['sW']
+
+    @strokeWidth.setter
+    def strokeWidth(self, val: float):
+        self._dict['sW'] = float(val)
 
 
 class Shadow(Style, _Shadow, _Blend):
