@@ -5,5 +5,6 @@ __email__ = "mia@yunru.se"
 
 from .enums import *
 from .structure import *
+from .styles import *
 from .layer import *
 from .pxdfile import *

@@ -9,6 +9,7 @@ from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
 from .enums import LayerFlag, BlendMode, LayerTag
+from .styles import _STYLES
 
 
 class Layer:
@@ -183,6 +184,23 @@ class Layer:
     @is_mask.setter
     def is_mask(self, val):
         self._flag_set(LayerFlag.mask, bool(val))
+
+    @property
+    def styles(self):
+        '''
+        A list of Style objects applied to the layer, in the order applied.
+        '''
+        data = self._info.get('styles-data')
+        if data is None:
+            return []
+        data = verlist(json.loads(data.decode()))
+        styles = []
+        for k in 'fsSi':
+            kind = _STYLES[k]
+            for style in data[k]:
+                style = kind._from_dict(verlist(style))
+                styles.append(style)
+        return styles
 
 
 class GroupLayer(Layer):

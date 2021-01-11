@@ -57,6 +57,8 @@ if __name__ == '__main__':
                 display(l.children, s+1)
 
             # Layer debugging here
+            for style in l.styles:
+                print(style)
 
     display(pxd.children)
 
