@@ -128,11 +128,9 @@ _STYLE_DEFAULT = {
     'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
     'gSP': [0, 0.5],
     'gEP': [1, 0.5],
-}
-
-_BLEND_DEFAULT = {
     'B': 'sourceOver',
 }
+
 _FILL_DEFAULT = {
     'fT': 0,
 }
@@ -144,14 +142,14 @@ _SHADOW_DEFAULT = {
 
 class Fill(Style, _Fill, _Blend):
     _defaults = dicts(
-        _STYLE_DEFAULT, _BLEND_DEFAULT, _FILL_DEFAULT
+        _STYLE_DEFAULT, _FILL_DEFAULT
     )
     _tag = 'f'
 
 
 class Stroke(Style, _Fill, _Blend):
     _defaults = dicts(
-        _STYLE_DEFAULT, _BLEND_DEFAULT, _FILL_DEFAULT, {
+        _STYLE_DEFAULT, _FILL_DEFAULT, {
             'sT': 0,
             'sP': 1,
             'sW': 3,
@@ -186,7 +184,7 @@ class Stroke(Style, _Fill, _Blend):
 
 class Shadow(Style, _Shadow, _Blend):
     _defaults = dicts(
-        _STYLE_DEFAULT, _BLEND_DEFAULT, _SHADOW_DEFAULT, {
+        _STYLE_DEFAULT, _SHADOW_DEFAULT, {
             'a': pi * 1.5,
         }
     )
