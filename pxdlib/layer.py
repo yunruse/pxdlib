@@ -198,7 +198,7 @@ class Layer:
         for k in 'fsiS':
             kind = _STYLES[k]
             for style in data[k]:
-                style = kind._from_dict(verlist(style))
+                style = kind._from_layer(verlist(style))
                 styles.append(style)
         return styles
 

@@ -11,11 +11,15 @@ class Style(dict):
     '''
     _tag = None
 
+    def __init__(self, data):
+        # TODO: non-dict format
+        dict.__init__(self, data)
+
     def __repr__(self):
         return f'{type(self).__name__}({dict.__repr__(self)})'
 
     @classmethod
-    def _from_dict(cls, data):
+    def _from_layer(cls, data):
         return cls(data)
 
     # TODO: make it so that Style has an optional callback to its layer,
