@@ -3,7 +3,8 @@ from math import pi
 from .enums import BlendMode
 
 
-class Style(dict):
+
+class Style:
     '''
     A style applied to a layer.
 
@@ -11,12 +12,14 @@ class Style(dict):
     '''
     _tag = None
 
-    def __init__(self, data):
-        # TODO: non-dict format
-        dict.__init__(self, data)
+    def __init__(self, data=None):
+        _dict = dict()
+        _dict.update(self._default)
+        _dict.update(data)
+        self._dict = _dict
 
     def __repr__(self):
-        return f'{type(self).__name__}({dict.__repr__(self)})'
+        return f'{type(self).__name__}({repr(self._dict)})'
 
     @classmethod
     def _from_layer(cls, data):
@@ -28,7 +31,7 @@ class _StyleWithBlend:
     @property
     def blendMode(self):
         '''The blend mode used for the style.'''
-        return getattr(BlendMode, self['B'])
+        return getattr(BlendMode, self._dict['B'])
 
 
 '''
@@ -43,17 +46,17 @@ class _Shadow:
     @property
     def blur(self):
         '''The blur intensity of the shadow, in pixels.'''
-        return self['b']
+        return self._dict['b']
 
     @property
     def distance(self):
         '''The distance of the shadow from its object, in pixels.'''
-        return self['d']
+        return self._dict['d']
 
     @property
     def angle(self):
         '''The angle of the shadow's distance in degrees clockwise from north.'''
-        angle_ccw_E = self['a'] * 180 / pi
+        angle_ccw_E = self._dict['a'] * 180 / pi
         return (90 - angle_ccw_E) % 360
 
 
