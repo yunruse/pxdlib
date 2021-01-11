@@ -62,6 +62,11 @@ class LayerTag(enum.IntEnum):
     gray = 7
 
 
+class FillType(enum.IntEnum):
+    color = 0
+    gradient = 1
+
+
 class StrokeType(enum.IntEnum):
     regular = 0
     dashed = 1

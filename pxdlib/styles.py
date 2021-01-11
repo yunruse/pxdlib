@@ -2,12 +2,15 @@ from math import pi
 from uuid import uuid1
 
 from .helpers import dicts
-from .enums import BlendMode, StrokeType, StrokePosition
+from .enums import (
+    FillType, BlendMode, StrokeType, StrokePosition
+)
 
 _STYLE_TAGS = {
     'E': 'enabled',
     'o': 'opacity',
     'B': 'blendMode',
+    'fT': 'fillType',
     'b': 'blur',
     'd': 'distance',
     'a': 'angle',
@@ -80,7 +83,13 @@ class _Blend:
 
 class _Fill:
     # Mixin for gradients
-    pass
+    @property
+    def fillType(self) -> FillType:
+        return FillType(self._dict['fT'])
+
+    @fillType.setter
+    def fillType(self, val: FillType):
+        self._dict['fT'] = int(FillType(val))
 
 
 class _Shadow:
