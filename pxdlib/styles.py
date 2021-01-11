@@ -12,10 +12,10 @@ class Style:
     '''
     _tag = None
 
-    def __init__(self, data=None):
+    def __init__(self, **kwargs):
         _dict = dict()
-        _dict.update(self._default)
-        _dict.update(data)
+        _dict.update(self._defaults)
+        _dict.update(kwargs)
         self._dict = _dict
 
     def __repr__(self):
@@ -23,7 +23,8 @@ class Style:
 
     @classmethod
     def _from_layer(cls, data):
-        return cls(data)
+        '''Internal binding for layer.styles'''
+        return cls(**data)
 
     @property
     def enabled(self):
