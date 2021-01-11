@@ -4,6 +4,8 @@ Basic structures
 
 from struct import Struct
 
+from .helpers import num
+
 _MAGIC = b'4-tP'
 _LENGTH = Struct('<i')
 
@@ -139,8 +141,33 @@ def verlist(data: list, version=1):
     return data[1]
 
 
-def color(data: dict):
-    data = verlist(data)
-    assert data['m'] == 2
-    assert data['csr'] == 0
-    return data['c']
+class RGBA:
+    '''
+    RGBA color in [0, 1] space.
+    '''
+
+    def __init__(self, r, g, b, a=1):
+        self.r = num(r)
+        self.g = num(g)
+        self.b = num(b)
+        self.a = num(a)
+
+    def __iter__(self):
+        tup = self.r, self.g, self.b, self.a
+        return iter(tup)
+
+    def __repr__(self):
+        vals = [str(self.r), str(self.g), str(self.b)]
+        if self.a != 1:
+            vals.append(str(self.a))
+        return f"RGBA({', '.join(vals)})"
+
+    @classmethod
+    def _from_data(cls, data):
+        data = verlist(data)
+        assert data['m'] == 2
+        assert data['csr'] == 0
+        return cls(*data['c'])
+
+    def _to_data(self):
+        return [1, {'m': 2, 'csr': 0, 'c': list(self)}]

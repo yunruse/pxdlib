@@ -3,6 +3,15 @@ Common functions used in pxdlib.
 '''
 
 
+def num(number):
+    '''
+    Return float (or int, if an integer)
+    '''
+    n = float(number)
+    n_int = int(number)
+    return n_int if n_int == n else n
+
+
 def dicts(*dicts, **kwargs):
     '''
     Concatenate dictionaries such that defaults are on the left.
