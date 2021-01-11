@@ -13,6 +13,9 @@ class Style:
     _tag = None
 
     def __init__(self, **kwargs):
+        if type(self) == Style:
+            raise TypeError(
+                'Cannot directly instantiate a Style. Try Fill, Stroke, Shadow or InnerShadow')
         _dict = dict()
         _dict.update(self._defaults)
         _dict.update(kwargs)
