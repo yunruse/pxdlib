@@ -27,19 +27,19 @@ class Style:
         return cls(**data)
 
     @property
-    def enabled(self):
-        return self._dict['E']
+    def enabled(self) -> bool:
+        return bool(self._dict['E'])
 
     @enabled.setter
-    def enabled(self, val):
+    def enabled(self, val: bool):
         self._dict['E'] = int(bool(val))
 
     @property
-    def opacity(self):
+    def opacity(self) -> float:
         return self._dict['o']
 
     @opacity.setter
-    def opacity(self, val):
+    def opacity(self, val: float):
         self._dict['o'] = float(val)
 
 
@@ -61,12 +61,12 @@ class _StyleWithBlend:
 class _Shadow:
     # Mixin for shadow stuff
     @property
-    def blur(self):
+    def blur(self) -> float:
         '''The blur intensity of the shadow, in pixels.'''
         return self._dict['b']
 
     @property
-    def distance(self):
+    def distance(self) -> float:
         '''The distance of the shadow from its object, in pixels.'''
         return self._dict['d']
 
