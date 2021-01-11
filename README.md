@@ -5,8 +5,8 @@
 Documentation exists for the [API], and a much longer set of documentation exists for the [reverse-engineering] of the `.pxd` format.
 
 [Pixelmator Pro]: https://pixelmator.com/pro/
-[API]: docs/api/readme.md
-[reverse-engineering]: docs/api/readme.md
+[API]: https://github.com/yunruse/pxdlib/blob/production/docs/api/readme.md
+[reverse-engineering]: https://github.com/yunruse/pxdlib/blob/production/docs/pxd/readme.md
 
 `pxdlib` can be used for a variety of purposes. For example, if you have designed a graph,
 you may automagically manipulate coordinates as:
@@ -42,4 +42,4 @@ Until the library is considered "done", it will not be confirmed to work on any 
 
 and all of the above is formally tested with a specially-created document.
 
-A changelog is available [here](/docs/changelog.md).
+A changelog is available [here](https://github.com/yunruse/pxdlib/blob/production/docs/changelog.md).

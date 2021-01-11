@@ -80,6 +80,6 @@ While some blobs' types appear only once (and are described where they are found
 <a id="json"></a>
 ### JSON structures
 
-- A **vercon**, or version container, is a dictionary containing version (nominally 1) and the contents inside versionSpecifiContainer [sic]; the latter is the actual contents.
+- A **vercon**, or version container, is a dictionary containing version (nominally 1) and the contents inside versionSpecifiContainer \[sic\]; the latter is the actual contents.
 - A **verlist**, likewise, is a list: the version (nominally 1) followed by the contents.
 - A **color**, a verlist with a dict containing `m` (nominally 2), `csr` (nominally 0) and `c` (a 4-list of RGBA).
