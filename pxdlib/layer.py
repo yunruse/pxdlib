@@ -195,7 +195,7 @@ class Layer:
             return []
         data = verlist(json.loads(data.decode()))
         styles = []
-        for k in 'fsSi':
+        for k in 'fsiS':
             kind = _STYLES[k]
             for style in data[k]:
                 style = kind._from_dict(verlist(style))
