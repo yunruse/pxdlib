@@ -1,7 +1,7 @@
 from math import pi
 from uuid import uuid1
 
-from .helpers import dicts
+from .helpers import dicts, reversegetattr
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
 )
@@ -76,9 +76,16 @@ class Style:
 class _Blend:
     # Mixin for blend modes
     @property
-    def blendMode(self):
+    def blendMode(self) -> BlendMode:
         '''The blend mode used for the style.'''
         return getattr(BlendMode, self._dict['B'])
+
+    @blendMode.setter
+    def blendMode(self, val: BlendMode):
+        '''The blend mode used for the style.'''
+        val = reversegetattr(BlendMode, val, 'sourceOver')
+        val = val.replace('normal', 'sourceOver')
+        self._dict['B'] = val
 
 
 class _Fill:
