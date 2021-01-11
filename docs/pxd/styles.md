@@ -19,17 +19,17 @@ Style effects have the following properties:
 
 - `id`, a UUID;
 - `C` and `V`, which always seem to be 1;
-- `E`, which is 0 if disabled and 1 if enabled;
-- `o`, the opacity from 0 to 1;
-- `B`, the blend mode. (See `BlendMode` under [`enums.py`](/pxdlib/enums.py) for a list of values.) Note that `S` (shadow) effects do not have a `B`.
-- `fT`, the fill type (for `f` and `s`.) This is 0 if a color is used and 1 if a gradient is used. Note that _all_ layer effects will contain gradient data, even if they can't actually display gradients.
+- `E`, which is 0 if disabled and 1 if enabled, default 1;
+- `o`, the opacity from 0 to 1, default 1;
+- `B`, the blend mode. (See `BlendMode` under [`enums.py`](/pxdlib/enums.py) for a list of values.) Default `'sourceOver'`.  Note that `S` (shadow) effects cannot have a blend mode specified, but still store them.
+- `fT`, the fill type (only stored for `f` and `s`.) This is 0 if a color is used and 1 if a gradient is used. Note that _all_ layer effects will contain gradient data, even if they can't actually display gradients.
 - `c`, the color (for all style effects), a standard [color](/docs/pxd/readme.md#json).
-- `gSP` and `gEP`, the coordinates for the source and end points for gradients. These are two-lists of the x-y coordinates in relative coordinates to the bounding box (so `[0.5, 0.5]` is the center).
+- `gSP` and `gEP`, the coordinates for the source and end points for gradients. These are two-lists of the x-y coordinates in relative coordinates to the bounding box (so `[0.5, 0.5]` is the center). Defaults to `[0, 0.5]` and `[1, 0.5]`, respectively.
 - `g`, the gradient (for `f` and `s` effects), which specifies _n_ colors. Like a standard color, this is a verlist containing a dictionary with:
   - `csr`, nominally 0;
-  - `t`, the gradient kind (0 being linear, 1 a radial, and 2 angle);
-  - `m`, the _n-1_ midpoints. (These are specified where 0 is the very start and 1 the very end, so even if they are all midpoints they will not all be 0.5).
-  - `s`, the series of _n_ colors from start to end. Each is a verlist containing the two-list `[[R, G, B, A], x]` (where all are floats from 0 to 1) for the color RGBA and the position x.
+  - `t`, the gradient kind (0 linear, 1 a radial, and 2 angle), default 0;
+  - `m`, the _n-1_ color midpoint of gradients. Defaults to being in the actual midpoints. Note that these are specified from 0 to 1, so even if they are untouched they will not be all 0.5
+  - `s`, the series of _n_ colors from start to end. Each is a verlist containing the two-list `[[R, G, B, A], x]` (where all are floats from 0 to 1) for the color RGBA and the position x. 
 
 For `s` (stroke) effects:
 
@@ -39,9 +39,9 @@ For `s` (stroke) effects:
 
 For `S` (shadow) and `i` (inner shadow) effects:
 
-- `b` is the blur (in pixels);
-- `d` is the distance (in pixels);
-- `a` is the angle used for distance (in radians, from 0 through 2pi);
+- `b` is the blur, default 5px;
+- `d` is the distance, default 2px;
+- `a` is the angle used for distance (in radians anticlockwise from east, from 0 through 2pi), default north for inner shadows and south for shadows;
 
 <a id="color-adjustments"></a>
 ## Color adjustments
