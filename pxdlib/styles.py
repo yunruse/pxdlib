@@ -158,8 +158,7 @@ class Stroke(Style, _Fill, _Blend):
 
     @strokeType.setter
     def strokeType(self, val: StrokeType):
-        assert val in [0, 1, 2]
-        self._dict['sT'] = int(val)
+        self._dict['sT'] = int(StrokeType(val))
 
     @property
     def strokePosition(self) -> StrokePosition:
@@ -167,8 +166,7 @@ class Stroke(Style, _Fill, _Blend):
 
     @strokePosition.setter
     def strokePosition(self, val: StrokePosition):
-        assert val in [0, 1, 2]
-        self._dict['sP'] = int(val)
+        self._dict['sP'] = int(StrokePosition(val))
 
     @property
     def strokeWidth(self) -> float:
