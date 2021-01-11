@@ -25,6 +25,22 @@ class Style:
     def _from_layer(cls, data):
         return cls(data)
 
+    @property
+    def enabled(self):
+        return self._dict['E']
+
+    @enabled.setter
+    def enabled(self, val):
+        self._dict['E'] = int(bool(val))
+
+    @property
+    def opacity(self):
+        return self._dict['o']
+
+    @opacity.setter
+    def opacity(self, val):
+        self._dict['o'] = float(val)
+
 
 class _StyleWithBlend:
     # Mixin for blend modes
