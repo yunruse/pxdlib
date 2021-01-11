@@ -137,3 +137,10 @@ def vercon(data: dict, version=1):
 def verlist(data: list, version=1):
     _assertver('verlist', version, data[0])
     return data[1]
+
+
+def color(data: dict):
+    data = verlist(data)
+    assert data['m'] == 2
+    assert data['csr'] == 0
+    return data['c']
