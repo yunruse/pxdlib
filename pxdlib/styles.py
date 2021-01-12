@@ -2,7 +2,7 @@ from math import pi
 from uuid import uuid1
 
 from .helpers import dicts, reversegetattr
-from .structure import RGBA
+from .structure import RGBA, Gradient
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
 )
@@ -13,6 +13,7 @@ _STYLE_TAGS = {
     'B': 'blendMode',
     'c': 'color',
     'fT': 'fillType',
+    'g': 'gradient',
     '_gPos': 'gradientPosition',
     'sT': 'strokeType',
     'sP': 'strokePosition',
@@ -122,6 +123,14 @@ class _Fill:
     def gradientPosition(self) -> tuple:
         return self._dict['_gPos']
 
+    @property
+    def gradient(self) -> Gradient:
+        return Gradient._from_data(self._dict['g'])
+
+    @gradient.setter
+    def gradient(self, val: Gradient):
+        self._dict['g'] = val._to_data()
+
 
 class _Shadow:
     # Mixin for shadow stuff
@@ -168,6 +177,7 @@ class Fill(Style, _Fill, _Blend):
     _defaults = dicts(
         _STYLE_DEFAULT, _FILL_DEFAULT, {
             'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
+            'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0.2823529411764706, 0.6274509803921569, 0.9725490196078431, 1], 0]], [1, [[0.2823529411764706, 0.6274509803921569, 0.9725490196078431, 0], 1]]], 't': 0}]
         }
     )
     _tag = 'f'
@@ -179,6 +189,7 @@ class Stroke(Style, _Fill, _Blend):
             'sT': 0,
             'sP': 1,
             'sW': 3,
+            'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0, 0, 0, 1], 0]], [1, [[1, 1, 1, 1], 1]]], 't': 0}],
         }
     )
     _tag = 's'
