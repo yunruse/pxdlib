@@ -42,6 +42,10 @@ class Style:
             _dict['_gPos'] = (
                 _dict.pop('gSP'), _dict.pop('gEP')
             )
+        for i in _dict:
+            if i not in self._defaults:
+                raise ValueError(f'Unknown property {i}.')
+
         self._dict = _dict
 
         if self._dict.get('id') is None:
