@@ -21,6 +21,7 @@ class PXDFile:
         self.path = Path(path)
         self._db = sqlite3.connect(self.path / 'metadata.info')
         self._closed = True
+        self._layer_cache = {}
 
         def keyval(table):
             return dict(self._db.execute(
@@ -32,10 +33,14 @@ class PXDFile:
     # Layer management
 
     def _layer(self, ID):
+        if ID in self._layer_cache:
+            return self._layer_cache[ID]
         typ, = self._db.execute(
             f"select type from document_layers where id = {ID};"
         ).fetchone()
-        return _LAYER_TYPES[typ](self, ID)
+        layer = _LAYER_TYPES[typ](self, ID)
+        self._layer_cache[ID] = layer
+        return layer
 
     def _layers(self, parent=None, recurse=False):
         '''
