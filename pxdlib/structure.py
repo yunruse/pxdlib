@@ -166,8 +166,8 @@ class RGBA:
                     'String colors must be #RRGGBB or #RRGGBBAA.'
                 )
             r = int(string[0:2], base=16)
-            g = int(string[0:2], base=16)
-            b = int(string[0:2], base=16)
+            g = int(string[2:4], base=16)
+            b = int(string[4:6], base=16)
             if len(string) == 8:
                 a = int(string[6:8], base=16)
         self.r = num(r)
