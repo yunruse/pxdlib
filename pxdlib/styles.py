@@ -13,8 +13,7 @@ _STYLE_TAGS = {
     'B': 'blendMode',
     'c': 'color',
     'fT': 'fillType',
-    'gEP': 'gradientStart',
-    'gSP': 'gradientEnd',
+    '_gPos': 'gradientPosition',
     'sT': 'strokeType',
     'sP': 'strokePosition',
     'sW': 'strokeWidth',
@@ -36,9 +35,12 @@ class Style:
         if type(self) == Style:
             raise TypeError(
                 'Cannot directly instantiate a Style. Try Fill, Stroke, Shadow or InnerShadow')
-        _dict = dict()
-        _dict.update(self._defaults)
+        _dict = dict(self._defaults)
         _dict.update(kwargs)
+        if 'gSP' in _dict:
+            _dict['_gPos'] = (
+                _dict.pop('gSP'), _dict.pop('gEP')
+            )
         self._dict = _dict
 
         if self._dict.get('id') is None:
@@ -55,8 +57,14 @@ class Style:
 
     @classmethod
     def _from_layer(cls, data):
-        '''Internal binding for layer.styles'''
+        '''Internal binding'''
         return cls(**data)
+
+    def _to_layer(self):
+        '''Internal binding'''
+        data = self._dict
+        data['gSP'], data['gEP'] = data.pop('_gPos')
+        return data
 
     @property
     def enabled(self) -> bool:
@@ -110,6 +118,10 @@ class _Fill:
     def fillType(self, val: FillType):
         self._dict['fT'] = int(FillType(val))
 
+    @property
+    def gradientPosition(self) -> tuple:
+        return self._dict['_gPos']
+
 
 class _Shadow:
     # Mixin for shadow stuff
@@ -138,8 +150,7 @@ _STYLE_DEFAULT = {
     'o': 1,
     'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0.20392156862745098, 0.47058823529411764, 0.9647058823529412, 1], 0]], [1, [[0.3254901960784314, 0.7137254901960784, 0.9764705882352941, 1], 1]]], 't': 0}],
     'c': RGBA()._to_data(),
-    'gSP': [0, 0.5],
-    'gEP': [1, 0.5],
+    '_gPos': ([0, 0.5], [1, 0.5]),
     'B': 'sourceOver',
 }
 
