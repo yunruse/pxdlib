@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### 0.0.3
+
+- Added the `layer.styles` property, a list of `Fill`, `Stroke`, `Shadow` and `InnerShadow` objects, supported by the `RGBA` and `Gradient` structures.
+
 ### 0.0.2
 
 - Various bug fixes.
