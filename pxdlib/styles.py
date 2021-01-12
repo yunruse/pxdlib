@@ -55,8 +55,8 @@ class Style:
         args = ', '.join([
             f'{_STYLE_TAGS[k]}={getattr(self, _STYLE_TAGS[k])}'
             for k, v in self._dict.items()
-            if self._dict[k] != self._defaults[k]
-            and k in _STYLE_TAGS
+            if k in _STYLE_TAGS
+            and self._dict[k] != self._defaults[k]
         ])
         return f'{type(self).__name__}({args})'
 
@@ -68,7 +68,8 @@ class Style:
     def _to_layer(self):
         '''Internal binding'''
         data = self._dict
-        data['gSP'], data['gEP'] = data.pop('_gPos')
+        if '_gPos' in data:
+            data['gSP'], data['gEP'] = data.pop('_gPos')
         return data
 
     @property

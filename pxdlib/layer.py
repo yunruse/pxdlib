@@ -200,6 +200,7 @@ class Layer:
         if data is None:
             return []
         data = verlist(json.loads(data.decode()))
+        assert data['csr'] == 0
         styles = []
         for k in 'fsiS':
             kind = _STYLES[k]
@@ -207,6 +208,21 @@ class Layer:
                 style = kind._from_layer(verlist(style))
                 styles.append(style)
         return styles
+
+    @styles.setter
+    def styles(self, val: list):
+        # attempt to extract csr, ctx
+        data = self._info.get('styles-data', b'[1, {}]')
+        data = verlist(json.loads(data.decode()))
+        data['csr'] = 0
+        for k in 'fsiS':
+            data[k] = []
+        for style in val:
+            k = style._tag
+            style = style._to_layer()
+            data[k].append([1, style])
+        data = json.dumps([1, data]).encode()
+        self._setinfo('styles-data', data)
 
 
 class GroupLayer(Layer):

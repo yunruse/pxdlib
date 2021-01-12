@@ -70,12 +70,9 @@ if __name__ == '__main__':
                             v = v2
                     print(f'{k:<5} {k2 or "":<17} {repr(v)}')
                 print(style)
-                    
-
 
     l = pxd.children[0]
     display(pxd.children)
-    style = l.styles[0]
 
     # PXD debugging here
 
