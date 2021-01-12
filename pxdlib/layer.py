@@ -22,17 +22,22 @@ class Layer:
             f"select identifier from document_layers where id = {ID};"
         ).fetchone()
 
-        self._info = dict(pxd._db.execute(
-            f"select key, value from layer_info where layer_id = {ID};"
-        ).fetchall())
 
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
 
+    def _info(self, key, default=None):
+        value = self.pxd._db.execute(
+            "select value from layer_info "
+            f"where layer_id = {self._id} and key = '{key}';",
+        ).fetchone()
+        if value is None:
+            return default
+        return value[0]
+
     def _setinfo(self, key, data):
         if self.pxd.closed:
             raise UnsupportedOperation('not writable')
-        self._info[key] = data
         c = self.pxd._db.cursor()
         c.execute(
             'update layer_info set value = ?'
@@ -47,7 +52,7 @@ class Layer:
         '''
         The layer's given visible name.
         '''
-        return blob(self._info['name'])
+        return blob(self._info('name'))
 
     @name.setter
     def name(self, name: str):
@@ -64,7 +69,7 @@ class Layer:
         '''
         The layer's opacity, from 0 to 100.
         '''
-        return blob(self._info['opacity'])
+        return blob(self._info('opacity'))
 
     @opacity.setter
     def opacity(self, opacity):
@@ -78,7 +83,7 @@ class Layer:
         '''
         The position of the layer (defined as its center).
         '''
-        return tuple(blob(self._info['position']))
+        return tuple(blob(self._info('position')))
 
     @position.setter
     def position(self, pos):
@@ -90,7 +95,7 @@ class Layer:
         '''
         The position of the layer (defined as its center).
         '''
-        return tuple(blob(self._info['size']))
+        return tuple(blob(self._info('size')))
 
     @size.setter
     def size(self, size):
@@ -104,7 +109,7 @@ class Layer:
 
         A float in the range [0, 360).
         '''
-        return blob(self._info['angle']) % 360
+        return blob(self._info('angle')) % 360
 
     @angle.setter
     def angle(self, angle):
@@ -115,7 +120,7 @@ class Layer:
         '''
         The blending mode of the layer.
         '''
-        return BlendMode(blob(self._info['blendMode']))
+        return BlendMode(blob(self._info('blendMode')))
 
     @blendMode.setter
     def blendMode(self, blend):
@@ -128,7 +133,7 @@ class Layer:
         '''
         The blending mode of the layer.
         '''
-        return LayerTag(self._info['color-value'])
+        return LayerTag(self._info('color-value'))
 
     @tag.setter
     def tag(self, tag):
@@ -141,7 +146,7 @@ class Layer:
 
     @property
     def _flags(self) -> LayerFlag:
-        return LayerFlag(blob(self._info['flags']))
+        return LayerFlag(blob(self._info('flags')))
 
     @_flags.setter
     def _flags(self, val: LayerFlag):
@@ -197,7 +202,7 @@ class Layer:
 
         would not have any effect.
         '''
-        data = self._info.get('styles-data')
+        data = self._info('styles-data')
         if data is None:
             return []
         data = verlist(json.loads(data.decode()))
@@ -213,7 +218,7 @@ class Layer:
     @styles.setter
     def styles(self, val: list):
         # attempt to extract csr, ctx
-        data = self._info.get('styles-data', b'[1, {}]')
+        data = self._info('styles-data', b'[1, {}]')
         data = verlist(json.loads(data.decode()))
         data['csr'] = 0
         for k in 'fsiS':
@@ -250,7 +255,7 @@ class RasterLayer(Layer):
 class TextLayer(Layer):
     def __init__(self, pxd, ID):
         Layer.__init__(self, pxd, ID)
-        data = vercon(json.loads(self._info['text-stringData']))
+        data = vercon(json.loads(self._info('text-stringData')))
         data = base64.b64decode(data['stringNSCodingData'])
         self._text = plistlib.loads(data)['$objects']
 

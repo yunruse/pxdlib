@@ -5,6 +5,7 @@
 ### 0.0.3
 
 - Added the `layer.styles` property, a list of `Fill`, `Stroke`, `Shadow` and `InnerShadow` objects, supported by the `RGBA` and `Gradient` structures.
+- Tightened up data to avoid data redundancy when, say, multiple layers are being referenced.
 
 ### 0.0.2
 

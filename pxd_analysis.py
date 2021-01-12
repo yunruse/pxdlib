@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
             elif isinstance(l, pxdlib.VectorLayer):
                 print('vector')
-                data = json.loads(l._info['shape-shapeData'])
+                data = json.loads(l._info('shape-shapeData'))
                 data = vercon(data)
                 data = {}
                 for k, v in data.items():
