@@ -135,6 +135,7 @@ _FILL_DEFAULT = {
     'fT': 0,
 }
 _SHADOW_DEFAULT = {
+    'o': 0.5,
     'b': 5,
     'd': 2,
 }
