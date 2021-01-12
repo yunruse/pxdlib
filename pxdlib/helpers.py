@@ -12,6 +12,12 @@ def num(number):
     return n_int if n_int == n else n
 
 
+def hexbyte(val):
+    '''Turn a number to two hex digits.'''
+    assert 0 <= val <= 255
+    return hex(round(val))[2:].zfill(2)
+
+
 def dicts(*dicts, **kwargs):
     '''
     Concatenate dictionaries such that defaults are on the left.
