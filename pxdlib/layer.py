@@ -22,6 +22,17 @@ class Layer:
             f"select identifier from document_layers where id = {ID};"
         ).fetchone()
 
+    @property
+    def parent(self):
+        # construct {child: parent} and fetch
+        children = dict(self.pxd._db.execute(
+            'select child.id, parent.id from ('
+            '  document_layers child inner join document_layers parent'
+            '  on child.parent_identifier = parent.identifier);'
+        ).fetchall())
+        if self._id not in children:
+            return self.pxd
+        return self.pxd._layer(children[self._id])
 
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
