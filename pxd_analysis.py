@@ -58,7 +58,6 @@ if __name__ == '__main__':
 
             # Layer debugging here
             for style in l.styles:
-                print(style)
                 data = style._dict
                 data = {}
                 for k, v in data.items():
@@ -69,7 +68,8 @@ if __name__ == '__main__':
                             k2 = None
                         else:
                             v = v2
-                    print(f'{k:<3} {k2 or "":<14} {repr(v)}')
+                    print(f'{k:<5} {k2 or "":<17} {repr(v)}')
+                print(style)
                     
 
 

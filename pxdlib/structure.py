@@ -5,6 +5,7 @@ Basic structures
 from struct import Struct
 
 from .helpers import num, hexbyte
+from .enums import GradientType
 
 _MAGIC = b'4-tP'
 _LENGTH = Struct('<i')
@@ -205,3 +206,77 @@ class RGBA:
             round(a[0]) == round(a[1])
             for a in zip(tuple(self), tuple(other))
         ])
+
+
+class Gradient:
+    '''
+    Gradient of two or more colours.
+
+    Contains a list of (RGBA, x),
+    alongside a list of midpoints
+    and the gradient kind.
+    '''
+
+    _default_cols = [
+        (RGBA('48a0f8'), 0), (RGBA('48a0f800'), 1)
+    ]
+
+    def __init__(self, colors=None, midpoints=None, kind=0):
+        self.kind = GradientType(kind)
+
+        self.colors = colors or self._default_cols
+        x0 = -1
+        for c, x in self.colors:
+            assert x0 < x
+            x0 = x
+
+        if midpoints is None:
+            midpoints = []
+            for i in range(len(self.colors) - 1):
+                c1, x1 = self.colors[i]
+                c2, x2 = self.colors[i+1]
+                midpoints.append((x1 + x2)/2)
+        self.midpoints = midpoints
+
+    def __repr__(self):
+        vals = []
+        if self.colors != self._default_cols:
+            vals.append(repr(self.colors))
+
+        midpoints_default = True
+        for i in range(len(self.colors) - 1):
+            c1, x1 = self.colors[i]
+            c2, x2 = self.colors[i+1]
+            m_apparent = (x1 + x2)/2
+            if self.midpoints[i] != m_apparent:
+                midpoints_default = False
+                break
+
+        if not midpoints_default:
+            vals.append(repr(self.midpoints))
+
+        if self.kind != 0:
+            vals.append(str(self.kind))
+
+        return f"Gradient({', '.join(vals)})"
+
+    @classmethod
+    def _from_data(cls, data):
+        data = verlist(data)
+        assert data['csr'] == 0
+        colors = [verlist(i) for i in data['s']]
+        colors = [
+            (RGBA(r*255, g*255, b*255, a*255), x)
+            for (r, g, b, a), x in colors
+        ]
+        return cls(colors, data['m'], data['t'])
+
+    def _to_data(self):
+        data = {'csr': 0}
+        data['m'] = list(self.midpoints)
+        data['s'] = [
+            [1, [[c.r/255, c.g/255, c.g/255, c.a/255], x]]
+            for c, x in self.colors
+        ]
+        data['t'] = int(self.kind)
+        return [1, data]
