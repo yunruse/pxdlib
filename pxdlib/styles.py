@@ -123,6 +123,11 @@ class _Fill:
     def gradientPosition(self) -> tuple:
         return self._dict['_gPos']
 
+    @gradientPosition.setter
+    def gradientPosition(self, val: tuple):
+        (x0, y0), (x1, y1) = val
+        self._dict['_gPos'] = val
+
     @property
     def gradient(self) -> Gradient:
         return Gradient._from_data(self._dict['g'])
