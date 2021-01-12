@@ -34,7 +34,9 @@ if __name__ == '__main__':
         x, y = l.position
         x, y = int(x), int(y)
 
-        print(f"{' ' * s}{l._id}( {x:4d}, {y:4d}) {l.name:<20} ", end='')
+        name = '<Mask>' if l.is_mask else l.name
+
+        print(f"{' ' * s}{l._id}( {x:4d}, {y:4d}) {name:<20} ", end='')
         if isinstance(l, pxdlib.RasterLayer):
             uuid = l._uuid.split('-')[0]
             print('raster', uuid)

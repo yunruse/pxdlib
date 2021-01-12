@@ -273,10 +273,13 @@ class GroupLayer(Layer):
     @property
     def children(self):
         '''
-        The children of the group layer.
+        The children of the group layer,
+        excluding any masks.
         '''
-        # TODO: avoid giving the mask, if any
-        return self.pxd._layers(self)
+        return [
+            layer for layer in self.pxd._layers(self)
+            if not layer.is_mask
+        ]
 
     def all_layers(self):
         return self.pxd._layers(self, recurse=True)
