@@ -16,6 +16,7 @@ class Layer:
     def __init__(self, pxd, ID):
         self.pxd = pxd
         self._id = ID
+        assert isinstance(ID, int)
 
         self._uuid, = pxd._db.execute(
             f"select identifier from document_layers where id = {ID};"
