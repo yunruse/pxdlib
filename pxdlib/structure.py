@@ -4,7 +4,7 @@ Basic structures
 
 from struct import Struct
 
-from .helpers import num
+from .helpers import num, hexbyte
 
 _MAGIC = b'4-tP'
 _LENGTH = Struct('<i')
@@ -143,10 +143,33 @@ def verlist(data: list, version=1):
 
 class RGBA:
     '''
-    RGBA color in [0, 1] space.
+    RGBA color in [0, 255]-space.
     '''
 
-    def __init__(self, r, g, b, a=1):
+    def __init__(self, r=0, g=0, b=0, a=255):
+        '''
+        Accepts RGBA values, tuple or hex string.
+        '''
+        if isinstance(r, (tuple, list)):
+            if len(r) == 3:
+                r, g, b = r
+            elif len(r) == 4:
+                r, g, b, a = r
+            else:
+                raise ValueError('Iterable must be length 3 or 4.')
+        elif isinstance(r, str):
+            string = r
+            if string.startswith('#'):
+                string = string[1:]
+            if not len(string) in (6, 8):
+                raise ValueError(
+                    'String colors must be #RRGGBB or #RRGGBBAA.'
+                )
+            r = int(string[0:2], base=16)
+            g = int(string[0:2], base=16)
+            b = int(string[0:2], base=16)
+            if len(string) == 8:
+                a = int(string[6:8], base=16)
         self.r = num(r)
         self.g = num(g)
         self.b = num(b)
@@ -157,17 +180,25 @@ class RGBA:
         return iter(tup)
 
     def __repr__(self):
-        vals = [str(self.r), str(self.g), str(self.b)]
-        if self.a != 1:
-            vals.append(str(self.a))
-        return f"RGBA({', '.join(vals)})"
+        val = hexbyte(self.r) + hexbyte(self.g) + hexbyte(self.b)
+        if self.a != 255:
+            val += hexbyte(self.a)
+        return f"RGBA('{val}')"
 
     @classmethod
     def _from_data(cls, data):
         data = verlist(data)
         assert data['m'] == 2
         assert data['csr'] == 0
-        return cls(*data['c'])
+        r, g, b, a = data['c']
+        return cls(r*255, g*255, b*255, a*255)
 
     def _to_data(self):
-        return [1, {'m': 2, 'csr': 0, 'c': list(self)}]
+        r, g, b, a = list(self)
+        return [1, {
+            'm': 2, 'csr': 0,
+            'c': [r/255, g/255, b/255, a/255]
+        }]
+
+    def __eq__(self, other):
+        return tuple(self) == tuple(other)
