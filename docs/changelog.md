@@ -6,6 +6,7 @@
 
 - Added the `layer.styles` property, a list of `Fill`, `Stroke`, `Shadow` and `InnerShadow` objects, supported by the `RGBA` and `Gradient` structures.
 - Tightened up data to avoid data redundancy when, say, multiple layers are being referenced.
+- Add `layer.pxd` and `layer.parent` properties, the latter of which may be modified.
 
 ### 0.0.2
 

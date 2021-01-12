@@ -24,6 +24,7 @@ class Layer:
 
     @property
     def parent(self):
+        '''The parent, which may be a Layer or a PXDFile.'''
         # construct {child: parent} and fetch
         children = dict(self.pxd._db.execute(
             'select child.id, parent.id from ('
@@ -33,6 +34,24 @@ class Layer:
         if self._id not in children:
             return self.pxd
         return self.pxd._layer(children[self._id])
+
+    @parent.setter
+    def parent(self, val):
+        if self.pxd.closed:
+            raise UnsupportedOperation('not writable')
+        if val is None or val is self.pxd:
+            ID = None
+        elif isinstance(val, Layer) and val.pxd is self.pxd:
+            ID = val._uuid
+        else:
+            raise TypeError(
+                'Parent must be own PXDFile or one of its layers.')
+
+        self.pxd._db.execute(
+            'update document_layers set parent_identifier = ?'
+            'where id = ?;',
+            (ID, self._id)
+        )
 
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
