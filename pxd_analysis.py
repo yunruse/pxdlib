@@ -9,7 +9,7 @@ import plistlib
 import struct
 
 import pxdlib as pxdlib
-from pxdlib import blob, vercon, verlist
+from pxdlib import blob, vercon, verlist, RGBA
 
 def hexes(data):
     return binascii.hexlify(data).decode()
@@ -59,8 +59,23 @@ if __name__ == '__main__':
             # Layer debugging here
             for style in l.styles:
                 print(style)
+                data = style._dict
+                data = {}
+                for k, v in data.items():
+                    k2 = pxdlib.styles._STYLE_TAGS.get(k)
+                    if k2:
+                        v2 = getattr(style, k2, None)
+                        if v2 is None:
+                            k2 = None
+                        else:
+                            v = v2
+                    print(f'{k:<3} {k2 or "":<14} {repr(v)}')
+                    
 
+
+    l = pxd.children[0]
     display(pxd.children)
+    style = l.styles[0]
 
     # PXD debugging here
 

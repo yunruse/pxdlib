@@ -2,6 +2,7 @@ from math import pi
 from uuid import uuid1
 
 from .helpers import dicts, reversegetattr
+from .structure import RGBA
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
 )
@@ -10,15 +11,16 @@ _STYLE_TAGS = {
     'E': 'enabled',
     'o': 'opacity',
     'B': 'blendMode',
+    'c': 'color',
     'fT': 'fillType',
-    'b': 'blur',
-    'd': 'distance',
-    'a': 'angle',
     'gEP': 'gradientStart',
     'gSP': 'gradientEnd',
     'sT': 'strokeType',
     'sP': 'strokePosition',
     'sW': 'strokeWidth',
+    'b': 'blur',
+    'd': 'distance',
+    'a': 'angle',
 }
 
 
@@ -71,6 +73,16 @@ class Style:
     @opacity.setter
     def opacity(self, val: float):
         self._dict['o'] = float(val)
+
+    @property
+    def color(self) -> RGBA:
+        return RGBA._from_data(self._dict['c'])
+
+    @color.setter
+    def color(self, val: RGBA):
+        if not isinstance(val, RGBA):
+            val = RGBA(val)
+        self._dict['c'] = val._to_data()
 
 
 class _Blend:
@@ -125,7 +137,7 @@ _STYLE_DEFAULT = {
     'E': 1,
     'o': 1,
     'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0.20392156862745098, 0.47058823529411764, 0.9647058823529412, 1], 0]], [1, [[0.3254901960784314, 0.7137254901960784, 0.9764705882352941, 1], 1]]], 't': 0}],
-    'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
+    'c': RGBA()._to_data(),
     'gSP': [0, 0.5],
     'gEP': [1, 0.5],
     'B': 'sourceOver',
@@ -143,7 +155,9 @@ _SHADOW_DEFAULT = {
 
 class Fill(Style, _Fill, _Blend):
     _defaults = dicts(
-        _STYLE_DEFAULT, _FILL_DEFAULT
+        _STYLE_DEFAULT, _FILL_DEFAULT, {
+            'c': RGBA('00a2ff')._to_data(),
+        }
     )
     _tag = 'f'
 
