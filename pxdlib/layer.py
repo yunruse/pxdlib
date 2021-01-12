@@ -14,7 +14,7 @@ from .styles import _STYLES
 
 class Layer:
     def __init__(self, pxd, ID):
-        self._pxd = pxd
+        self.pxd = pxd
         self._id = ID
 
         self._uuid, = pxd._db.execute(
@@ -29,10 +29,10 @@ class Layer:
         return f'<{type(self).__name__} {repr(self.name)}>'
 
     def _setinfo(self, key, data):
-        if self._pxd.closed:
+        if self.pxd.closed:
             raise UnsupportedOperation('not writable')
         self._info[key] = data
-        c = self._pxd._db.cursor()
+        c = self.pxd._db.cursor()
         c.execute(
             'update layer_info set value = ?'
             'where layer_id = ? and key = ?',
@@ -232,10 +232,10 @@ class GroupLayer(Layer):
         The children of the group layer.
         '''
         # TODO: avoid giving the mask, if any
-        return self._pxd._layers(self)
+        return self.pxd._layers(self)
 
     def all_layers(self):
-        return self._pxd._layers(self, recurse=True)
+        return self.pxd._layers(self, recurse=True)
 
 
 class VectorLayer(Layer):
