@@ -75,6 +75,14 @@ class Layer:
             (data, self._id, key)
         )
 
+    @property
+    def mask(self):
+        for layer in self.pxd._layers(self):
+            if layer.is_mask:
+                return layer
+        else:
+            return None
+
     # Attributes
 
     @property

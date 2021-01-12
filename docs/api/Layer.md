@@ -9,10 +9,14 @@ A layer will never be a direct `Layer` object, but rather one of its four subcla
 <a id="Layer"></a>
 ## Layer
 
-Layers contain the following attributes, which may be changed:
+Layers contain the following pointers:
 
 - `pxd`, the `PXDFile` to which they belong. (This cannot be changed.)
 - `parent`, which is the `pxd` if the layer is a top-level layer, or the layer to which it belongs. If changed, the layer moves to the top of wherever it is placed.
+- `mask`, the layer mask (if any) applied to the layer. This cannot be manually set yet as layers cannot be removed, though I suppose fiddling with `parent` and `is_mask` might work somewhat.
+
+Layers also have the following shared attributes, all of which can be set:
+
 - `name`, the layer's given visible name.
 - `opacity`, an integer in the range [0, 100].
 - `is_visible`, a boolean which specifies if the layer is visible.
