@@ -156,7 +156,7 @@ _SHADOW_DEFAULT = {
 class Fill(Style, _Fill, _Blend):
     _defaults = dicts(
         _STYLE_DEFAULT, _FILL_DEFAULT, {
-            'c': RGBA('00a2ff')._to_data(),
+            'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
         }
     )
     _tag = 'f'

@@ -201,4 +201,7 @@ class RGBA:
         }]
 
     def __eq__(self, other):
-        return tuple(self) == tuple(other)
+        return all([
+            round(a[0]) == round(a[1])
+            for a in zip(tuple(self), tuple(other))
+        ])
