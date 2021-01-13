@@ -63,7 +63,11 @@ class Layer:
             return None
 
     def delete(self):
-        '''Irrevocably delete layer and children.'''
+        '''
+        Irrevocably delete layer and children.
+
+        Note that no attributes can be read or written after this is done.
+        '''
         if self._deleted:
             return
         if self.pxd.closed:
@@ -145,7 +149,7 @@ class Layer:
     @property
     def opacity(self) -> int:
         '''
-        The layer's opacity, from 0 to 100.
+        The layer's opacity, an integer from 0 to 100.
         '''
         return blob(self._info('opacity'))
 
@@ -159,7 +163,8 @@ class Layer:
     @property
     def position(self) -> tuple:
         '''
-        The position of the layer (defined as its center).
+        The center of the layer, defined in (x, y) pixels such that
+        the origin is at the bottom left.
         '''
         return tuple(blob(self._info('position')))
 
@@ -183,9 +188,9 @@ class Layer:
     @property
     def angle(self) -> float:
         '''
-        The angle of a (text) layer in degrees.
+        The angle of a (text) layer as a float in degrees.
 
-        A float in the range [0, 360).
+        Nominally 0 except for text layers.
         '''
         return blob(self._info('angle')) % 360
 
@@ -209,7 +214,7 @@ class Layer:
     @property
     def tag(self) -> LayerTag:
         '''
-        The blending mode of the layer.
+        The color tag for the layer.
         '''
         return LayerTag(self._info('color-value'))
 
@@ -238,35 +243,49 @@ class Layer:
             self._flags ^= flag
 
     @property
-    def is_visible(self):
+    def is_visible(self) -> bool:
+        '''
+        A boolean defining if the layer is visible.
+        '''
         return bool(self._flags & LayerFlag.visible)
 
     @is_visible.setter
-    def is_visible(self, val):
+    def is_visible(self, val: bool):
         self._flag_set(LayerFlag.visible, bool(val))
 
     @property
-    def is_locked(self):
+    def is_locked(self) -> bool:
+        '''
+        A boolean defining if the layer is user-locked.
+
+        This does not affect if `pxdlib` can modify it though :)
+        '''
         return bool(self._flags & LayerFlag.locked)
 
     @is_locked.setter
-    def is_locked(self, val):
+    def is_locked(self, val: bool):
         self._flag_set(LayerFlag.locked, bool(val))
 
     @property
-    def is_clipping(self):
+    def is_clipping(self) -> bool:
+        '''
+        A boolean defining if the layer is a clipping mask.
+        '''
         return bool(self._flags & LayerFlag.clipping)
 
     @is_clipping.setter
-    def is_clipping(self, val):
+    def is_clipping(self, val: bool):
         self._flag_set(LayerFlag.clipping, bool(val))
 
     @property
-    def is_mask(self):
+    def is_mask(self) -> bool:
+        '''
+        A boolean defining if the layer is a mask.
+        '''
         return bool(self._flags & LayerFlag.mask)
 
     @is_mask.setter
-    def is_mask(self, val):
+    def is_mask(self, val: bool):
         self._flag_set(LayerFlag.mask, bool(val))
 
     @property
