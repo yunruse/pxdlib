@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
         name = '<Mask>' if l.is_mask else l.name
 
-        print(l, f'( {x:4d}, {y:4d}) ', end='')
+        print(' '*s + f'{repr(l)} ( {x:4d}, {y:4d}) ', end='')
         if isinstance(l, pxdlib.RasterLayer):
             uuid = l._uuid.split('-')[0]
             print(uuid)
@@ -83,6 +83,7 @@ if __name__ == '__main__':
 
     l = pxd.children[0]
     displays(pxd.children)
+    layers = pxd.all_layers()
 
     # PXD debugging here
 
