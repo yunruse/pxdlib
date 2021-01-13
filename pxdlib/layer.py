@@ -13,7 +13,10 @@ from .styles import _STYLES
 
 
 class MaskError(ValueError):
-    pass
+    '''
+    A layer was moved about in a way that creates
+    a situation where a layer has a mask (but shouldn't)
+    '''
 
 
 class Layer:
@@ -82,8 +85,6 @@ class Layer:
     @mask.setter
     def mask(self, mask):
         self._assert(write=True)
-        if self.pxd.closed:
-            raise UnsupportedOperation('not writable')
         if not isinstance(mask, RasterLayer):
             raise MaskError('Only RasterLayers can be masks.')
         if self.mask:
