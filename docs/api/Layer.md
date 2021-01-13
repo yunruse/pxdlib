@@ -15,6 +15,10 @@ Layers contain the following pointers:
 - `parent`, which is the `pxd` if the layer is a top-level layer, or the layer to which it belongs. If changed, the layer moves to the top of wherever it is placed.
 - `mask`, the layer mask (if any) applied to the layer. This cannot be manually set yet as layers cannot be removed, though I suppose fiddling with `parent` and `is_mask` might work somewhat.
 
+Layers have the methods:
+
+- `delete()`, which deletes the layer and its children. Note that no attributes can be read or written after this is done.
+
 Layers also have the following shared attributes, all of which can be set:
 
 - `name`, the layer's given visible name.

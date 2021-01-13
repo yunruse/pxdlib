@@ -16,6 +16,7 @@ class Layer:
     def __init__(self, pxd, ID):
         self.pxd = pxd
         self._id = ID
+        self._deleted = False
         assert isinstance(ID, int)
 
         self._uuid, = pxd._db.execute(
@@ -61,7 +62,32 @@ class Layer:
         else:
             return None
 
+    def delete(self):
+        '''Irrevocably delete layer and children.'''
+        if self._deleted:
+            return
+        if self.pxd.closed:
+            raise UnsupportedOperation('not writable')
+        self._deleted = True
+
+        for child in self.pxd._layers(self):
+            child.delete()
+
+        ID = self._id
+        self.pxd._db.execute(
+            f'delete from layer_info where layer_id = {ID};'
+        )
+        self.pxd._db.execute(
+            f'delete from layer_tiles where layer_id = {ID};'
+        )
+        self.pxd._db.execute(
+            f'delete from document_layers where id = {ID};'
+        )
+
     def __repr__(self):
+        typ = type(self).__name__
+        if self._deleted:
+            return f'<{typ}: deleted layer>'
         name = repr(self.name)
         info = []
         if self.is_mask:
@@ -72,9 +98,11 @@ class Layer:
             info = f" ({', '.join(info)})"
         else:
             info = ""
-        return f'<{type(self).__name__} {name}{info}>'
+        return f'<{typ} {name}{info}>'
 
     def _info(self, key, default=None):
+        if self._deleted:
+            raise UnsupportedOperation('not readable')
         value = self.pxd._db.execute(
             "select value from layer_info "
             f"where layer_id = {self._id} and key = '{key}';",
@@ -84,6 +112,8 @@ class Layer:
         return value[0]
 
     def _setinfo(self, key, data):
+        if self._deleted:
+            raise UnsupportedOperation('not readable')
         if self.pxd.closed:
             raise UnsupportedOperation('not writable')
         c = self.pxd._db.cursor()
