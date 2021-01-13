@@ -12,6 +12,10 @@ from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
 
 
+class MaskError(ValueError):
+    pass
+
+
 class Layer:
     def __init__(self, pxd, ID):
         self.pxd = pxd
@@ -56,6 +60,9 @@ class Layer:
 
     @property
     def mask(self):
+        '''
+        The layer's mask, if any.
+        '''
         for layer in self.pxd._layers(self):
             if layer.is_mask:
                 return layer
@@ -281,11 +288,28 @@ class Layer:
     def is_mask(self) -> bool:
         '''
         A boolean defining if the layer is a mask.
+
+        This may raise a MaskError if it would put the layer
+        in a illogical situation: layers can only have one mask,
+        and not all layers can have non-mask children.
+        Consider setting 
         '''
         return bool(self._flags & LayerFlag.mask)
 
     @is_mask.setter
     def is_mask(self, val: bool):
+        if (isinstance(self.parent, Layer)
+                and not isinstance(self.parent, GroupLayer)
+            ):
+            raise MaskError(
+                'Cannot unmask a layer: would not be a valid child. '
+                'Consider setting `layer.parent`.')
+        if self.parent.mask is not None:
+            raise MaskError(
+                "The layer's parent already has a mask. "
+                'Consider setting `layer.parent`.'
+            )
+
         self._flag_set(LayerFlag.mask, bool(val))
 
     @property
