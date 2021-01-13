@@ -7,6 +7,7 @@
 - Various bug fixes.
 - Improved `repr(layer)`.
 - Added `layer.delete`
+- Tightened up `layer.mask` behaviour.
 
 ### 0.0.3
 

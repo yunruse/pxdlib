@@ -13,7 +13,7 @@ Layers contain the following pointers:
 
 - `pxd`, the `PXDFile` to which they belong. (This cannot be changed.)
 - `parent`, which is the `pxd` if the layer is a top-level layer, or the layer to which it belongs. If changed, the layer moves to the top of wherever it is placed.
-- `mask`, the layer mask (if any) applied to the layer. This cannot be manually set yet as layers cannot be removed, though I suppose fiddling with `parent` and `is_mask` might work somewhat.
+- `mask`, the layer's mask, if any. If you set a mask, it will delete the current one. If you set a mask to an existing layer, it will move it from its original position.
 
 Layers have the methods:
 

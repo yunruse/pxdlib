@@ -62,12 +62,28 @@ class Layer:
     def mask(self):
         '''
         The layer's mask, if any.
+
+        If you set a mask, it will delete the current one.
+        If you set a mask to an existing layer, it will move it from
+        its original position.
         '''
         for layer in self.pxd._layers(self):
             if layer.is_mask:
                 return layer
         else:
             return None
+
+    @mask.setter
+    def mask(self, mask):
+        if self.pxd.closed:
+            raise UnsupportedOperation('not writable')
+        if not isinstance(mask, RasterLayer):
+            raise MaskError('Only RasterLayers can be masks.')
+        if self.mask:
+            self.mask.delete()
+
+        mask.parent = self
+        mask._flag_set(LayerFlag.mask, True)
 
     def delete(self):
         '''
@@ -296,14 +312,17 @@ class Layer:
         return bool(self._flags & LayerFlag.mask)
 
     @is_mask.setter
-    def is_mask(self, val: bool):
-        if (isinstance(self.parent, Layer)
-                and not isinstance(self.parent, GroupLayer)
+    def is_mask(self, masked: bool):
+        if (not masked
+            and isinstance(self.parent, Layer)
+            and not isinstance(self.parent, GroupLayer)
             ):
             raise MaskError(
                 'Cannot unmask a layer: would not be a valid child. '
                 'Consider setting `layer.parent`.')
-        if self.parent.mask is not None:
+        elif masked and not isinstance(self, RasterLayer):
+            raise MaskError('Only RasterLayers can be masks.')
+        elif masked and self.parent.mask is not None:
             raise MaskError(
                 "The layer's parent already has a mask. "
                 'Consider setting `layer.parent`.'
