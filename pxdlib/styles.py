@@ -1,7 +1,7 @@
 from math import pi
 from uuid import uuid1
 
-from .helpers import dicts, reversegetattr
+from .helpers import dicts
 from .structure import RGBA, Gradient
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
@@ -109,7 +109,7 @@ class _Blend:
     @blendMode.setter
     def blendMode(self, val: BlendMode):
         '''The blend mode used for the style.'''
-        val = reversegetattr(BlendMode, val, 'sourceOver')
+        val = BlendMode(val).name
         val = val.replace('normal', 'sourceOver')
         self._dict['B'] = val
 
