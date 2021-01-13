@@ -5,6 +5,7 @@ Layer objects, bound to a PXD file.
 import json
 import plistlib
 import base64
+from uuid import uuid1
 from io import UnsupportedOperation
 
 from .structure import blob, make_blob, vercon, verlist
@@ -118,6 +119,78 @@ class Layer:
         self.pxd._db.execute(
             f'delete from document_layers where id = {ID};'
         )
+
+    def _contains(self, child):
+        return child in self.pxd._layers(self, recurse=True)
+
+    def copyto(self, parent, asmask=False):
+        self._copyto(parent, asmask, False)
+
+    def _copyto(self, parent, asmask, keep_index):
+        if self is parent or self._contains(parent):
+            raise ValueError(
+                'Cannot copy layer into child.'
+            )
+        if isinstance(parent, Layer):
+            destpxd = parent.pxd
+            parent_UUID = parent._uuid
+            if asmask and parent.mask is not None:
+                raise MaskError('This layer already has a mask.')
+        else:
+            if asmask:
+                raise MaskError('Only Layers can have masks.')
+            destpxd = parent
+            parent_UUID = None
+
+        self._assert()
+        if destpxd.closed:
+            raise UnsupportedOperation('not writable')
+
+        UUID = str(uuid1()).upper()
+        for code, kind in _LAYER_TYPES.items():
+            if isinstance(self, kind):
+                break
+        else:
+            raise TypeError('Unknown type copied')
+
+        index_at_parent = 0
+        if keep_index:
+            index_at_parent, = self.pxd._db.execute(
+                'select index_at_parent from document_layers'
+                f' where id = {self._id}'
+            ).fetchone()
+
+        ID = destpxd._db.execute(
+            'insert into document_layers'
+            ' (identifier, parent_identifier, index_at_parent, type)'
+            ' values (?, ?, ?, ?)',
+            (UUID, parent_UUID, index_at_parent, code)
+        ).lastrowid
+        # why can't I get an ID?
+        # ID, = destpxd._db.execute(
+        #    'select id from document_layers'
+        #    ' where identifier = "{uuid}";'
+        # ).fetchone()
+
+        info = self.pxd._db.execute(
+            'select key, value from layer_info'
+            f' where layer_id = {self._id};',
+        ).fetchall()
+        for k, v in info:
+            destpxd._db.execute(
+                'insert into layer_info'
+                ' (layer_id, key, value)'
+                ' values (?, ?, ?)',
+                (ID, k, v)
+            )
+
+        layer = destpxd._layer(ID)
+        if asmask:
+            layer.is_mask = True
+        for child in self.pxd._layers(self):
+            self._copyto(layer, False, True)
+
+        return layer
 
     def __repr__(self):
         typ = type(self).__name__

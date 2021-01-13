@@ -17,7 +17,8 @@ Layers contain the following pointers:
 
 Layers have the methods:
 
-- `delete()`, which deletes the layer and its children. Note that no attributes can be read or written after this is done.
+- `delete()`, which irrevocably deletes the layer and its children. Note that no attributes can be read or written after this is done.
+- `copyto(parent, asmask=False)`, which copies a layer to the top of a new parent and returns it.
 
 Layers also have the following shared attributes, all of which can be set:
 

@@ -6,7 +6,7 @@
 
 - Various bug fixes.
 - Improved `repr(layer)`.
-- Added `layer.delete`
+- Added `layer.delete` and `layer.copyto(parent)`.
 - Tightened up `layer.mask` behaviour.
 
 ### 0.0.3
