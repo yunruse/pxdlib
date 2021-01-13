@@ -62,7 +62,16 @@ class Layer:
             return None
 
     def __repr__(self):
-        return f'<{type(self).__name__} {repr(self.name)}>'
+        info = []
+        if self.is_mask:
+            info.append('mask')
+        if self.tag:
+            info.append(self.tag.name)
+        if info:
+            info = f" ({', '.join(info)})"
+        else:
+            info = ""
+        return f'<{type(self).__name__} {repr(self.name)}{info}>'
 
     def _info(self, key, default=None):
         value = self.pxd._db.execute(

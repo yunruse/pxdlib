@@ -36,13 +36,12 @@ if __name__ == '__main__':
 
         name = '<Mask>' if l.is_mask else l.name
 
-        print(f"{' ' * s}{l._id}( {x:4d}, {y:4d}) {name:<20} ", end='')
+        print(l, f'( {x:4d}, {y:4d}) ', end='')
         if isinstance(l, pxdlib.RasterLayer):
             uuid = l._uuid.split('-')[0]
-            print('raster', uuid)
+            print(uuid)
 
         elif isinstance(l, pxdlib.TextLayer):
-            print('text: ', end='')
             string = l.getText()
             if len(string) > 30:
                 string = repr(string[:16]) + f'... [{len(string)} chars]'
@@ -51,7 +50,7 @@ if __name__ == '__main__':
             print(string)
 
         elif isinstance(l, pxdlib.VectorLayer):
-            print('vector')
+            print()
             data = json.loads(l._info('shape-shapeData'))
             data = vercon(data)
             data = {}
