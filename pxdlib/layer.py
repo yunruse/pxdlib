@@ -143,7 +143,7 @@ class Layer:
         # Manually setting a name means Pixelmator no longer auto-sets name,
         # if a text layer
         DYNAMIC = 'text-nameIsDynamic'
-        if DYNAMIC in self._info:
+        if self._info(DYNAMIC, False):
             self._setinfo(DYNAMIC, make_blob(b'SI16', 0))
 
     @property

@@ -4,7 +4,8 @@
 
 ### 0.0.4
 
-- Improved `repr(layer)`
+- Various bug fixes.
+- Improved `repr(layer)`.
 - Added `layer.delete`
 
 ### 0.0.3
