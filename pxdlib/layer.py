@@ -244,7 +244,6 @@ class Layer:
 
     def _flag_set(self, flag, truth):
         past_truth = bool(self._flags & flag)
-        print(truth, past_truth)
         if truth != past_truth:
             # flip the bit
             self._flags ^= flag
