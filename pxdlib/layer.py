@@ -27,6 +27,12 @@ class Layer:
             f"select identifier from document_layers where id = {ID};"
         ).fetchone()
 
+    def _assert(self, write=False):
+        if self._deleted:
+            raise UnsupportedOperation('not readable')
+        if write and self.pxd.closed:
+            raise UnsupportedOperation('not writable')
+
     @property
     def parent(self):
         '''The parent, which may be a Layer or a PXDFile.'''
@@ -42,8 +48,7 @@ class Layer:
 
     @parent.setter
     def parent(self, val):
-        if self.pxd.closed:
-            raise UnsupportedOperation('not writable')
+        self._assert()
         if val is None or val is self.pxd:
             ID = None
         elif isinstance(val, Layer) and val.pxd is self.pxd:
@@ -67,6 +72,7 @@ class Layer:
         If you set a mask to an existing layer, it will move it from
         its original position.
         '''
+        self._assert()
         for layer in self.pxd._layers(self):
             if layer.is_mask:
                 return layer
@@ -75,6 +81,7 @@ class Layer:
 
     @mask.setter
     def mask(self, mask):
+        self._assert(write=True)
         if self.pxd.closed:
             raise UnsupportedOperation('not writable')
         if not isinstance(mask, RasterLayer):
@@ -128,8 +135,7 @@ class Layer:
         return f'<{typ} {name}{info}>'
 
     def _info(self, key, default=None):
-        if self._deleted:
-            raise UnsupportedOperation('not readable')
+        self._assert()
         value = self.pxd._db.execute(
             "select value from layer_info "
             f"where layer_id = {self._id} and key = '{key}';",
@@ -139,12 +145,8 @@ class Layer:
         return value[0]
 
     def _setinfo(self, key, data):
-        if self._deleted:
-            raise UnsupportedOperation('not readable')
-        if self.pxd.closed:
-            raise UnsupportedOperation('not writable')
-        c = self.pxd._db.cursor()
-        c.execute(
+        self._assert(write=True)
+        self.pxd._db.execute(
             'update layer_info set value = ?'
             'where layer_id = ? and key = ?',
             (data, self._id, key)
@@ -314,9 +316,9 @@ class Layer:
     @is_mask.setter
     def is_mask(self, masked: bool):
         if (not masked
-            and isinstance(self.parent, Layer)
-            and not isinstance(self.parent, GroupLayer)
-            ):
+                and isinstance(self.parent, Layer)
+                and not isinstance(self.parent, GroupLayer)
+                ):
             raise MaskError(
                 'Cannot unmask a layer: would not be a valid child. '
                 'Consider setting `layer.parent`.')
