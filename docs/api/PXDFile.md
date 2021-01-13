@@ -11,8 +11,11 @@ For editing purposes:
 
 For accessing layers:
 
-- `children` is a list of the top-level layers, ordered as seen in the document.
-- `all_layers()` provides a list of _all_ layers in the document, ordered as seen in the document.
+- `children` is a list of the top-level layers;
+- `all_layers()` provides a list of _all_ layers in the document;
+- `find(name)` will find the first layer with a given name.
+
+In general, layers are ordered as seen visually in the document.
 
 ## Metadata
 

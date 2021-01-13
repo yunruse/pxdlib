@@ -72,20 +72,18 @@ class PXDFile:
         else:
             return children
 
-    def layer_with_name(self, name):
-        '''Get the first layer found with the given name.'''
-        layers = [
-            l for l in self._layers(recurse=True)
-            if l.name == name
-        ]
-        return layers[0]
-
     @property
     def children(self):
         return self._layers()
 
     def all_layers(self) -> list:
         return self._layers(recurse=True)
+
+    def find(self, name):
+        '''Get the first layer found with the given name.'''
+        for l in self.all_layers():
+            if l.name == name:
+                return l
 
     # Database management
 
