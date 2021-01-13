@@ -53,6 +53,14 @@ class Layer:
             (ID, self._id)
         )
 
+    @property
+    def mask(self):
+        for layer in self.pxd._layers(self):
+            if layer.is_mask:
+                return layer
+        else:
+            return None
+
     def __repr__(self):
         return f'<{type(self).__name__} {repr(self.name)}>'
 
@@ -74,14 +82,6 @@ class Layer:
             'where layer_id = ? and key = ?',
             (data, self._id, key)
         )
-
-    @property
-    def mask(self):
-        for layer in self.pxd._layers(self):
-            if layer.is_mask:
-                return layer
-        else:
-            return None
 
     # Attributes
 
