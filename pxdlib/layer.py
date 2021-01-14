@@ -342,8 +342,8 @@ class Layer:
 
     @tag.setter
     def tag(self, tag):
-        blend = blend or LayerTag.none
-        if not isinstance(blend, LayerTag):
+        tag = tag or LayerTag.none
+        if not isinstance(tag, LayerTag):
             raise TypeError('Tag must be a LayerTag.')
         self._setinfo('color-value', int(tag))
 
