@@ -114,6 +114,7 @@ class Layer:
         ID = self._id
         self._id = None
 
+        del self.pxd._layer_cache[ID]
         self.pxd._db.execute(
             f'delete from layer_info where layer_id = {ID};'
         )
