@@ -55,20 +55,29 @@ class Layer:
 
     @parent.setter
     def parent(self, val):
-        self._assert()
+        self._assert(write=True)
         if val is None or val is self.pxd:
-            ID = None
-        elif isinstance(val, Layer) and val.pxd is self.pxd:
-            ID = val._uuid
-        else:
-            raise TypeError(
-                'Parent must be own PXDFile or one of its layers.')
+            uuid = None
+        elif isinstance(val, Layer):
+            uuid = val._uuid
 
-        self.pxd._db.execute(
-            'update document_layers set parent_identifier = ?'
-            'where id = ?;',
-            (ID, self._id)
-        )
+        if val.pxd is self.pxd:
+            # intra-PXD
+            self.pxd._db.execute(
+                'update document_layers set parent_identifier = ?'
+                'where id = ?;',
+                (uuid, self._id)
+            )
+        else:
+            # inter-PXD
+            if val.pxd.closed:
+                raise UnsupportedOperation('not writable')
+            new = self._copyto(val, asmask=False, keep_index=False)
+            self.delete()
+            self.pxd = new.pxd
+            self._id = new._id
+            self.pxd._layer_cache[self._id] = self
+            del new
 
     @property
     def mask(self):
