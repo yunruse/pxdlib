@@ -28,6 +28,36 @@ class Layer:
         assert isinstance(ID, int)
         self._id = ID
 
+    def _new_entry(self, parent, kind, index_at_parent=0):
+        '''
+        internal: create entry and get ID. doesn't set info!
+        '''
+        # note that here, pxd is not necessarily self.pxd
+        # (this is also used when copying to a different pxd)
+        if isinstance(parent, Layer):
+            pxd = parent.pxd
+            parent_UUID = parent._uuid
+        else:
+            pxd = parent
+            parent_UUID = None
+
+        if pxd.closed:
+            raise UnsupportedOperation('not writable')
+
+        UUID = str(uuid1()).upper()
+        for code, kind in _LAYER_TYPES.items():
+            if isinstance(self, kind):
+                break
+        else:
+            raise TypeError('Unknown type copied')
+        return pxd._db.execute(
+            'insert into document_layers'
+            ' (identifier, parent_identifier, index_at_parent, type)'
+            ' values (?, ?, ?, ?)',
+            (UUID, parent_UUID, index_at_parent, code)
+        ).lastrowid
+        return id
+
     @property
     def _uuid(self):
         return self.pxd._db.execute(
@@ -146,26 +176,15 @@ class Layer:
                 'Cannot copy layer into child.'
             )
         if isinstance(parent, Layer):
-            destpxd = parent.pxd
-            parent_UUID = parent._uuid
             if asmask and parent.mask is not None:
                 raise MaskError('This layer already has a mask.')
+            destpxd = parent.pxd
         else:
             if asmask:
                 raise MaskError('Only Layers can have masks.')
             destpxd = parent
-            parent_UUID = None
 
         self._assert()
-        if destpxd.closed:
-            raise UnsupportedOperation('not writable')
-
-        UUID = str(uuid1()).upper()
-        for code, kind in _LAYER_TYPES.items():
-            if isinstance(self, kind):
-                break
-        else:
-            raise TypeError('Unknown type copied')
 
         index_at_parent = 0
         if keep_index:
@@ -174,17 +193,7 @@ class Layer:
                 f' where id = {self._id}'
             ).fetchone()
 
-        ID = destpxd._db.execute(
-            'insert into document_layers'
-            ' (identifier, parent_identifier, index_at_parent, type)'
-            ' values (?, ?, ?, ?)',
-            (UUID, parent_UUID, index_at_parent, code)
-        ).lastrowid
-        # why can't I get an ID?
-        # ID, = destpxd._db.execute(
-        #    'select id from document_layers'
-        #    ' where identifier = "{uuid}";'
-        # ).fetchone()
+        ID = self._new_entry(parent, type(self), index_at_parent)
 
         info = self.pxd._db.execute(
             'select key, value from layer_info'
@@ -202,7 +211,7 @@ class Layer:
         if asmask:
             layer.is_mask = True
         for child in self.pxd._layers(self):
-            self._copyto(layer, False, True)
+            self._copyto(layer, asmask=False, keep_index=True)
 
         return layer
 
@@ -397,16 +406,16 @@ class Layer:
         This may raise a MaskError if it would put the layer
         in a illogical situation: layers can only have one mask,
         and not all layers can have non-mask children.
-        Consider setting 
         '''
         return bool(self._flags & LayerFlag.mask)
 
     @is_mask.setter
     def is_mask(self, masked: bool):
-        if (not masked
-            and isinstance(self.parent, Layer)
+        not_group = (
+            isinstance(self.parent, Layer)
             and not isinstance(self.parent, GroupLayer)
-            ):
+        )
+        if not masked and not_group:
             raise MaskError(
                 'Cannot unmask a layer: would not be a valid child. '
                 'Consider setting `layer.parent`.')
