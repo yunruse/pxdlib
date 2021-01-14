@@ -21,18 +21,21 @@ class MaskError(ValueError):
 
 
 class Layer:
+    __slots__ = ('pxd', '_id')
+
     def __init__(self, pxd, ID):
         self.pxd = pxd
-        self._id = ID
-        self._deleted = False
         assert isinstance(ID, int)
+        self._id = ID
 
-        self._uuid, = pxd._db.execute(
-            f"select identifier from document_layers where id = {ID};"
-        ).fetchone()
+    @property
+    def _uuid(self):
+        return self.pxd._db.execute(
+            f"select identifier from document_layers where id = {self._id};"
+        ).fetchone()[0]
 
     def _assert(self, write=False):
-        if self._deleted:
+        if self._id is None:
             raise UnsupportedOperation('not readable')
         if write and self.pxd.closed:
             raise UnsupportedOperation('not writable')
@@ -100,16 +103,17 @@ class Layer:
 
         Note that no attributes can be read or written after this is done.
         '''
-        if self._deleted:
+        if self._id is None:
             return
         if self.pxd.closed:
             raise UnsupportedOperation('not writable')
-        self._deleted = True
 
         for child in self.pxd._layers(self):
             child.delete()
 
         ID = self._id
+        self._id = None
+
         self.pxd._db.execute(
             f'delete from layer_info where layer_id = {ID};'
         )
@@ -194,7 +198,7 @@ class Layer:
 
     def __repr__(self):
         typ = type(self).__name__
-        if self._deleted:
+        if self._id is None:
             return f'<{typ}: deleted layer>'
         name = repr(self.name)
         info = []
@@ -390,9 +394,9 @@ class Layer:
     @is_mask.setter
     def is_mask(self, masked: bool):
         if (not masked
-                and isinstance(self.parent, Layer)
-                and not isinstance(self.parent, GroupLayer)
-                ):
+            and isinstance(self.parent, Layer)
+            and not isinstance(self.parent, GroupLayer)
+            ):
             raise MaskError(
                 'Cannot unmask a layer: would not be a valid child. '
                 'Consider setting `layer.parent`.')
