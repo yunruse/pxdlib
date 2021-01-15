@@ -11,20 +11,7 @@ from io import UnsupportedOperation
 from .structure import blob, make_blob, vercon, verlist
 from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
-
-
-class ChildError(ValueError):
-    '''
-    Attempted move of a layer to a parent layer
-    for which an invalid error would occur.
-    '''
-
-
-class MaskError(ChildError):
-    '''
-    A layer was moved about in a way that creates
-    a situation where a layer has a mask (but shouldn't)
-    '''
+from .errors import ChildError, MaskError
 
 
 class Layer:
