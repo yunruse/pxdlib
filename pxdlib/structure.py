@@ -125,13 +125,6 @@ def make_blob(kind: bytes, *data) -> bytes:
     return _MAGIC + kind[::-1] + length + data
 
 
-def _assertver(kind, want, found):
-    if want == found:
-        return
-    else:
-        raise ValueError(f"Expected {kind} version {want}, got {found}")
-
-
 def verb(data, version=1):
     '''vercon, verstruct or verlist extractor'''
     if isinstance(data, dict):
@@ -143,7 +136,12 @@ def verb(data, version=1):
             con = data['versionSpecificInfo']
     else:
         ver, con = data
-    _assertver('verb', version, ver)
+    if ver != version:
+        raise VersionError(
+            f"Data structure was version {ver}, expected {version}. "
+            "Most likely this is because a newer Pixelmator version exists. "
+            "Try updating `pxdlib`, or otherwise contact developer."
+        )
     return con
 
 
