@@ -11,7 +11,7 @@ from .helpers import uuid
 from .structure import blob, make_blob, vercon, verlist
 from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
-from .errors import ChildError, MaskError
+from .errors import ChildError, MaskError, StyleError
 
 
 class Layer:
@@ -512,6 +512,8 @@ class Layer:
 
     @styles.setter
     def styles(self, val: list):
+        if isinstance(self, GroupLayer):
+            raise StyleError('GroupLayers cannot have styles.')
         # attempt to extract csr, ctx
         data = self._info('styles-data', b'[1, {}]')
         data = verlist(json.loads(data.decode()))

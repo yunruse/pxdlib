@@ -17,3 +17,9 @@ class MaskError(ChildError):
     A layer was moved about in a way that creates
     a situation where a layer has a mask (but shouldn't)
     '''
+
+
+class StyleError(PixelmatorError):
+    '''
+    An invalid style was set.
+    '''
