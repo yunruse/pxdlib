@@ -1,4 +1,4 @@
-# pxdlib (Alpha 0.0.3)
+# pxdlib (Alpha 0.0.4)
 
 `pxdlib` is a library intended for deciphering and manipulating `.pxd` files, used by the image editor [Pixelmator Pro]. Grab Python 3.6 or above and `pip install pxdlib`!
 
