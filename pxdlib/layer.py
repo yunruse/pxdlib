@@ -514,8 +514,13 @@ class Layer:
         if isinstance(self, GroupLayer):
             raise StyleError('GroupLayers cannot have styles.')
         # attempt to extract csr, ctx
-        data = self._info('styles-data', b'[1, {}]')
-        data = verlist(json.loads(data.decode()))
+        data = self._info('styles-data', None)
+        if data is None:
+            create = True
+            data = {}
+        else:
+            create = False
+            data = verlist(json.loads(data.decode()))
         data['csr'] = 0
         for k in 'fsiS':
             data[k] = []
@@ -524,7 +529,7 @@ class Layer:
             style = style._to_layer()
             data[k].append([1, style])
         data = json.dumps([1, data]).encode()
-        self._setinfo('styles-data', data)
+        self._setinfo('styles-data', data, create=create)
 
 
 class GroupLayer(Layer):
