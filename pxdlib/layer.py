@@ -36,7 +36,6 @@ class Layer:
         self.pxd._layer_cache[self._id] = self
 
         self._assert(write=True)
-        print(self.pxd, self._id, self._uuid)
         # set default info
 
         def tag(k, kind, *vals):
