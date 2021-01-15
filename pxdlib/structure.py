@@ -132,14 +132,19 @@ def _assertver(kind, want, found):
         raise ValueError(f"Expected {kind} version {want}, got {found}")
 
 
-def vercon(data: dict, version=1):
-    _assertver('vercon', version, data['version'])
-    return data['versionSpecifiContainer']
-
-
-def verlist(data: list, version=1):
-    _assertver('verlist', version, data[0])
-    return data[1]
+def verb(data, version=1):
+    '''vercon, verstruct or verlist extractor'''
+    if isinstance(data, dict):
+        if 'version' in data:
+            ver = data['version']
+            con = data['versionSpecifiContainer']
+        else:
+            ver = data['structureVersion']
+            con = data['versionSpecificInfo']
+    else:
+        ver, con = data
+    _assertver('verb', version, ver)
+    return con
 
 
 class RGBA:
@@ -188,7 +193,7 @@ class RGBA:
 
     @classmethod
     def _from_data(cls, data):
-        data = verlist(data)
+        data = verb(data)
         assert data['m'] == 2
         assert data['csr'] == 0
         r, g, b, a = data['c']
@@ -262,9 +267,9 @@ class Gradient:
 
     @classmethod
     def _from_data(cls, data):
-        data = verlist(data)
+        data = verb(data)
         assert data['csr'] == 0
-        colors = [verlist(i) for i in data['s']]
+        colors = [verb(i) for i in data['s']]
         colors = [
             (RGBA(r*255, g*255, b*255, a*255), x)
             for (r, g, b, a), x in colors

@@ -8,7 +8,7 @@ import base64
 from io import UnsupportedOperation
 
 from .helpers import uuid
-from .structure import blob, make_blob, vercon, verlist
+from .structure import blob, make_blob, verb
 from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
 from .errors import ChildError, MaskError, StyleError
@@ -500,13 +500,13 @@ class Layer:
         data = self._info('styles-data')
         if data is None:
             return []
-        data = verlist(json.loads(data.decode()))
+        data = verb(json.loads(data.decode()))
         assert data['csr'] == 0
         styles = []
         for k in 'fsiS':
             kind = _STYLES[k]
             for style in data[k]:
-                style = kind._from_layer(verlist(style))
+                style = kind._from_layer(verb(style))
                 styles.append(style)
         return styles
 
@@ -521,7 +521,7 @@ class Layer:
             data = {}
         else:
             create = False
-            data = verlist(json.loads(data.decode()))
+            data = verb(json.loads(data.decode()))
         data['csr'] = 0
         for k in 'fsiS':
             data[k] = []
@@ -560,7 +560,7 @@ class RasterLayer(Layer):
 class TextLayer(Layer):
     @property
     def _text(self):
-        data = vercon(json.loads(self._info('text-stringData')))
+        data = verb(json.loads(self._info('text-stringData')))
         data = base64.b64decode(data['stringNSCodingData'])
         return plistlib.loads(data)['$objects']
 

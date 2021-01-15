@@ -9,7 +9,7 @@ import plistlib
 import struct
 
 import pxdlib as pxdlib
-from pxdlib import blob, vercon, verlist, RGBA
+from pxdlib import blob, verb, RGBA
 
 def hexes(data):
     return binascii.hexlify(data).decode()
@@ -51,8 +51,7 @@ if __name__ == '__main__':
 
         elif isinstance(l, pxdlib.VectorLayer):
             print()
-            data = json.loads(l._info('shape-shapeData'))
-            data = vercon(data)
+            data = verb(json.loads(l._info('shape-shapeData')))
             data = {}
             for k, v in data.items():
                 print('-', k, v)
