@@ -36,7 +36,6 @@ class Layer:
         self.pxd._layer_cache[self._id] = self
 
         self._assert(write=True)
-        # set default info
 
         def tag(k, kind, *vals):
             if kind is None:
@@ -63,6 +62,8 @@ class Layer:
             tag('name', b'Strn', 'Text')
         else:
             tag('name', b'Strn', 'Layer')
+
+        tag('angle', b'PTFl', 0)
 
     def _new_entry(self, parent, kind, index_at_parent=0):
         '''
