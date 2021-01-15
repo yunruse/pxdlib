@@ -5,9 +5,9 @@ Layer objects, bound to a PXD file.
 import json
 import plistlib
 import base64
-from uuid import uuid1
 from io import UnsupportedOperation
 
+from .helpers import uuid
 from .structure import blob, make_blob, vercon, verlist
 from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
@@ -81,7 +81,7 @@ class Layer:
         if pxd.closed:
             raise UnsupportedOperation('not writable')
 
-        UUID = str(uuid1()).upper()
+        UUID = uuid()
         for code, kind in _LAYER_TYPES.items():
             if isinstance(self, kind):
                 break

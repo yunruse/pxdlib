@@ -2,6 +2,12 @@
 Common functions used in pxdlib.
 '''
 
+from uuid import uuid1
+
+
+def uuid():
+    return str(uuid1()).upper()
+
 
 def num(number):
     '''

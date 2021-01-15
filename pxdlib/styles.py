@@ -1,7 +1,6 @@
 from math import pi
-from uuid import uuid1
 
-from .helpers import dicts
+from .helpers import dicts, uuid
 from .structure import RGBA, Gradient
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
@@ -49,7 +48,7 @@ class Style:
         self._dict = _dict
 
         if self._dict.get('id') is None:
-            self._dict['id'] = uuid1()
+            self._dict['id'] = uuid()
 
     def __repr__(self):
         args = ', '.join([
