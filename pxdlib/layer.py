@@ -495,11 +495,11 @@ class RasterLayer(Layer):
 
 
 class TextLayer(Layer):
-    def __init__(self, pxd, ID):
-        Layer.__init__(self, pxd, ID)
+    @property
+    def _text(self):
         data = vercon(json.loads(self._info('text-stringData')))
         data = base64.b64decode(data['stringNSCodingData'])
-        self._text = plistlib.loads(data)['$objects']
+        return plistlib.loads(data)['$objects']
 
     def getText(self):
         '''
