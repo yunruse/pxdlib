@@ -23,10 +23,53 @@ class MaskError(ValueError):
 class Layer:
     __slots__ = ('pxd', '_id')
 
-    def __init__(self, pxd, ID):
-        self.pxd = pxd
-        assert isinstance(ID, int)
-        self._id = ID
+    def __init__(self, parent, ID=None):
+        if type(self) is Layer:
+            raise TypeError('Cannot instantiate a bare Layer.')
+
+        if isinstance(parent, Layer):
+            self.pxd = parent.pxd
+        else:
+            self.pxd = parent
+
+        if isinstance(ID, int):
+            self._id = ID
+        else:
+            self._create(parent)
+
+    def _create(self, parent):
+        self._id = self._new_entry(parent, type(self))
+        self.pxd._layer_cache[self._id] = self
+
+        self._assert(write=True)
+        print(self.pxd, self._id, self._uuid)
+        # set default info
+
+        def tag(k, kind, *vals):
+            if kind is None:
+                blob = vals[0]
+            else:
+                blob = make_blob(kind, *vals)
+            self._setinfo(k, blob, create=True)
+
+        if isinstance(self, TextLayer):
+            tag('text-nameIsDynamic', b'SI16', 0)
+
+        tag('opacity', b'LOpc', 100)
+        tag('color-value', None, 0)
+        tag('blendMode', b'Blnd', 'norm')
+
+        if isinstance(self, RasterLayer):
+            tag('flags', b'UI64', 0b1000001)
+        else:
+            tag('flags', b'UI64', 0b0000001)
+
+        if isinstance(self, GroupLayer):
+            tag('name', b'Strn', 'New Group')
+        elif isinstance(self, TextLayer):
+            tag('name', b'Strn', 'Text')
+        else:
+            tag('name', b'Strn', 'Layer')
 
     def _new_entry(self, parent, kind, index_at_parent=0):
         '''

@@ -6,6 +6,7 @@
 
 - Various bug fixes.
 - Improved `repr(layer)`.
+- Allowed very limited creation of new layers eg `GroupLayer(parent)`
 - Added `layer.delete` and `layer.copyto(parent)`, and thereby added the ability to set `layer.parent` to be in a different `PXDFile`.
 - Tightened up `layer.mask` behaviour.
 
