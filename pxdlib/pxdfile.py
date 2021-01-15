@@ -21,6 +21,7 @@ class PXDFile:
         self.path = Path(path)
         self._db = sqlite3.connect(self.path / 'metadata.info')
         self._closed = True
+        self._layer_cache = {}
 
         def keyval(table):
             return dict(self._db.execute(
@@ -32,10 +33,14 @@ class PXDFile:
     # Layer management
 
     def _layer(self, ID):
+        if ID in self._layer_cache:
+            return self._layer_cache[ID]
         typ, = self._db.execute(
             f"select type from document_layers where id = {ID};"
         ).fetchone()
-        return _LAYER_TYPES[typ](self, ID)
+        layer = _LAYER_TYPES[typ](self, ID)
+        self._layer_cache[ID] = layer
+        return layer
 
     def _layers(self, parent=None, recurse=False):
         '''
@@ -67,20 +72,18 @@ class PXDFile:
         else:
             return children
 
-    def layer_with_name(self, name):
-        '''Get the first layer found with the given name.'''
-        layers = [
-            l for l in self._layers(recurse=True)
-            if l.name == name
-        ]
-        return layers[0]
-
     @property
     def children(self):
         return self._layers()
 
     def all_layers(self) -> list:
         return self._layers(recurse=True)
+
+    def find(self, name):
+        '''Get the first layer found with the given name.'''
+        for l in self.all_layers():
+            if l.name == name:
+                return l
 
     # Database management
 
@@ -134,6 +137,21 @@ class PXDFile:
         )
 
     # Metadata
+
+    @property
+    def size(self) -> tuple:
+        '''
+        The width and height of the document, in pixels.
+        '''
+        return blob(self._info['size'])
+
+    @size.setter
+    def size(self, size: tuple):
+        '''
+        The width and height of the document, in pixels.
+        '''
+        w, h = size
+        self._set('size', make_blob(b'BDSz', int(w), int(h)))
 
     @property
     def guides(self):

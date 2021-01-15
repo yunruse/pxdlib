@@ -4,6 +4,9 @@ Basic structures
 
 from struct import Struct
 
+from .helpers import num, hexbyte
+from .enums import GradientType
+
 _MAGIC = b'4-tP'
 _LENGTH = Struct('<i')
 
@@ -122,18 +125,161 @@ def make_blob(kind: bytes, *data) -> bytes:
     return _MAGIC + kind[::-1] + length + data
 
 
-def _assertver(kind, want, found):
-    if want == found:
-        return
+def verb(data, version=1):
+    '''vercon, verstruct or verlist extractor'''
+    if isinstance(data, dict):
+        if 'version' in data:
+            ver = data['version']
+            con = data['versionSpecifiContainer']
+        else:
+            ver = data['structureVersion']
+            con = data['versionSpecificInfo']
     else:
-        raise ValueError(f"Expected {kind} version {want}, got {found}")
+        ver, con = data
+    if ver != version:
+        raise VersionError(
+            f"Data structure was version {ver}, expected {version}. "
+            "Most likely this is because a newer Pixelmator version exists. "
+            "Try updating `pxdlib`, or otherwise contact developer."
+        )
+    return con
 
 
-def vercon(data: dict, version=1):
-    _assertver('vercon', version, data['version'])
-    return data['versionSpecifiContainer']
+class RGBA:
+    '''
+    RGBA color in [0, 255]-space.
+    '''
+
+    def __init__(self, r=0, g=0, b=0, a=255):
+        '''
+        Accepts RGBA values, tuple or hex string.
+        '''
+        if isinstance(r, (tuple, list)):
+            if len(r) == 3:
+                r, g, b = r
+            elif len(r) == 4:
+                r, g, b, a = r
+            else:
+                raise ValueError('Iterable must be length 3 or 4.')
+        elif isinstance(r, str):
+            string = r
+            if string.startswith('#'):
+                string = string[1:]
+            if not len(string) in (6, 8):
+                raise ValueError(
+                    'String colors must be #RRGGBB or #RRGGBBAA.'
+                )
+            r = int(string[0:2], base=16)
+            g = int(string[2:4], base=16)
+            b = int(string[4:6], base=16)
+            if len(string) == 8:
+                a = int(string[6:8], base=16)
+        self.r = num(r)
+        self.g = num(g)
+        self.b = num(b)
+        self.a = num(a)
+
+    def __iter__(self):
+        tup = self.r, self.g, self.b, self.a
+        return iter(tup)
+
+    def __repr__(self):
+        val = hexbyte(self.r) + hexbyte(self.g) + hexbyte(self.b)
+        if self.a != 255:
+            val += hexbyte(self.a)
+        return f"RGBA('{val}')"
+
+    @classmethod
+    def _from_data(cls, data):
+        data = verb(data)
+        assert data['m'] == 2
+        assert data['csr'] == 0
+        r, g, b, a = data['c']
+        return cls(r*255, g*255, b*255, a*255)
+
+    def _to_data(self):
+        r, g, b, a = list(self)
+        return [1, {
+            'm': 2, 'csr': 0,
+            'c': [r/255, g/255, b/255, a/255]
+        }]
+
+    def __eq__(self, other):
+        return all([
+            round(a[0]) == round(a[1])
+            for a in zip(tuple(self), tuple(other))
+        ])
 
 
-def verlist(data: list, version=1):
-    _assertver('verlist', version, data[0])
-    return data[1]
+class Gradient:
+    '''
+    Gradient of two or more colours.
+
+    Contains a list of (RGBA, x),
+    alongside a list of midpoints
+    and the gradient kind.
+    '''
+
+    _default_cols = [
+        (RGBA('48a0f8'), 0), (RGBA('48a0f800'), 1)
+    ]
+
+    def __init__(self, colors=None, midpoints=None, kind=0):
+        self.kind = GradientType(kind)
+
+        self.colors = colors or self._default_cols
+        x0 = -1
+        for c, x in self.colors:
+            assert x0 < x
+            x0 = x
+
+        if midpoints is None:
+            midpoints = []
+            for i in range(len(self.colors) - 1):
+                c1, x1 = self.colors[i]
+                c2, x2 = self.colors[i+1]
+                midpoints.append((x1 + x2)/2)
+        self.midpoints = midpoints
+
+    def __repr__(self):
+        vals = []
+        if self.colors != self._default_cols:
+            vals.append(repr(self.colors))
+
+        midpoints_default = True
+        for i in range(len(self.colors) - 1):
+            c1, x1 = self.colors[i]
+            c2, x2 = self.colors[i+1]
+            m_apparent = (x1 + x2)/2
+            if self.midpoints[i] != m_apparent:
+                midpoints_default = False
+                break
+
+        if not midpoints_default:
+            vals.append(repr(self.midpoints))
+
+        if self.kind != 0:
+            vals.append(str(self.kind))
+
+        return f"Gradient({', '.join(vals)})"
+
+    @classmethod
+    def _from_data(cls, data):
+        data = verb(data)
+        assert data['csr'] == 0
+        colors = [verb(i) for i in data['s']]
+        colors = [
+            (RGBA(r*255, g*255, b*255, a*255), x)
+            for (r, g, b, a), x in colors
+        ]
+        return cls(colors, data['m'], data['t'])
+
+    def _to_data(self):
+        data = {'csr': 0}
+        data['m'] = list(self.midpoints)
+        data['s'] = [
+            [1, [[c.r/255, c.g/255, c.g/255, c.a/255], x]]
+            for c, x in self.colors
+        ]
+        data['t'] = int(self.kind)
+        return [1, data]

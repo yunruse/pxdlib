@@ -60,3 +60,26 @@ class LayerTag(enum.IntEnum):
     blue = 5
     purple = 6
     gray = 7
+
+
+class FillType(enum.IntEnum):
+    color = 0
+    gradient = 1
+
+
+class GradientType(enum.IntEnum):
+    linear = 0
+    radial = 1
+    angle = 2
+
+
+class StrokeType(enum.IntEnum):
+    regular = 0
+    dashed = 1
+    dotted = 2
+
+
+class StrokePosition(enum.IntEnum):
+    inside = 0
+    center = 1
+    outside = 2
