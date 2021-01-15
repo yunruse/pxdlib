@@ -234,8 +234,9 @@ class Layer:
     def _info(self, key, default=None):
         self._assert()
         value = self.pxd._db.execute(
-            "select value from layer_info "
-            f"where layer_id = {self._id} and key = '{key}';",
+            "select value from layer_info"
+            f" where layer_id = ? and key = ?;",
+            (self._id, key)
         ).fetchone()
         if value is None:
             return default
@@ -245,7 +246,7 @@ class Layer:
         self._assert(write=True)
         self.pxd._db.execute(
             'update layer_info set value = ?'
-            'where layer_id = ? and key = ?',
+            ' where layer_id = ? and key = ?',
             (data, self._id, key)
         )
 
