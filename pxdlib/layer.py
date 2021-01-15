@@ -13,7 +13,14 @@ from .enums import LayerFlag, BlendMode, LayerTag
 from .styles import _STYLES
 
 
-class MaskError(ValueError):
+class ChildError(ValueError):
+    '''
+    Attempted move of a layer to a parent layer
+    for which an invalid error would occur.
+    '''
+
+
+class MaskError(ChildError):
     '''
     A layer was moved about in a way that creates
     a situation where a layer has a mask (but shouldn't)
@@ -133,6 +140,17 @@ class Layer:
             uuid = None
         elif isinstance(val, Layer):
             uuid = val._uuid
+
+        if self.is_mask:
+            raise MaskError(
+                "Cannot set mask's parent."
+                " Try setting `layer.mask = mask` instead.")
+
+        # disallow if val would be a non-mask on a non-group!
+        can_hold_non_mask = uuid == None or isinstance(val, GroupLayer)
+
+        if not can_hold_non_mask:
+            raise ChildError('Invalid parent (must be GroupLayer or ')
 
         if val.pxd is self.pxd:
             # intra-PXD
