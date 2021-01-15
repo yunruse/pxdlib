@@ -139,6 +139,21 @@ class PXDFile:
     # Metadata
 
     @property
+    def size(self) -> tuple:
+        '''
+        The width and height of the document, in pixels.
+        '''
+        return blob(self._info['size'])
+
+    @size.setter
+    def size(self, size: tuple):
+        '''
+        The width and height of the document, in pixels.
+        '''
+        w, h = size
+        self._set('size', make_blob(b'BDSz', int(w), int(h)))
+
+    @property
     def guides(self):
         '''
         A list of the guides used for visual alignment.

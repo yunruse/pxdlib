@@ -7,7 +7,8 @@
 - Various bug fixes.
 - Added `PixelmatorError`, and tightened up error raising, in particular with `layer.mask`.
 - Improved `repr(layer)`.
-- Allowed very limited creation of new layers eg `GroupLayer(parent)`
+- Allowed very limited creation of new layers eg `GroupLayer(parent)`. (It's a bit buggy though.)
+- Added settable property `pxd.size`.
 - Added `layer.delete` and `layer.copyto(parent)`, and thereby added the ability to set `layer.parent` to be in a different `PXDFile`.
 
 ### 0.0.3
