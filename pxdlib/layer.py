@@ -242,13 +242,21 @@ class Layer:
             return default
         return value[0]
 
-    def _setinfo(self, key, data):
+    def _setinfo(self, key, data, create=False):
         self._assert(write=True)
-        self.pxd._db.execute(
-            'update layer_info set value = ?'
-            ' where layer_id = ? and key = ?',
-            (data, self._id, key)
-        )
+        if create:
+            self.pxd._db.execute(
+                'insert into layer_info'
+                ' (layer_id, key, value)'
+                ' values (?, ?, ?);',
+                (self._id, key, data)
+            )
+        else:
+            self.pxd._db.execute(
+                'update layer_info set value = ?'
+                ' where layer_id = ? and key = ?',
+                (data, self._id, key)
+            )
 
     # Attributes
 
