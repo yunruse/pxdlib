@@ -35,20 +35,15 @@ class Style:
         if type(self) == Style:
             raise TypeError(
                 'Cannot directly instantiate a Style. Try Fill, Stroke, Shadow or InnerShadow')
-        _dict = dict(self._defaults)
-        _dict.update(kwargs)
-        if 'gSP' in _dict:
-            _dict['_gPos'] = (
-                _dict.pop('gSP'), _dict.pop('gEP')
-            )
-        for i in _dict:
-            if i not in self._defaults:
-                raise ValueError(f'Unknown property {i}.')
+        self._dict = dict(self._defaults, id=uuid())
 
-        self._dict = _dict
+        for k, name in _STYLE_TAGS.items():
+            if name in kwargs:
+                setattr(self, name, kwargs.pop(name))
 
-        if self._dict.get('id') is None:
-            self._dict['id'] = uuid()
+        if kwargs:
+            for k, v in kwargs.items():
+                raise ValueError(f'Unknown property {repr(k)}.')
 
     def __repr__(self):
         args = ', '.join([
@@ -62,7 +57,13 @@ class Style:
     @classmethod
     def _from_layer(cls, data):
         '''Internal binding'''
-        return cls(**data)
+        self = cls()
+        self._dict.update(data)
+        if 'gSP' in self._dict:
+            self._dict['_gPos'] = (
+                self._dict.pop('gSP'), self._dict.pop('gEP')
+            )
+        return self
 
     def _to_layer(self):
         '''Internal binding'''
