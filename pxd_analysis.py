@@ -61,7 +61,7 @@ if __name__ == '__main__':
             display(l.mask, s+2)
 
         # Layer debugging here
-        d = l.color_adjustments
+        d = l.adjusts
         print(d)
 
         # End layer debugging
@@ -72,6 +72,9 @@ if __name__ == '__main__':
     l = pxd.children[0]
     displays(pxd.children)
     layers = pxd.all_layers()
+    d = l.adjusts
 
     # PXD debugging here
+    with pxd:
+        l.adjusts.white_balance.tint = -0.8
 

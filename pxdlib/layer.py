@@ -554,9 +554,11 @@ class Layer:
             raise TypeError(
                 'color_adjustments should be ColorAdjustments.'
             )
-        self._setinfo(
-            'color-adjustments',
-            [self.COLOR_ADJUSTMENT_STRUCT, val.data])
+        data = json.dumps([
+            self.COLOR_ADJUSTMENT_STRUCT,
+            val._data
+        ]).encode()
+        self._setinfo('color-adjustments', data)
 
 
 class GroupLayer(Layer):
