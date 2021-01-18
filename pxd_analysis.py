@@ -61,19 +61,8 @@ if __name__ == '__main__':
             display(l.mask, s+2)
 
         # Layer debugging here
-        for style in l.styles:
-            data = style._dict
-            data = {}
-            for k, v in data.items():
-                k2 = pxdlib.styles._STYLE_TAGS.get(k)
-                if k2:
-                    v2 = getattr(style, k2, None)
-                    if v2 is None:
-                        k2 = None
-                    else:
-                        v = v2
-                print(f'{k:<5} {k2 or "":<17} {repr(v)}')
-            print(style)
+        d = l.color_adjustments
+        print(d)
 
         # End layer debugging
         

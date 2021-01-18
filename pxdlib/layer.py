@@ -10,8 +10,10 @@ from io import UnsupportedOperation
 from .helpers import uuid
 from .structure import blob, make_blob, verb
 from .enums import LayerFlag, BlendMode, LayerTag
-from .styles import _STYLES
 from .errors import ChildError, MaskError, StyleError
+
+from .styles import _STYLES
+from .color_adjustments import ColorAdjustments
 
 
 class Layer:
@@ -531,6 +533,27 @@ class Layer:
             data[k].append([1, style])
         data = json.dumps([1, data]).encode()
         self._setinfo('styles-data', data, create=create)
+
+    COLOR_ADJUSTMENT_STRUCT = 2
+
+    @property
+    def color_adjustments(self):
+        data = self._info('color-adjustments')
+        if data:
+            data = verb(
+                json.loads(data.decode()),
+                self.COLOR_ADJUSTMENT_STRUCT)
+        return ColorAdjustments(self, data)
+
+    @color_adjustments.setter
+    def color_adjustments(self, val):
+        if not isinstance(val, ColorAdjustments):
+            raise TypeError(
+                'color_adjustments should be ColorAdjustments.'
+            )
+        self._setinfo(
+            'color-adjustments',
+            [self.COLOR_ADJUSTMENT_STRUCT, val.data])
 
 
 class GroupLayer(Layer):

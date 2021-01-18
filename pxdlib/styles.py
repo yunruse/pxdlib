@@ -1,3 +1,8 @@
+'''
+Pixelmator styles: fill, stroke and shadows.
+Multiple styles can be applied simultaneously, so they are defined as their own objects.
+'''
+
 from math import pi
 
 from .helpers import dicts, uuid
