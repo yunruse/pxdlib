@@ -57,7 +57,7 @@ Each effect listed is a also a key in the dictionary: a verlist (nominally versi
 
 If _`i`_ is given, it refers to the "intensity" knob, from 0 to 1, and defaults to 1. Likewise, if _`A`_ is given, it is 1 if the "ML" auto-adjustment is made, and 0 otherwise. Otherwise, unless specified, a value ranges from -1 to +1, corresponding to -100% to +100%, and default to 0.
 
-The fo
+The effects are:
 
 - `w`, "White Balance", with _`A`_, `T` (tint) and `t` (temperature);
 - `hS`, "Hue & Saturation", with _`A`_, `h` (hue), `s` (saturation) and `v` (vibrance);
