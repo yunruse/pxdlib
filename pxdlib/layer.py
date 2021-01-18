@@ -537,7 +537,10 @@ class Layer:
     COLOR_ADJUSTMENT_STRUCT = 2
 
     @property
-    def color_adjustments(self):
+    def adjusts(self):
+        '''
+        Color adjustments, such as greyscale and white balance.
+        '''
         data = self._info('color-adjustments')
         if data:
             data = verb(
@@ -545,8 +548,8 @@ class Layer:
                 self.COLOR_ADJUSTMENT_STRUCT)
         return ColorAdjustments(self, data)
 
-    @color_adjustments.setter
-    def color_adjustments(self, val):
+    @adjusts.setter
+    def adjusts(self, val):
         if not isinstance(val, ColorAdjustments):
             raise TypeError(
                 'color_adjustments should be ColorAdjustments.'
