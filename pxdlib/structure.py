@@ -4,6 +4,7 @@ Basic structures
 
 from struct import Struct
 
+from .errors import VersionError
 from .helpers import num, hexbyte
 from .enums import GradientType
 

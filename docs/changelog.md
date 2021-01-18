@@ -2,6 +2,10 @@
 
 ## Alpha
 
+### 0.0.5
+
+- Various bug fixes.
+
 ### 0.0.4 (2020-01-15)
 
 - Various bug fixes.
