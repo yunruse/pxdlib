@@ -88,6 +88,41 @@ class ColorAdjustments:
             return '<ColorAdjustments: as default>'
 
 
+class Attribute(property):
+    def __init__(
+        attr, key,
+        limits=(-1, +1),  # min, max limits
+        limitdoc=None,  # names for minmax limits
+        default=0,  # for documenting only
+        factor=1,  # if data varies more than
+        doc='',  # docs if not a regular slider
+    ):
+        attr._key = key
+
+        def fget(self):
+            return self._get(key) / factor
+
+        def fset(self, x):
+            if limits is not None:
+                if not a < x < b:
+                    raise ValueError(f'attribute must be between {a} and {b}.')
+            self._set(key, x * factor)
+
+        if default is not None:
+            doc = f'{doc}, default {default}'
+
+        if limits:
+            a, b = limits
+            if limitdoc:
+                ad, bd = limitdoc
+                doc = f'{a} ({ad}) to {b} ({bd}){doc}'
+            else:
+                doc = f'{a} to {b}{doc}'
+        fget.__doc__ = doc
+
+        property.__init__(attr, fget, fset)
+
+
 def adjustment(key, name):
     '''
     wrapper to handle binding layer.adjusts.x
@@ -104,6 +139,13 @@ def adjustment(key, name):
             raise TypeError(
                 'Cannot define any layer.adjusts.x; try setting layer.adjusts.x.y instead'
             )
+
+        cls._attribs = {}
+        for n in dir(cls):
+            v = getattr(cls, n)
+            if isinstance(v, Attribute):
+                k = v._key
+                cls._attribs[k] = n
 
         setattr(ColorAdjustments, name, property(getter, setter))
         return cls
@@ -170,36 +212,34 @@ class Adjustment:
 
 
 class Intensity:
-    @property
-    def intensity(self):
-        pass
+    intensity = Attribute('i', limits=(0, 1), default=1)
 
 
 @adjustment('w', 'white_balance')
 class WhiteBalance(Adjustment):
-    @property
-    def temperature(self):
-        '''-1 (blue) to +1 (orange), default 0'''
-        return self._get('t')
+    temperature = Attribute('t', limitdoc=('blue', 'yellow'))
+    tint = Attribute('T', limitdoc=('green', 'purple'))
 
-    @temperature.setter
-    def temperature(self, val):
-        if not -1 <= val <= 1:
-            raise ValueError('temperature must be in range -1 to +1')
-        self._set('t', val)
 
-    @property
-    def tint(self):
-        '''-1 (green) to +1 (purple), default 0'''
-        return self._get('T')
+@adjustment('hS', 'color')
+class Color(Adjustment):
+    hue = Attribute('h')
+    saturation = Attribute('s')
+    vibrance = Attribute('v')
 
-    @tint.setter
-    def tint(self, val):
-        if not -1 <= val <= 1:
-            raise ValueError('tint must be in range -1 to +1')
-        self._set('T', val)
 
-    _attribs = {'t': 'temperature', 'T': 'tint'}
+@adjustment('l', 'lightness')
+class Lightness(Adjustment):
+    exposure = Attribute('e', limits=(-2, 2))
+    highlights = Attribute('h', factor=2)
+    shadows = Attribute('s', factor=2)
+    brightness = Attribute('b')
+    black_point = Attribute('B')
+
+
+@adjustment('s', 'sepia')
+class Sepia(Adjustment, Intensity):
+    pass
 
 
 def _document_attribs():

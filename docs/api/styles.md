@@ -50,5 +50,14 @@ Changing a property automatically enables its adjustment, but you can set `layer
 
 Properties are:
 
-- `.white_balance.temperature`: -1 (blue) to +1 (orange), default 0 
-- `.white_balance.tint`: -1 (green) to +1 (purple) 
+- `.white_balance.temperature`: -1 (blue) to 1 (yellow), default 0 
+- `.white_balance.tint`: -1 (green) to 1 (purple), default 0
+- `.color.hue`: -1 to 1, default 0 
+- `.color.saturation`: -1 to 1, default 0 
+- `.color.vibrance`: -1 to 1, default 0 
+- `.lightness.black_point`: -1 to 1, default 0 
+- `.lightness.brightness`: -1 to 1, default 0 
+- `.lightness.exposure`: -2 to 2, default 0 
+- `.lightness.highlights`: -1 to 1, default 0 
+- `.lightness.shadows`: -1 to 1, default 0 
+- `.sepia.intensity`: 0 to 1, default 1 
