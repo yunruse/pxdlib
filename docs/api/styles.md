@@ -46,6 +46,8 @@ Color adjustments are provided by `layer.adjusts`. As `repr(layer.adjusts)` may 
 
 one can modify the parameters of each adjustment directly.
 
+Changing a property automatically enables its adjustment, but you can set `layer.adjusts.x.enabled = False` if you want.
+
 Properties are:
 
 - `.white_balance.temperature`, -1 (blue) to +1 (orange), default 0

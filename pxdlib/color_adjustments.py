@@ -142,12 +142,27 @@ class Adjustment:
     def _get(self, k2):
         return self.adjust._data[self._key]
 
-    def _set(self, k2, value):
+    def _set(self, k2, value, enable_effect=True):
         data = self.adjust._data
         ver, val = data[self._key]
         val[k2] = value
+        if enable_effect:
+            val['E'] = enable
         data[self._key] = [ver, val]
         self.adjust._update()
+
+    @property
+    def enabled(self):
+        '''
+        Whether the adjustment is enabled.
+
+        Changing a property automatically enables the entire adjustment.
+        '''
+        return self._get('E')
+
+    @enabled.setter
+    def enabled(self, val):
+        self._set('E', bool(val))
 
 
 class Intensity:
