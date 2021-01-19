@@ -50,5 +50,5 @@ Changing a property automatically enables its adjustment, but you can set `layer
 
 Properties are:
 
-- `.white_balance.temperature`, -1 (blue) to +1 (orange), default 0
-- `.white_balance.tint`, -1 to +1)
+- `.white_balance.temperature`: -1 (blue) to +1 (orange), default 0 
+- `.white_balance.tint`: -1 (green) to +1 (purple) 

@@ -48,6 +48,7 @@ for k, v in _KEYS.items():
 _ADJUSTMENTS = {}
 # each Adjustment._attribs is a {k2: funcname}
 
+
 class ColorAdjustments:
     '''
     Color adjustments for a layer.
@@ -178,6 +179,7 @@ class Intensity:
 class WhiteBalance(Adjustment):
     @property
     def temperature(self):
+        '''-1 (blue) to +1 (orange), default 0'''
         return self._get('t')
 
     @temperature.setter
@@ -188,6 +190,7 @@ class WhiteBalance(Adjustment):
 
     @property
     def tint(self):
+        '''-1 (green) to +1 (purple), default 0'''
         return self._get('T')
 
     @tint.setter
@@ -197,3 +200,14 @@ class WhiteBalance(Adjustment):
         self._set('T', val)
 
     _attribs = {'t': 'temperature', 'T': 'tint'}
+
+
+def _document_attribs():
+    for k1, adjust in _ADJUSTMENTS.items():
+        for k2, funcname in adjust._attribs.items():
+            docs = getattr(adjust, funcname).__doc__
+            print(f'- `.{adjust._name}.{funcname}`: {docs} ')
+
+
+if __name__ == '__main__':
+    _document_attribs()
