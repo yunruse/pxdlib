@@ -182,8 +182,8 @@ class WhiteBalance(Adjustment):
 
     @temperature.setter
     def temperature(self, val):
-        if not -1 < val < 1:
-            raise ValueError('temperature must be in range -100% to +100%')
+        if not -1 <= val <= 1:
+            raise ValueError('temperature must be in range -1 to +1')
         self._set('t', val)
 
     @property
@@ -192,8 +192,8 @@ class WhiteBalance(Adjustment):
 
     @tint.setter
     def tint(self, val):
-        if not -2 < val < 2:
-            raise ValueError('tint must be in range -200% to +200%')
+        if not -1 <= val <= 1:
+            raise ValueError('tint must be in range -1 to +1')
         self._set('T', val)
 
     _attribs = {'t': 'temperature', 'T': 'tint'}
