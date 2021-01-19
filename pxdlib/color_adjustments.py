@@ -117,7 +117,7 @@ class Attribute(property):
 
         def fset(self, x):
             if limits is not None:
-                if not a < x < b:
+                if not a <= x <= b:
                     raise ValueError(f'attribute must be between {a} and {b}.')
             self._set(key, x * factor)
 
