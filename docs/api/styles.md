@@ -1,4 +1,4 @@
-# `pxdlib` API: Layer stytles
+# `pxdlib` API: Layer styles
 
 <a id="styles"></a>
 ## Styles
@@ -34,3 +34,19 @@ Both `Shadow` and `InnerShadow` styles contain:
 - `blur`, the blur in pixels.
 - `distance`, the distance of the shadow from the object in pixels.
 - `angle`, in degrees clockwise from north.
+
+<a id="adjusts"></a>
+## Color adjustments
+
+Color adjustments are provided by `layer.adjusts`. As `repr(layer.adjusts)` may imply:
+
+    <ColorAdjustments: as listed below>
+      .white_balance.temperature = 0.443
+      .white_balance.tint = -0.8
+
+one can modify the parameters of each adjustment directly.
+
+Properties are:
+
+- `.white_balance.temperature`, -1 (blue) to +1 (orange), default 0
+- `.white_balance.tint`, -1 to +1)

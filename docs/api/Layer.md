@@ -34,6 +34,7 @@ Layers also have the following shared attributes, all of which can be set:
 - `blendMode` is an enumerable from `pxdlib.BlendMode`.
 - `tag` is an enumerable from `pxdlib.LayerTag` (or, an integer from 0 through 7) representing a color tag for user convenience. It is truthy if a tag is applied to the layer.
 - `styles` is a list of [`Style`](/docs/api/styles.md#styles) objects.
+- `adjusts` is a series of [`color adjustments`](/docs/api/styles.md#adjusts).
 
 <a id="GroupLayer"></a>
 ## GroupLayer
