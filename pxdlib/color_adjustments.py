@@ -146,8 +146,11 @@ class Adjustment:
         data = self.adjust._data
         ver, val = data[self._key]
         val[k2] = value
+        if 'A' in val:
+            # disable 'auto'
+            val['A'] = 0
         if enable_effect:
-            val['E'] = enable
+            val['E'] = enable_effect
         data[self._key] = [ver, val]
         self.adjust._update()
 
