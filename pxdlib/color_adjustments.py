@@ -4,6 +4,11 @@ Color adjustments with a wrapper to allow layer.adjusts.x.y = val.
 
 # Color adjustments are found using data[k1][k2]. As such,
 # we construct a set of data structs to help facilitate this.
+# We also define a set of constructors:
+# `Attribute` auto-gens a property for binding a k2;
+# `adjustment` generates the overall class bindings for k1.
+# This is very over-engineered way of handling a dictionary.
+# To which I say: yes. Yes it is. But it's cool, no?
 
 # this cruft gets added in too; purpose is not wholly deciphered
 # but imagined to be color profiles
@@ -89,6 +94,10 @@ class ColorAdjustments:
 
 
 class Attribute(property):
+    '''
+    Auto-generator for a property binding (eg sliders)
+    to provide general getter and setter.
+    '''
     def __init__(
         attr, key,
         limits=(-1, +1),  # min, max limits
