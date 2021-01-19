@@ -1,4 +1,12 @@
+'''
+Color adjustments with a wrapper to allow layer.adjusts.x.y = val.
+'''
 
+# Color adjustments are found using data[k1][k2]. As such,
+# we construct a set of data structs to help facilitate this.
+
+# this cruft gets added in too; purpose is not wholly deciphered
+# but imagined to be color profiles
 _DEFAULTS = {
     "e": 0,
     "E": 0,
@@ -7,6 +15,7 @@ _DEFAULTS = {
     "in": 1,
     "ctx": [1, {"cs": [1, {"map": {"0": [1, {"m": 2, "k": 0, "icc": "data"}]}}]}],
 }
+# {k1: data}
 _KEYS = {
     "ca": [1, {"A": 0}],
     "r": [1, {"r": [1, {"r": 0.5, "i": 1}]}],
@@ -35,6 +44,9 @@ for k, v in _KEYS.items():
     val.update(v[1])
     _DEFAULTS[k] = [v[0], val]
 
+# {k1: Adjustment}
+_ADJUSTMENTS = {}
+# each Adjustment._attribs is a {k2: funcname}
 
 class ColorAdjustments:
     '''
@@ -73,9 +85,6 @@ class ColorAdjustments:
             return string
         else:
             return '<ColorAdjustments: as default>'
-
-
-_ADJUSTMENTS = {}
 
 
 def adjustment(key, name):
