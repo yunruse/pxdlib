@@ -86,8 +86,8 @@ class ColorAdjustments:
                 continue
             prop1 = _ADJUSTMENTS[k1]._name
             for k2, prop2 in _ADJUSTMENTS[k1]._attribs.items():
-                val = v[1][k2]
-                if val != default[1][k2]:
+                val = v[1].get(k2)
+                if val != default[1].get(k2):
                     changes.append(f'  .{prop1}.{prop2} = {val}')
         if changes:
             string = '<ColorAdjustments: as listed below>\n'
