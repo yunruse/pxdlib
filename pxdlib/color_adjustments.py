@@ -80,6 +80,10 @@ class ColorAdjustments:
             v = self._data[k1]
             if default == v:
                 continue
+            # debug feature
+            if k1 not in _ADJUSTMENTS:
+                print(default, v)
+                continue
             prop1 = _ADJUSTMENTS[k1]._name
             for k2, prop2 in _ADJUSTMENTS[k1]._attribs.items():
                 val = v[1][k2]
