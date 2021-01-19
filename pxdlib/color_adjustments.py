@@ -224,7 +224,7 @@ class Adjustment:
         self._set('E', bool(val))
 
 
-class Intensity:
+class Intensity(Adjustment):
     intensity = Attribute('i', limits=(0, 1), default=1)
 
 
@@ -251,8 +251,36 @@ class Lightness(Adjustment):
 
 
 @adjustment('s', 'sepia')
-class Sepia(Adjustment, Intensity):
+class Sepia(Intensity):
     pass
+
+
+@adjustment('f', 'fade')
+class Sepia(Intensity):
+    pass
+
+
+@adjustment('v', 'vignette')
+class Vignette(Adjustment):
+    exposure = Attribute('e', default=0.5)
+    black_point = Attribute('b')
+    softness = Attribute('s', (0, 1), default=1)
+
+
+@adjustment('i', 'invert')
+class Invert(Intensity):
+    pass
+
+
+@adjustment('S', 'sharpen')
+class Sharpen(Intensity):
+    radius = Attribute('s', limits=(0, 100), default=2.5)
+
+
+@adjustment('g', 'grain')
+class Grain(Adjustment):
+    intensity = Attribute('i', limits=(0, 1), default=0.5)
+    size = Attribute('s', limits=(0, 2), default=0.25)
 
 
 def _document_attribs():
