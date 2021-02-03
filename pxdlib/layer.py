@@ -362,11 +362,6 @@ class Layer(SizeHelper, PosHelper):
         '''
         return tuple(blob(self._info('size')))
 
-    @size.setter
-    def size(self, size):
-        w, h = size
-        self._setinfo('size', make_blob(b'PTSz', w, h))
-
     @property
     def angle(self) -> float:
         '''
