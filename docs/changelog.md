@@ -9,6 +9,7 @@ This will probably be the last update for a while until I figure out raster and 
 - Various bug fixes.
 - Added `recurse` keyword (default `True`) to `pxd.find`, `layer.find`.
 - Added `pxd.copyto` as a wrapper to `shutil`.
+- `layer.copyto` adds ` (Copy)`, ` (Copy 2)`, etc to avoid duplicate names.
 - Renamed `RGBA` to `Color`.
 - Added `Color.rgb`, `.hsv`, `.hls`, `.yiq` class methods to align with `colorsys`. Also includes the readable properties `.r`, `.h`, etc.
 - Improved `Gradient` API, repr.

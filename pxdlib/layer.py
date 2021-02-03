@@ -223,7 +223,17 @@ class Layer(SizeHelper, PosHelper):
         return child in self.pxd._layers(self, recurse=True)
 
     def copyto(self, parent, asmask=False):
-        return self._copyto(parent, asmask, False)
+        name = self.name
+        i = 0
+        while parent.find(name):
+            i += 1
+            if i == 1:
+                name = f'{self.name} (Copy)'
+            else:
+                name = f'{self.name} (Copy {i})'
+        copy = self._copyto(parent, asmask, False)
+        copy.name = name
+        return copy
 
     def _copyto(self, parent, asmask, keep_index):
         if self is parent or self._contains(parent):
