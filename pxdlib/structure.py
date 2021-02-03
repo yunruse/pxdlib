@@ -260,7 +260,7 @@ class Gradient:
         if pos_provided:
             self.colors = []
             x0 = -1
-            for c, x in self.colors:
+            for c, x in colors:
                 assert x0 < x
                 x0 = x
                 self.colors.append((Color(c), x))
@@ -325,11 +325,10 @@ class Gradient:
         data = verb(data)
         assert data['csr'] == 0
         colors = [verb(i) for i in data['s']]
-        colors = [
+        return cls([
             (Color(r*255, g*255, b*255, a*255), x)
             for (r, g, b, a), x in colors
-        ]
-        return cls(colors, data['m'], data['t'])
+        ], midpoints=data['m'], kind=data['t'])
 
     def _to_data(self):
         data = {'csr': 0}
