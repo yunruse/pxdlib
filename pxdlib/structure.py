@@ -157,9 +157,11 @@ class Color:
 
     def __init__(self, r=0, g=0, b=0, a=255):
         '''
-        Accepts RGBA values, tuple or hex string.
+        Accepts a hex string, or RGBA values in [0, 255]-space.
         '''
-        if isinstance(r, (tuple, list)):
+        if isinstance(r, Color):
+            r, g, b, a = r.r, r.g, r.b, r.a
+        elif isinstance(r, (tuple, list)):
             if len(r) == 3:
                 r, g, b = r
             elif len(r) == 4:
