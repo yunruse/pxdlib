@@ -146,7 +146,7 @@ def verb(data, version=1):
     return con
 
 
-class RGBA:
+class Color:
     '''
     RGBA color in [0, 255]-space.
     '''
@@ -184,11 +184,14 @@ class RGBA:
         tup = self.r, self.g, self.b, self.a
         return iter(tup)
 
-    def __repr__(self):
+    def __str__(self):
         val = hexbyte(self.r) + hexbyte(self.g) + hexbyte(self.b)
         if self.a != 255:
             val += hexbyte(self.a)
-        return f"RGBA('{val}')"
+        return '#' + val
+
+    def __repr__(self):
+        return f"Color('{str(self)}')"
 
     @classmethod
     def _from_data(cls, data):
@@ -270,7 +273,7 @@ class Gradient:
         assert data['csr'] == 0
         colors = [verb(i) for i in data['s']]
         colors = [
-            (RGBA(r*255, g*255, b*255, a*255), x)
+            (Color(r*255, g*255, b*255, a*255), x)
             for (r, g, b, a), x in colors
         ]
         return cls(colors, data['m'], data['t'])

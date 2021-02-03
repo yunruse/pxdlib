@@ -9,10 +9,12 @@ import plistlib
 import struct
 
 import pxdlib as pxdlib
-from pxdlib import blob, verb, RGBA
+from pxdlib import blob, verb, Color
+
 
 def hexes(data):
     return binascii.hexlify(data).decode()
+
 
 def hexdump(data):
     data = hexes(data)
@@ -65,16 +67,15 @@ if __name__ == '__main__':
         print(d)
 
         # End layer debugging
-        
+
         if isinstance(l, pxdlib.GroupLayer):
             displays(l.children, s+1)
 
     l = pxd.children[0]
     displays(pxd.children)
     layers = pxd.all_layers()
-    d = l.adjusts
 
     # PXD debugging here
     with pxd:
-        l.adjusts.white_balance.tint = -0.8
-
+        l.adjusts.white_balance.tint = -1.0
+        print(l.adjusts)

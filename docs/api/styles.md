@@ -12,14 +12,14 @@ All `Style` objects contain the following properties:
 - `enabled`, a boolean as to if the style is enabled;
 - `opacity`, between 0 and 1;
 - `blendMode`, a `BlendMode` enum (default `normal`);
-- `color`, an `RGBA` object, the color of the fill effect. 
+- `color`, a `Color` object, the color of the fill effect. 
 
 `Fill` and `Stroke` styles contain:
 
 - `fillType`, a `FillType` (`.color`, `.gradient`) defining which is used for display.
 - `gradientPosition`, a tuple of two coordinates. These are in relative coordinates, where `[0, 0]` is the top-left and `[1, 1]` the bottom-right.
 - `gradient`, a `Gradient` object. This has the properties:
-  - `colors`, a list of two-tuples `(RGBA, x)`, where `x` ranges from 0 through 1;
+  - `colors`, a list of two-tuples `(Color, x)`, where `x` ranges from 0 through 1;
   - `kind`, a `GradientType` (`.linear`, `.radial`, `.angle`);
   - `midpoints`, a list of _n-1_ midpoints from 0 through 1. This tweaks the movement of the color gradient; it defaults to being in the middle of its respective points.
 

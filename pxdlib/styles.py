@@ -6,7 +6,7 @@ Multiple styles can be applied simultaneously, so they are defined as their own 
 from math import pi
 
 from .helpers import dicts, uuid
-from .structure import RGBA, Gradient
+from .structure import Color, Gradient
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
 )
@@ -94,13 +94,13 @@ class Style:
         self._dict['o'] = float(val)
 
     @property
-    def color(self) -> RGBA:
-        return RGBA._from_data(self._dict['c'])
+    def color(self) -> Color:
+        return Color._from_data(self._dict['c'])
 
     @color.setter
-    def color(self, val: RGBA):
-        if not isinstance(val, RGBA):
-            val = RGBA(val)
+    def color(self, val: Color):
+        if not isinstance(val, Color):
+            val = Color(val)
         self._dict['c'] = val._to_data()
 
 
@@ -173,7 +173,7 @@ _STYLE_DEFAULT = {
     'E': 1,
     'o': 1,
     'g': [1, {'m': [0.5], 'csr': 0, 's': [[1, [[0.20392156862745098, 0.47058823529411764, 0.9647058823529412, 1], 0]], [1, [[0.3254901960784314, 0.7137254901960784, 0.9764705882352941, 1], 1]]], 't': 0}],
-    'c': RGBA()._to_data(),
+    'c': Color()._to_data(),
     '_gPos': ([0, 0.5], [1, 0.5]),
     'B': 'sourceOver',
 }
