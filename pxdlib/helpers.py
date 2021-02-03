@@ -37,6 +37,57 @@ def dicts(*dicts, **kwargs):
     return result
 
 
+def BoundList(prop):
+    '''
+    A list that, when modified, re-sets its parent. Useful for convenience properties.
+    '''
+    class bindy(list):
+        __slots__ = ('_BoundList__bind', )
+
+        def _bind(self, val):
+            self._BoundList__bind = val
+            return self
+
+        def _bind_update(self):
+            setattr(self._BoundList__bind, prop, self)
+
+        def append(self, obj):
+            list.append(self, obj)
+            self._bind_update()
+
+        def clear(self):
+            list.clear(self)
+            self._bind_update()
+
+        def extend(self, iterable):
+            list.extend(self, iterable)
+            self._bind_update()
+
+        def insert(self, index: int, obj):
+            list.insert(self, index, obj)
+            self._bind_update()
+
+        def pop(self, index: int):
+            val = list.pop(self, index)
+            self._bind_update()
+            return val
+
+        def remove(self, obj):
+            list.remove(self, obj)
+            self._bind_update()
+
+        def reverse(self):
+            list.reverse(self)
+            self._bind_update()
+
+        def sort(self, *, key, reverse=False):
+            list.sort(self, key=key, reverse=reverse)
+            self._bind_update()
+
+    bindy.__name__ = f'<BoundList({prop!r})>'
+    return bindy
+
+
 def tupleBuddy(prop, names):
     '''
     Return a class mixin with convenient tuple accessors.

@@ -7,7 +7,7 @@ import plistlib
 import base64
 from io import UnsupportedOperation
 
-from .helpers import uuid, SizeHelper, PosHelper
+from .helpers import uuid, SizeHelper, PosHelper, BoundList
 from .structure import blob, make_blob, verb
 from .enums import LayerFlag, BlendMode, LayerTag
 from .errors import ChildError, MaskError, StyleError
@@ -15,9 +15,11 @@ from .errors import ChildError, MaskError, StyleError
 from .styles import _STYLES
 from .color_adjustments import ColorAdjustments
 
+Styles = BoundList('styles')
+
 
 class Layer(SizeHelper, PosHelper):
-    __slots__ = ('pxd', '_id')
+    __slots__ = ('pxd', '_id', '_styles')
 
     def __init__(self, parent, ID=None):
         if type(self) is Layer:
@@ -32,6 +34,9 @@ class Layer(SizeHelper, PosHelper):
             self._id = ID
         else:
             self._create(parent)
+
+        # helper for caching
+        self._styles = None
 
     def _create(self, parent):
         self._id = self._new_entry(parent, type(self))
@@ -495,6 +500,8 @@ class Layer(SizeHelper, PosHelper):
 
         would not have any effect.
         '''
+        if self._styles is not None:
+            return self._styles
         data = self._info('styles-data')
         if data is None:
             return []
@@ -506,12 +513,17 @@ class Layer(SizeHelper, PosHelper):
             for style in data[k]:
                 style = kind._from_layer(verb(style))
                 styles.append(style)
+
+        styles = Styles(styles)._bind(self)
+        self._styles = styles
         return styles
 
     @styles.setter
     def styles(self, val: list):
         if isinstance(self, GroupLayer):
             raise StyleError('GroupLayers cannot have styles.')
+        self._styles = Styles(val)._bind(self)
+
         # attempt to extract csr, ctx
         data = self._info('styles-data', None)
         if data is None:
