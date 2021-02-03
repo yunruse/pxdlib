@@ -121,6 +121,12 @@ class _Blend:
 
 class _Fill:
     # Mixin for gradients
+
+    def __init__(self, **kwargs):
+        if 'gradient' in kwargs and not 'fillType' in kwargs:
+            kwargs['fillType'] = FillType.gradient
+        super().__init__(**kwargs)
+
     @property
     def fillType(self) -> FillType:
         return FillType(self._dict['fT'])
@@ -188,7 +194,7 @@ _SHADOW_DEFAULT = {
 }
 
 
-class Fill(Style, _Fill, _Blend):
+class Fill(_Fill, _Blend, Style):
     _defaults = dicts(
         _STYLE_DEFAULT, _FILL_DEFAULT, {
             'c': [1, {'m': 2, 'c': [0, 0.635, 1, 1], 'csr': 0}],
@@ -198,7 +204,7 @@ class Fill(Style, _Fill, _Blend):
     _tag = 'f'
 
 
-class Stroke(Style, _Fill, _Blend):
+class Stroke(_Fill, _Blend, Style):
     _defaults = dicts(
         _STYLE_DEFAULT, _FILL_DEFAULT, {
             'sT': 0,
@@ -234,7 +240,7 @@ class Stroke(Style, _Fill, _Blend):
         self._dict['sW'] = float(val)
 
 
-class Shadow(Style, _Shadow, _Blend):
+class Shadow(_Shadow, _Blend, Style):
     _defaults = dicts(
         _STYLE_DEFAULT, _SHADOW_DEFAULT, {
             'a': pi * 1.5,
@@ -243,7 +249,7 @@ class Shadow(Style, _Shadow, _Blend):
     _tag = 'S'
 
 
-class InnerShadow(Style, _Shadow):
+class InnerShadow(_Shadow, Style):
     _defaults = dicts(
         _STYLE_DEFAULT, _SHADOW_DEFAULT, {
             'a': pi * 0.5,
