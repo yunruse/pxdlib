@@ -7,7 +7,7 @@ import plistlib
 import base64
 from io import UnsupportedOperation
 
-from .helpers import uuid
+from .helpers import uuid, SizeHelper
 from .structure import blob, make_blob, verb
 from .enums import LayerFlag, BlendMode, LayerTag
 from .errors import ChildError, MaskError, StyleError
@@ -16,7 +16,7 @@ from .styles import _STYLES
 from .color_adjustments import ColorAdjustments
 
 
-class Layer:
+class Layer(SizeHelper):
     __slots__ = ('pxd', '_id')
 
     def __init__(self, parent, ID=None):

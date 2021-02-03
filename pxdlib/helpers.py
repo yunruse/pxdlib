@@ -35,3 +35,21 @@ def dicts(*dicts, **kwargs):
         result.update(d)
     result.update(kwargs)
     return result
+
+
+class SizeHelper:
+    @property
+    def width(self):
+        return self.size[0]
+
+    @width.setter
+    def width(self, val):
+        self.size = (val, self.height)
+
+    @property
+    def height(self):
+        return self.size[1]
+
+    @height.setter
+    def height(self, val):
+        self.size = (self.width, val)
