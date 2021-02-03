@@ -81,9 +81,9 @@ class PXDFile(SizeHelper):
     def all_layers(self) -> list:
         return self._layers(recurse=True)
 
-    def find(self, name):
-        '''Get the first layer found with the given name.'''
-        for l in self.all_layers():
+    def find(self, name, recurse=True):
+        '''Get the first child found with the given name.'''
+        for l in self._layers(None, recurse):
             if l.name == name:
                 return l
 

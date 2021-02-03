@@ -584,6 +584,12 @@ class GroupLayer(Layer):
     def all_layers(self):
         return self.pxd._layers(self, recurse=True)
 
+    def find(self, name, recurse=True):
+        '''Get the first child found with the given name.'''
+        for l in self.pxd._layers(self, recurse):
+            if l.name == name:
+                return l
+
 
 class VectorLayer(Layer):
     pass
