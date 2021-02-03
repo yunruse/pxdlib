@@ -13,7 +13,7 @@ with pxd:
 
 ## Accessing a document
 
-The [`PXDFile`](/docs/api/PXDFile.md) itself has a variety of properties that may be accessed; it also exposes methods to obtain layers, which are various subclasses of [`Layer`](/docs/api/Layer.md).
+The [`PXDFile`](/docs/api/PXDFile.md) itself has a variety of properties that may be accessed; it also exposes methods to obtain layers, which are various subclasses of [`Layer`](/docs/api/Layer.md). Also of note are [`Color` and `Gradient` objects](/docs/api/structures.md)
 
 ## Errors
 
