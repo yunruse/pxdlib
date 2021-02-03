@@ -8,6 +8,7 @@ Note: This will be the last update for a little while. The vector and raster for
 
 - Various bug fixes.
 - Renamed `RGBA` to `Color`.
+- Added `Color.rgb`, `.hsv`, `.hls`, `.yiq` class methods to align with `colorsys`.
 - Improved `Gradient` API, repr.
 - Added the `layer.adjusts` property, a library of tweaks and dials that allows, say, `layer.adjusts.white_balance.tint = -0.4`.
 

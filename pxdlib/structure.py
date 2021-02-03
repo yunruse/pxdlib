@@ -2,6 +2,7 @@
 Basic structures
 '''
 
+import colorsys
 from struct import Struct
 
 from .errors import VersionError
@@ -148,7 +149,10 @@ def verb(data, version=1):
 
 class Color:
     '''
-    RGBA color in [0, 255]-space.
+    A color.
+
+    May be instantiated in [0, 255]-space, or in
+    [0, 1]-space for various formats defined in colorsys.
     '''
 
     def __init__(self, r=0, g=0, b=0, a=255):
@@ -179,6 +183,22 @@ class Color:
         self.g = num(g)
         self.b = num(b)
         self.a = num(a)
+
+    @classmethod
+    def rgb(cls, r, g, b, a=1):
+        return cls(r*255, g*255, b*255, a*255)
+
+    @classmethod
+    def hsv(cls, h, s, v, a=1):
+        return cls.rgb(*colorsys.hsv_to_rgb(h, s, v), a)
+
+    @classmethod
+    def hls(cls, h, l, s, a=1):
+        return cls.rgb(*colorsys.hls_to_rgb(h, l, s), a)
+
+    @classmethod
+    def yiq(cls, y, i, q, a=1):
+        return cls.rgb(*colorsys.yiq_to_rgb(y, i, q), a)
 
     def __iter__(self):
         tup = self.r, self.g, self.b, self.a
