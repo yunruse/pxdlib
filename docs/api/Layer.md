@@ -28,8 +28,8 @@ Layers also have the following shared attributes, all of which can be set:
 - `is_locked`, a boolean. This is only a convenience for the UI – it does not affect whether `pxdlib` can modify the layer!
 - `is_mask`, a boolean. If true, the layer is the mask for its parent.
 - `is_clipping`, a boolean. If true, the layer is a clipping mask; it clips onto the layer below it.
-- `position`, a tuple of the x,y coordinates of the center of the layer, defined in pixels such that the origin is the bottom-left.
-- `size`,  a tuple of the w,h size of the layer defined in pixels.
+- `position` (also `x` and `y`), the x and y coordinates of the center of the layer, in pixels such that the origin is the bottom-left.
+- `size` (also `width` and `height`), the width and height of the layer in pixels.
 - `angle`, a float in degrees in the range [0, 360). Nominally 0 except for text layers.
 - `blendMode` is an enumerable from `pxdlib.BlendMode`.
 - `tag` is an enumerable from `pxdlib.LayerTag` (or, an integer from 0 through 7) representing a color tag for user convenience. It is truthy if a tag is applied to the layer.

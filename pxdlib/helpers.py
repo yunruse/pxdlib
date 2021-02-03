@@ -63,3 +63,4 @@ def tupleBuddy(prop, names):
 
 
 SizeHelper = tupleBuddy('size', ('width', 'height'))
+PosHelper = tupleBuddy('position', ('x', 'y'))
