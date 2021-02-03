@@ -111,3 +111,22 @@ def tupleBuddy(prop, names):
                 getter, setter, doc=f'Convenience member for self.{prop}[{i}].'))
         return cls
     return wrapper
+
+
+def synonymBuddy(aliases):
+    def wrapper(cls):
+        for link, aa in aliases.items():
+            assert link.isidentifier(), link
+
+            def getter(self):
+                return getattr(self, link)
+
+            def setter(self, val):
+                setattr(self, link, val)
+
+            prop = property(getter, setter)
+            for a in aa:
+                assert a.isidentifier(), a
+                setattr(cls, a, prop)
+        return cls
+    return wrapper
