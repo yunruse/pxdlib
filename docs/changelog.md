@@ -17,6 +17,7 @@ This will probably be the last update for a while until I figure out raster and 
 - Tweaked `layer.position` to be relative to the top left, not bottom left.
 - Added a binding class to `layer.styles` such that `.append` (etc) work.
 - Auto-set `fillType` based on if a style has a `gradient` provided.
+- Added `CENTER`, `TOPLEFT`, `BOTTOM` (etc) for use in `gradientPosition`.
 - The beginnings of a `layer.adjusts` property, a library of tweaks and dials that allows, say, `layer.adjusts.white_balance.tint = -0.4`. (Not completed!)
 
 ### 0.0.4 (2020-01-15)

@@ -73,6 +73,18 @@ class GradientType(enum.IntEnum):
     angle = 2
 
 
+# gradient direction helpers
+CENTER = (0.5, 0.5)
+TOPLEFT = (0, 0)
+TOPRIGHT = (1, 0)
+BOTTOMLEFT = (0, 1)
+BOTTOMRIGHT = (1, 1)
+TOP = (0.5, 0)
+BOTTOM = (0.5, 1)
+LEFT = (0, 0.5)
+RIGHT = (1, 0.5)
+
+
 class StrokeType(enum.IntEnum):
     regular = 0
     dashed = 1
