@@ -7,7 +7,7 @@ import plistlib
 import base64
 from io import UnsupportedOperation
 
-from .helpers import uuid, SizeHelper, PosHelper, BoundList
+from .helpers import uuid, BoundList, tupleBuddy
 from .structure import blob, make_blob, verb
 from .enums import LayerFlag, BlendMode, LayerTag
 from .errors import ChildError, MaskError, StyleError
@@ -18,7 +18,9 @@ from .color_adjustments import ColorAdjustments
 Styles = BoundList('styles')
 
 
-class Layer(SizeHelper, PosHelper):
+@tupleBuddy('size', ('width', 'height'))
+@tupleBuddy('position', ('x', 'y'))
+class Layer:
     __slots__ = ('pxd', '_id', '_styles')
 
     def __init__(self, parent, ID=None):

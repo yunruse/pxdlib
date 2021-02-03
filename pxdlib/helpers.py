@@ -94,25 +94,20 @@ def tupleBuddy(prop, names):
     For example, tupleBuddy('position', ('x', 'y'))
     makes .x and .y valid properties for .position.
     '''
-    assert prop.isidentifier()
-    for i in names:
-        assert i.isidentifier()
-    helper = type(f'{prop}Helper', (), {
-        '__doc__': f'Auto-generated with: tupleBuddy({prop!r}, {names})'
-    })
-    for i, n in enumerate(names):
-        def getter(self):
-            return getattr(self, prop)[i]
+    def wrapper(cls):
+        assert prop.isidentifier()
+        for i, n in enumerate(names):
+            assert n.isidentifier()
 
-        def setter(self, val):
-            vals = list(getattr(self, prop))
-            vals[i] = val
-            setattr(self, prop, tuple(vals))
+            def getter(self):
+                return getattr(self, prop)[i]
 
-        setattr(helper, n, property(
-            getter, setter, doc=f'Convenience member for self.{prop}[{i}].'))
-    return helper
+            def setter(self, val):
+                vals = list(getattr(self, prop))
+                vals[i] = val
+                setattr(self, prop, tuple(vals))
 
-
-SizeHelper = tupleBuddy('size', ('width', 'height'))
-PosHelper = tupleBuddy('position', ('x', 'y'))
+            setattr(cls, n, property(
+                getter, setter, doc=f'Convenience member for self.{prop}[{i}].'))
+        return cls
+    return wrapper

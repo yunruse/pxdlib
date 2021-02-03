@@ -8,14 +8,15 @@ import sqlite3
 from io import UnsupportedOperation
 from collections import namedtuple
 
-from .helpers import SizeHelper
+from .helpers import tupleBuddy
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
 
 guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 
-class PXDFile(SizeHelper):
+@tupleBuddy('size', ('width', 'height'))
+class PXDFile:
     def __repr__(self):
         return f"PXDFile({repr(str(self.path))})"
 
