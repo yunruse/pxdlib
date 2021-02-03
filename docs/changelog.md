@@ -12,6 +12,7 @@ Note: This will be the last update for a little while. The vector and raster for
 - Added `Color.rgb`, `.hsv`, `.hls`, `.yiq` class methods to align with `colorsys`.
 - Improved `Gradient` API, repr.
 - Added `.height`, `.width` convenience properties for both `Layer` and `PXDFile`.
+- Tweaked `layer.position` to be relative to the top left, not bottom left.
 - Added the `layer.adjusts` property, a library of tweaks and dials that allows, say, `layer.adjusts.white_balance.tint = -0.4`.
 
 ### 0.0.4 (2020-01-15)

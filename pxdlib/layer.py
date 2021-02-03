@@ -345,14 +345,15 @@ class Layer(SizeHelper):
     def position(self) -> tuple:
         '''
         The center of the layer, defined in (x, y) pixels such that
-        the origin is at the bottom left.
+        the origin is at the top left.
         '''
-        return tuple(blob(self._info('position')))
+        x, y = tuple(blob(self._info('position')))
+        return x, self.pxd.height - y
 
     @position.setter
     def position(self, pos):
         x, y = pos
-        self._setinfo('position', make_blob(b'PTPt', x, y))
+        self._setinfo('position', make_blob(b'PTPt', x, self.pxd.height - y))
 
     @property
     def size(self) -> int:
