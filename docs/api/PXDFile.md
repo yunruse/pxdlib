@@ -6,14 +6,15 @@ The `PXDFile` object contains a variety of metadata about the Pixelmator documen
 
 For editing purposes:
 
-- `open()`. Starts a transaction to modify the document. Changes will only be made on `close()`.
-- `close()`. Closes a transaction and commits any changes made. `open()` and `close()` are useful in certain edge cased, but it is recommended to use a `with pxd` block.
+- `open()` starts a transaction to modify the document. Changes will only be made on `close()`.
+- `close()` closes a transaction and commits any changes made. `open()` and `close()` are useful in certain edge cases, but it is recommended to use a `with pxd` block, which handles both a litle easier.
+- `copyto(path, overwrite=False) -> PXDfile` copies the PXD file to a new directory and returns it.
 
 For accessing layers:
 
-- `children` is a list of the top-level layers;
-- `all_layers()` provides a list of _all_ layers in the document;
-- `find(name)` will find the first layer with a given name.
+- `children -> list` is a list of the top-level layers;
+- `all_layers() -> list` provides a list of _all_ layers in the document;
+- `find(name) -> Layer` will find the first layer with a given name.
 
 In general, layers are ordered as seen visually in the document.
 

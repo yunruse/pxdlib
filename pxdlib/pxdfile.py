@@ -3,6 +3,7 @@ PXDFile class, handling most database access.
 '''
 
 from pathlib import Path
+import shutil
 import sqlite3
 from io import UnsupportedOperation
 from collections import namedtuple
@@ -121,6 +122,25 @@ class PXDFile:
 
     def __del__(self):
         self._db.close()
+
+    def copyto(self, path, overwrite=False):
+        '''
+        Copy this PXDFile to a path, and return the copy.
+
+        Make sure you pxd.close() so that all changes are saved.
+        '''
+        if not self.closed:
+            raise UnsupportedOperation('close file before copying!')
+
+        path = Path(path)
+        if path.is_dir():
+            if overwrite:
+                shutil.rmtree(path)
+            else:
+                raise FileExistsError(
+                    'The .pxd file already exists. Pass overwrite=True, or delete it.')
+        shutil.copytree(self.path, path)
+        return type(self)(path)
 
     def _set(self, key, data, is_meta=False):
         if self.closed:

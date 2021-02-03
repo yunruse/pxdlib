@@ -7,6 +7,7 @@
 Note: This will be the last update for a little while. The vector and raster formats are tough nuts to crack, so I'm going to come to it with fresh eyes.
 
 - Various bug fixes.
+- Added `pxd.copyto` as a wrapper to `shutil`.
 - Renamed `RGBA` to `Color`.
 - Added `Color.rgb`, `.hsv`, `.hls`, `.yiq` class methods to align with `colorsys`.
 - Improved `Gradient` API, repr.
