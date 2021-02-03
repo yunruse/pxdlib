@@ -4,7 +4,7 @@
 
 ### 0.0.5
 
-Note: This will be the last update for a little while. The vector and raster formats are tough nuts to crack, so I'm going to come to it with fresh eyes.
+This will probably be the last update for a while until I figure out raster and vector stuff. Until then, however, I've been using this in another project, so I've tried to tighten the API as much as possible. 
 
 - Various bug fixes.
 - Added `pxd.copyto` as a wrapper to `shutil`.
@@ -15,7 +15,7 @@ Note: This will be the last update for a little while. The vector and raster for
 - Disallowed setting `layer.size`: will re-enable individually for raster, vector, etc as convenience wrappers for transformation.
 - Added `layer.x`, `layer.y` convenience properties.
 - Tweaked `layer.position` to be relative to the top left, not bottom left.
-- Added the `layer.adjusts` property, a library of tweaks and dials that allows, say, `layer.adjusts.white_balance.tint = -0.4`.
+- The beginnings of a `layer.adjusts` property, a library of tweaks and dials that allows, say, `layer.adjusts.white_balance.tint = -0.4`. (Not completed!)
 
 ### 0.0.4 (2020-01-15)
 
