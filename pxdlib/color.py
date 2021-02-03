@@ -49,20 +49,20 @@ class Color:
         self.a = num(a)
 
     @classmethod
-    def rgb(cls, r, g, b, a=1):
+    def from_rgb(cls, r, g, b, a=1):
         return cls(r*255, g*255, b*255, a*255)
 
     @classmethod
-    def hsv(cls, h, s, v, a=1):
-        return cls.rgb(*colorsys.hsv_to_rgb(h, s, v), a)
+    def from_hsv(cls, h, s, v, a=1):
+        return cls.from_rgb(*colorsys.hsv_to_rgb(h, s, v), a)
 
     @classmethod
-    def hls(cls, h, l, s, a=1):
-        return cls.rgb(*colorsys.hls_to_rgb(h, l, s), a)
+    def from_hls(cls, h, l, s, a=1):
+        return cls.from_rgb(*colorsys.hls_to_rgb(h, l, s), a)
 
     @classmethod
-    def yiq(cls, y, i, q, a=1):
-        return cls.rgb(*colorsys.yiq_to_rgb(y, i, q), a)
+    def from_yiq(cls, y, i, q, a=1):
+        return cls.from_rgb(*colorsys.yiq_to_rgb(y, i, q), a)
 
     def __iter__(self):
         tup = self.r, self.g, self.b, self.a

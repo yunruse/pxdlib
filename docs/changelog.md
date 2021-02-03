@@ -11,7 +11,7 @@ This will probably be the last update for a while until I figure out raster and 
 - Added `pxd.copyto` as a wrapper to `shutil`.
 - `layer.copyto` adds ` (Copy)`, ` (Copy 2)`, etc to avoid duplicate names.
 - Renamed `RGBA` to `Color`.
-- Added `Color.rgb`, `.hsv`, `.hls`, `.yiq` class methods to align with `colorsys`. Also includes the readable properties `.r`, `.h`, etc.
+- Added `Color.from_{rgb,hsv,hls,yiq}` class methods to align with `colorsys`.
 - Improved `Gradient` API, repr.
 - Added `.height`, `.width` convenience properties for both `Layer` and `PXDFile`.
 - Disallowed setting `layer.size`: will re-enable individually for raster, vector, etc as convenience wrappers for transformation.
