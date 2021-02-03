@@ -219,23 +219,35 @@ class Gradient:
     '''
     Gradient of two or more colours.
 
-    Contains a list of (RGBA, x),
-    alongside a list of midpoints
-    and the gradient kind.
+    Contains a list of colors, or a list of (col, x)
+    for position x in the range [0, 1].
+    Midpoints for the gradient interpolation
+    can be provided but default to the position midpoint.
     '''
 
-    _default_cols = [
-        (RGBA('48a0f8'), 0), (RGBA('48a0f800'), 1)
-    ]
+    _default_cols = ['48a0f8' '48a0f800']
 
-    def __init__(self, colors=None, midpoints=None, kind=0):
+    def __init__(self, *colors, midpoints=None, kind=GradientType.linear):
+        if len(colors) == 1 and isinstance(colors[0], (list, tuple)):
+            colors = colors[0]
         self.kind = GradientType(kind)
 
-        self.colors = colors or self._default_cols
-        x0 = -1
-        for c, x in self.colors:
-            assert x0 < x
-            x0 = x
+        colors = colors or self._default_cols
+        pos_provided = isinstance(colors[0], tuple)
+
+        if pos_provided:
+            self.colors = []
+            x0 = -1
+            for c, x in self.colors:
+                assert x0 < x
+                x0 = x
+                self.colors.append((Color(c), x))
+        else:
+            # no positions, so at equal steps
+            self.colors = [
+                (Color(c), i/(len(colors)-1))
+                for i, c in enumerate(colors)
+            ]
 
         if midpoints is None:
             midpoints = []
@@ -243,29 +255,48 @@ class Gradient:
                 c1, x1 = self.colors[i]
                 c2, x2 = self.colors[i+1]
                 midpoints.append((x1 + x2)/2)
+        else:
+            M = len(midpoints)
+            C = len(self.colors)
+            if M != C - 1:
+                raise ValueError(
+                    f'Need {C-1} midpoints, got {M}.'
+                )
         self.midpoints = midpoints
 
-    def __repr__(self):
-        vals = []
-        if self.colors != self._default_cols:
-            vals.append(repr(self.colors))
+    def is_positions_default(self):
+        N = len(self.colors) - 1
+        for i, (c, x) in enumerate(self.colors):
+            x_apparent = i / N
+            if x != x_apparent:
+                return False
+        return True
 
-        midpoints_default = True
+    def is_midpoints_default(self):
         for i in range(len(self.colors) - 1):
             c1, x1 = self.colors[i]
             c2, x2 = self.colors[i+1]
             m_apparent = (x1 + x2)/2
-            if self.midpoints[i] != m_apparent:
-                midpoints_default = False
-                break
+            m = self.midpoints[i]
+            if m != m_apparent:
+                return False
+        return True
 
-        if not midpoints_default:
-            vals.append(repr(self.midpoints))
+    def __repr__(self):
+        vals = []
+        if self.colors != self._default_cols:
+            col_only = self.is_positions_default()
+            vals.append(', '.join([
+                repr(str(c) if col_only else (str(c), x))
+                for c, x in self.colors]))
+
+        if not self.is_midpoints_default():
+            vals.append('midpoints=' + str(self.midpoints))
 
         if self.kind != 0:
-            vals.append(str(self.kind))
+            vals.append('kind=' + str(self.kind))
 
-        return f"Gradient({', '.join(vals)})"
+        return f"{type(self).__name__}({', '.join(vals)})"
 
     @classmethod
     def _from_data(cls, data):
