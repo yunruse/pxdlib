@@ -6,7 +6,7 @@ Multiple styles can be applied simultaneously, so they are defined as their own 
 from math import pi
 
 from .helpers import dicts, uuid
-from .structure import Color, Gradient
+from .color import Color, Gradient
 from .enums import (
     FillType, BlendMode, StrokeType, StrokePosition
 )
