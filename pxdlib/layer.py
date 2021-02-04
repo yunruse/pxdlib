@@ -636,7 +636,8 @@ class TextLayer(Layer):
         return o[o[1]['NSString']]['NS.string']
 
     @rawText.setter
-    def rawText(self, val):
+    def _rawText(self, val):
+        # currently doesn't work and just deletes layer
         _t = self._text
         o = _t['$objects']
         o[o[1]['NSString']]['NS.string'] = val
