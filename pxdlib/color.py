@@ -6,9 +6,24 @@ import colorsys
 
 from .structure import verb
 from .enums import GradientType
-from .helpers import num, hexbyte
+from .helpers import num, hexbyte, tupleBuddy, synonymBuddy
+
+_ALIASES = {
+    'a': ('alpha', ),
+    'h': ('hue', ),
+    'v': ('val', 'value'),
+    'l': ('lum', 'lumin', 'luminosity'),
+    'r': ('red', ),
+    'g': ('green', ),
+    'b': ('blue', ),
+}
 
 
+@tupleBuddy('hsv', ('h', 'sv', 'v'))
+@tupleBuddy('hls', ('h', 'l', 'sl'))
+@tupleBuddy('yiq', ('y', 'i', 'q'))
+@tupleBuddy('rgb', ('r', 'g', 'b'))
+@synonymBuddy(_ALIASES)
 class Color:
     '''
     A color.
@@ -16,62 +31,101 @@ class Color:
     May be instantiated in [0, 255]-space, or in
     [0, 1]-space for various formats defined in colorsys.
     '''
+    __slots__ = ('R', 'G', 'B', 'A')
 
-    def __init__(self, r=0, g=0, b=0, a=255):
+    def __init__(self, R=0, G=0, B=0, A=255):
         '''
         Accepts a hex string, or RGBA values in [0, 255]-space.
         '''
-        if isinstance(r, Color):
-            r, g, b, a = r.r, r.g, r.b, r.a
-        elif isinstance(r, (tuple, list)):
-            if len(r) == 3:
-                r, g, b = r
-            elif len(r) == 4:
-                r, g, b, a = r
+        if isinstance(R, Color):
+            R, G, B, A = R.R, R.G, R.B, R.a
+        elif isinstance(R, (tuple, list)):
+            if len(R) == 3:
+                R, G, B = R
+            elif len(R) == 4:
+                R, G, B, A = R
             else:
                 raise ValueError('Iterable must be length 3 or 4.')
-        elif isinstance(r, str):
-            string = r
+        elif isinstance(R, str):
+            string = R
             if string.startswith('#'):
                 string = string[1:]
             if not len(string) in (6, 8):
                 raise ValueError(
                     'String colors must be #RRGGBB or #RRGGBBAA.'
                 )
-            r = int(string[0:2], base=16)
-            g = int(string[2:4], base=16)
-            b = int(string[4:6], base=16)
+            R = int(string[0:2], base=16)
+            G = int(string[2:4], base=16)
+            B = int(string[4:6], base=16)
             if len(string) == 8:
-                a = int(string[6:8], base=16)
-        self.r = num(r)
-        self.g = num(g)
-        self.b = num(b)
-        self.a = num(a)
+                A = int(string[6:8], base=16)
+        self.R = num(R)
+        self.G = num(G)
+        self.B = num(B)
+        self.A = num(A)
 
     @classmethod
     def from_rgb(cls, r, g, b, a=1):
         return cls(r*255, g*255, b*255, a*255)
 
+    @property
+    def a(self):
+        return self.A / 255
+
+    @property
+    def rgb(self):
+        return (self.R/255, self.G/255, self.B/255)
+
+    @rgb.setter
+    def rgb(self, val):
+        r, g, b = val
+        self.R = r * 255
+        self.G = g * 255
+        self.B = g * 255
+
     @classmethod
     def from_hsv(cls, h, s, v, a=1):
         return cls.from_rgb(*colorsys.hsv_to_rgb(h, s, v), a)
+
+    @property
+    def hsv(self, val):
+        return colorsys.rgb_to_hsv(*self.rgb)
+
+    @hsv.setter
+    def hsv(self, val):
+        self.rgb = colorsys.hsv_to_rgb(*val)
 
     @classmethod
     def from_hls(cls, h, l, s, a=1):
         return cls.from_rgb(*colorsys.hls_to_rgb(h, l, s), a)
 
+    @property
+    def hls(self, val):
+        return colorsys.rgb_to_hls(*self.rgb)
+
+    @hls.setter
+    def hls(self, val):
+        self.rgb = colorsys.hls_to_rgb(*val)
+
     @classmethod
     def from_yiq(cls, y, i, q, a=1):
         return cls.from_rgb(*colorsys.yiq_to_rgb(y, i, q), a)
 
+    @property
+    def yiq(self):
+        return colorsys.rgb_to_yiq(*self.rgb)
+
+    @yiq.setter
+    def yiq(self, val):
+        self.rgb = colorsys.yiq_to_rgb(*val)
+
     def __iter__(self):
-        tup = self.r, self.g, self.b, self.a
-        return iter(tup)
+        return iter((self.R, self.G, self.B, self.a))
 
     def __str__(self):
-        val = hexbyte(self.r) + hexbyte(self.g) + hexbyte(self.b)
-        if self.a != 255:
-            val += hexbyte(self.a)
+        val = hexbyte(self.R) + hexbyte(self.G) + hexbyte(self.B)
+        if self.A != 255:
+            val += hexbyte(self.A)
         return '#' + val
 
     def __repr__(self):
@@ -82,14 +136,12 @@ class Color:
         data = verb(data)
         assert data['m'] == 2
         assert data['csr'] == 0
-        r, g, b, a = data['c']
-        return cls(r*255, g*255, b*255, a*255)
+        return cls.from_rgb(*data['c'])
 
     def _to_data(self):
-        r, g, b, a = list(self)
         return [1, {
             'm': 2, 'csr': 0,
-            'c': [r/255, g/255, b/255, a/255]
+            'c': self.rgb
         }]
 
     def __eq__(self, other):
@@ -188,15 +240,15 @@ class Gradient:
         assert data['csr'] == 0
         colors = [verb(i) for i in data['s']]
         return cls([
-            (Color(r*255, g*255, b*255, a*255), x)
-            for (r, g, b, a), x in colors
+            (Color.from_rgb(*c), x)
+            for c, x in colors
         ], midpoints=data['m'], kind=data['t'])
 
     def _to_data(self):
         data = {'csr': 0}
         data['m'] = list(self.midpoints)
         data['s'] = [
-            [1, [[c.r/255, c.g/255, c.g/255, c.a/255], x]]
+            [1, [c.rgb, x]]
             for c, x in self.colors
         ]
         data['t'] = int(self.kind)
