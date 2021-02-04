@@ -96,9 +96,8 @@ def tupleBuddy(prop, names):
     '''
     def wrapper(cls):
         assert prop.isidentifier()
-        for i, n in enumerate(names):
-            assert n.isidentifier()
 
+        def propgen(i):
             def getter(self):
                 return getattr(self, prop)[i]
 
@@ -106,9 +105,11 @@ def tupleBuddy(prop, names):
                 vals = list(getattr(self, prop))
                 vals[i] = val
                 setattr(self, prop, tuple(vals))
+            return property(getter, setter, doc=f'Convenience member for self.{prop}[{i}].')
 
-            setattr(cls, n, property(
-                getter, setter, doc=f'Convenience member for self.{prop}[{i}].'))
+        for i, n in enumerate(names):
+            assert n.isidentifier()
+            setattr(cls, n, propgen(i))
         return cls
     return wrapper
 
