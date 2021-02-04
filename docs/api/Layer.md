@@ -29,7 +29,6 @@ Layers also have the following shared attributes, all of which can be set:
 - `is_mask`, a boolean. If true, the layer is the mask for its parent.
 - `is_clipping`, a boolean. If true, the layer is a clipping mask; it clips onto the layer below it.
 - `position` (also `x` and `y`), the x and y coordinates of the center of the layer, in pixels such that the origin is the bottom-left.
-- `size` (also `width` and `height`), the width and height of the layer in pixels. (Setting this is currently disabled.)
 - `angle`, a float in degrees in the range [0, 360). Nominally 0 except for text layers.
 - `blendMode` is an enumerable from `pxdlib.BlendMode`.
 - `tag` is an enumerable from `pxdlib.LayerTag` (or, an integer from 0 through 7) representing a color tag for user convenience. It is truthy if a tag is applied to the layer.
@@ -39,18 +38,39 @@ Layers also have the following shared attributes, all of which can be set:
 <a id="GroupLayer"></a>
 ## GroupLayer
 
-A `GroupLayer` contains nothing other than its children; its coordinates and size are only given as reference. Identical to `PXDFile`, the following methods are given:
+A `GroupLayer` contains nothing other than its children. Identical to `PXDFile`, the following methods are given:
 
 - `children` is a list of the child layerss
 - `all_layers()` provides a list of _all_ layers in the group;
 - `find(name)` will find the first layer with a given name.
 
+Its attributes include:
+
+- `size` (also `width` and `height`), the width and height of the layer in pixels. This is read-only and simply gives the bounding box of its contents.
+
 <a id="VectorLayer"></a>
 ## VectorLayer
+
+A `VectorLayer` contains a series of shapes. (Currently, these are not accessible.)
+
+Attributes include:
+
+- `size` (also `width` and `height`), the width and height of the layer in pixels.This is currently read-only.
 
 <a id="RasterLayer"></a>
 ## RasterLayer
 
+A `RasterLayer` contains a raster image, a grid of pixels. (Currently, this is not accessible.)
+
+Attributes include:
+
 <a id="TextLayer"></a>
 ## TextLayer
+
+A `TextLayer` contains formatted text. It may also contain a single shape, the path along which the text moves.
+
+Attributes include:
+
+- `size` (also `width` and `height`), the width and height of the layer in pixels. This is currently read-only.
+- `rawText`, the text without formatting. This is currently read-only.
 
