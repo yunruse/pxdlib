@@ -2,6 +2,7 @@
 Layer objects, bound to a PXD file.
 '''
 
+import enum
 import json
 import plistlib
 import base64
@@ -9,11 +10,20 @@ from io import UnsupportedOperation
 
 from .helpers import uuid, BoundList, tupleBuddy
 from .structure import blob, make_blob, verb
-from .enums import LayerFlag, BlendMode, LayerTag
+from .enums import BlendMode, LayerTag
 from .errors import ChildError, MaskError, StyleError
 
 from .styles import _STYLES
 from .color_adjustments import ColorAdjustments
+
+
+class _LayerFlag(enum.IntFlag):
+    visible = 1 << 0
+    locked = 1 << 1
+    clipping = 1 << 3
+    mask = 1 << 4
+    raster = 1 << 6
+
 
 Styles = BoundList('styles')
 
@@ -191,7 +201,7 @@ class Layer:
             self.mask.delete()
 
         mask.parent = self
-        mask._flag_set(LayerFlag.mask, True)
+        mask._flag_set(_LayerFlag.mask, True)
 
     def delete(self):
         '''
@@ -422,11 +432,11 @@ class Layer:
     # Flags
 
     @property
-    def _flags(self) -> LayerFlag:
-        return LayerFlag(blob(self._info('flags')))
+    def _flags(self) -> _LayerFlag:
+        return _LayerFlag(blob(self._info('flags')))
 
     @_flags.setter
-    def _flags(self, val: LayerFlag):
+    def _flags(self, val: _LayerFlag):
         self._setinfo('flags', make_blob(b'UI64', int(val)))
 
     def _flag_set(self, flag, truth):
@@ -440,11 +450,11 @@ class Layer:
         '''
         A boolean defining if the layer is visible.
         '''
-        return bool(self._flags & LayerFlag.visible)
+        return bool(self._flags & _LayerFlag.visible)
 
     @is_visible.setter
     def is_visible(self, val: bool):
-        self._flag_set(LayerFlag.visible, bool(val))
+        self._flag_set(_LayerFlag.visible, bool(val))
 
     @property
     def is_locked(self) -> bool:
@@ -453,22 +463,22 @@ class Layer:
 
         This does not affect if `pxdlib` can modify it though :)
         '''
-        return bool(self._flags & LayerFlag.locked)
+        return bool(self._flags & _LayerFlag.locked)
 
     @is_locked.setter
     def is_locked(self, val: bool):
-        self._flag_set(LayerFlag.locked, bool(val))
+        self._flag_set(_LayerFlag.locked, bool(val))
 
     @property
     def is_clipping(self) -> bool:
         '''
         A boolean defining if the layer is a clipping mask.
         '''
-        return bool(self._flags & LayerFlag.clipping)
+        return bool(self._flags & _LayerFlag.clipping)
 
     @is_clipping.setter
     def is_clipping(self, val: bool):
-        self._flag_set(LayerFlag.clipping, bool(val))
+        self._flag_set(_LayerFlag.clipping, bool(val))
 
     @property
     def is_mask(self) -> bool:
@@ -479,7 +489,7 @@ class Layer:
         in a illogical situation: layers can only have one mask,
         and not all layers can have non-mask children.
         '''
-        return bool(self._flags & LayerFlag.mask)
+        return bool(self._flags & _LayerFlag.mask)
 
     @is_mask.setter
     def is_mask(self, masked: bool):
@@ -499,7 +509,7 @@ class Layer:
                 'Consider setting `layer.parent`.'
             )
 
-        self._flag_set(LayerFlag.mask, bool(val))
+        self._flag_set(_LayerFlag.mask, bool(val))
 
     @property
     def styles(self):

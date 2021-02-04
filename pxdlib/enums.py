@@ -1,15 +1,7 @@
 '''
-Enumerables used in layer objects.
+(API-facing) enumerables that may be used in Layer objects.
 '''
 import enum
-
-
-class LayerFlag(enum.IntFlag):
-    visible = 1 << 0
-    locked = 1 << 1
-    clipping = 1 << 3
-    mask = 1 << 4
-    raster = 1 << 6
 
 
 class BlendMode(enum.Enum):
