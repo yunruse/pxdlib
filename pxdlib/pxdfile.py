@@ -123,7 +123,8 @@ class PXDFile:
         self.close()
 
     def __del__(self):
-        self._db.close()
+        if hasattr(self, '_db'):
+            self._db.close()
 
     def copyto(self, path, overwrite=False):
         '''
