@@ -186,8 +186,8 @@ class PXDFile:
         '''
         data = [blob(b) for b in blob(self._info['guides'])]
         return guides(
-            [r for _, r, vert in data if not vert],
-            [r for _, r, vert in data if vert]
+            list(sorted(r for _, r, vert in data if not vert)),
+            list(sorted(r for _, r, vert in data if vert))
         )
 
     @guides.setter
