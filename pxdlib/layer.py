@@ -528,7 +528,7 @@ class Layer:
         if data is None:
             return []
         data = verb(json.loads(data.decode()))
-        assert data['csr'] == 0
+        # assert data['csr'] == 0
         styles = []
         for k in 'fsiS':
             kind = _STYLES[k]

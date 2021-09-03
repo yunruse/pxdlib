@@ -135,7 +135,7 @@ class Color:
     def _from_data(cls, data):
         data = verb(data)
         assert data['m'] == 2
-        assert data['csr'] == 0
+        # assert data['csr'] == 0
         return cls.from_rgb(*data['c'])
 
     def _to_data(self):
@@ -237,7 +237,7 @@ class Gradient:
     @classmethod
     def _from_data(cls, data):
         data = verb(data)
-        assert data['csr'] == 0
+        # assert data['csr'] == 0
         colors = [verb(i) for i in data['s']]
         return cls([
             (Color.from_rgb(*c), x)
