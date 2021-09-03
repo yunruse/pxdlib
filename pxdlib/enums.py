@@ -44,6 +44,9 @@ class BlendMode(enum.Enum):
 
 
 class LayerTag(enum.IntEnum):
+    '''
+    The 'color' used to tag a layer for searching.
+    '''
     none = 0
     red = 1
     orange = 2
