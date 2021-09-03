@@ -33,6 +33,9 @@ class Color:
     '''
     __slots__ = ('R', 'G', 'B', 'A')
 
+    def __hash__(self):
+        return hash(str(self))
+
     def __init__(self, R=0, G=0, B=0, A=255):
         '''
         Accepts a hex string, or RGBA values in [0, 255]-space.
