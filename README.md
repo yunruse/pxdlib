@@ -31,14 +31,18 @@ with PXDFile('graph.pxd') as pxd:
 
 As `pxdlib` is available on PyPI, it will be updated in `production` only when a new version is available. The reverse-engineering document, however, will be kept up-to-date in `production` as behaviour is confirmed.
 
-Until the library is considered "done", it will not be confirmed to work on any specific Pixelmator version other than "the latest". I will consider `pxdlib` "done" when:
+## Limitations
+
+The following features are not available, and are future goals:
 
 - raster layers are accessible in a format which is compatible with a good raster-manipulating API;
 - vector layers are fully modifiable;
 - text layers can be modified, at least with the common formatting capabilities;
 - all effects and filters are documented and available;
 - layers can be created and destroyed;
+- the above is all formally tested;
+- backwards compatibility exists.
 
-and all of the above is formally tested with a specially-created document.
+Thankfully Pixelmator is pretty backwards-compatible, so the basic automation tools – toggling visibility, moving items around – should probably work forever. No promises though!
 
 A changelog is available [here](https://github.com/yunruse/pxdlib/blob/production/docs/changelog.md).
