@@ -74,6 +74,7 @@ class ColorAdjustments:
         self._layer.adjusts = self
 
     def __repr__(self):
+        # TODO: maybe hide from __repr__ if the effect is disabled!
         changes = []
         for k1 in _KEYS:
             default = _DEFAULTS[k1]
