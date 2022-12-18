@@ -10,14 +10,14 @@ from collections import namedtuple
 from tempfile import mkdtemp
 from zipfile import is_zipfile, ZipFile
 
-from .helpers import tupleBuddy
+from .helpers import add_tuple_shortcuts
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
 
 guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 
-@tupleBuddy('size', ('width', 'height'))
+@add_tuple_shortcuts('size', ('width', 'height'))
 class PXDFile:
     path: Path  # The path the PXD file or folder is saved at.
     _edit_dir: Path  # The path the PXD folder is editable at.

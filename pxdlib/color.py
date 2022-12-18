@@ -6,9 +6,13 @@ import colorsys
 
 from .structure import verb
 from .enums import GradientType
-from .helpers import num, hexbyte, tupleBuddy, synonymBuddy
+from .helpers import num, hexbyte, add_tuple_shortcuts, add_shortcuts
 
-_ALIASES = {
+@add_tuple_shortcuts('hsv', ('h', 'sv', 'v'))
+@add_tuple_shortcuts('hls', ('h', 'l', 'sl'))
+@add_tuple_shortcuts('yiq', ('y', 'i', 'q'))
+@add_tuple_shortcuts('rgb', ('r', 'g', 'b'))
+@add_shortcuts({
     'a': ('alpha', ),
     'h': ('hue', ),
     'v': ('val', 'value'),
@@ -16,14 +20,7 @@ _ALIASES = {
     'r': ('red', ),
     'g': ('green', ),
     'b': ('blue', ),
-}
-
-
-@tupleBuddy('hsv', ('h', 'sv', 'v'))
-@tupleBuddy('hls', ('h', 'l', 'sl'))
-@tupleBuddy('yiq', ('y', 'i', 'q'))
-@tupleBuddy('rgb', ('r', 'g', 'b'))
-@synonymBuddy(_ALIASES)
+})
 class Color:
     '''
     A color.

@@ -88,11 +88,11 @@ def BoundList(prop):
     return bindy
 
 
-def tupleBuddy(prop, names):
+def add_tuple_shortcuts(prop, names):
     '''
-    Return a class mixin with convenient tuple accessors.
-    For example, tupleBuddy('position', ('x', 'y'))
-    makes .x and .y valid properties for .position.
+    Class decorator. Adds property aliases for tuple indices.
+    For example, @add_tuple_shortcuts('position', ('x', 'y'))
+    makes .x and .y aliases for .position[0] and .position[1]
     '''
     def wrapper(cls):
         assert prop.isidentifier()
@@ -114,7 +114,12 @@ def tupleBuddy(prop, names):
     return wrapper
 
 
-def synonymBuddy(aliases):
+def add_shortcuts(aliases):
+    '''
+    Class decorator. Adds property aliases for tuple indices.
+    For example, @add_shortcuts({'v': ('val', 'value')})
+    makes .val and .value aliases for .v
+    '''
     def wrapper(cls):
         for link, aa in aliases.items():
             assert link.isidentifier(), link

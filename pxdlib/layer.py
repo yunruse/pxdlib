@@ -8,7 +8,7 @@ import plistlib
 import base64
 from io import UnsupportedOperation
 
-from .helpers import uuid, BoundList, tupleBuddy
+from .helpers import uuid, BoundList, add_tuple_shortcuts
 from .structure import blob, make_blob, verb
 from .enums import BlendMode, LayerTag
 from .errors import ChildError, MaskError, StyleError
@@ -28,8 +28,8 @@ class _LayerFlag(enum.IntFlag):
 Styles = BoundList('styles')
 
 
-@tupleBuddy('size', ('width', 'height'))
-@tupleBuddy('position', ('x', 'y'))
+@add_tuple_shortcuts('size', ('width', 'height'))
+@add_tuple_shortcuts('position', ('x', 'y'))
 class Layer:
     __slots__ = ('pxd', '_id', '_styles')
 
