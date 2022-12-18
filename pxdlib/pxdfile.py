@@ -17,13 +17,25 @@ guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 @tupleBuddy('size', ('width', 'height'))
 class PXDFile:
+    path: Path  # The path the PXD file or folder is saved at.
+
+    _closed: bool  # True iff open for editing
+    _db = sqlite3.Connection  # Always held open for reading
+    _layer_cache = dict
+    _meta = dict
+    _info = dict
+
     def __repr__(self):
         return f"PXDFile({repr(str(self.path))})"
 
     def __init__(self, path):
+        '''
+        A PXD (Pixelmator Pro) file.
+        '''
+
         self.path = Path(path)
-        self._db = sqlite3.connect(self.path / 'metadata.info')
         self._closed = True
+        self._db = sqlite3.connect(self.path / 'metadata.info')
         self._layer_cache = {}
 
         def keyval(table):
@@ -32,6 +44,44 @@ class PXDFile:
             ).fetchall())
         self._meta = keyval('document_meta')
         self._info = keyval('document_info')
+
+    # Database management
+
+    @property
+    def closed(self):
+        return self._closed
+
+    def open(self) -> None:
+        '''
+        Starts a transaction to modify the document.
+
+        Changes will only be made on `close()`.
+        '''
+        if not self._closed:
+            return
+        self._db.execute('PRAGMA journal_mode=DELETE')
+        self._db.execute('begin exclusive')
+        self._closed = False
+
+    def close(self) -> None:
+        '''
+        Closes a transaction and commits any changes made.
+        '''
+        if self._closed:
+            return
+        self._closed = True
+        self._db.execute('commit')
+
+    def __enter__(self):
+        self.open()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+
+    def __del__(self):
+        if hasattr(self, '_db'):
+            self._db.close()
 
     # Layer management
 
@@ -87,44 +137,8 @@ class PXDFile:
         for l in self._layers(None, recurse):
             if l.name == name:
                 return l
-
-    # Database management
-
-    def open(self) -> None:
-        '''
-        Starts a transaction to modify the document.
-
-        Changes will only be made on `close()`.
-        '''
-        if not self._closed:
-            return
-        self._db.execute('PRAGMA journal_mode=DELETE')
-        self._db.execute('begin exclusive')
-        self._closed = False
-
-    def close(self) -> None:
-        '''
-        Closes a transaction and commits any changes made.
-        '''
-        if self._closed:
-            return
-        self._closed = True
-        self._db.execute('commit')
-
-    @property
-    def closed(self):
-        return self._closed
-
-    def __enter__(self):
-        self.open()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
-
-    def __del__(self):
-        if hasattr(self, '_db'):
-            self._db.close()
+    
+    # Misc helpers
 
     def copyto(self, path, overwrite=False):
         '''
