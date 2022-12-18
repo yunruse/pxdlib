@@ -7,6 +7,8 @@ import shutil
 import sqlite3
 from io import UnsupportedOperation
 from collections import namedtuple
+from tempfile import mkdtemp
+from zipfile import is_zipfile, ZipFile
 
 from .helpers import tupleBuddy
 from .layer import _LAYER_TYPES, Layer
@@ -18,6 +20,10 @@ guides = namedtuple('guides', ('horizontal', 'vertical'))
 @tupleBuddy('size', ('width', 'height'))
 class PXDFile:
     path: Path  # The path the PXD file or folder is saved at.
+    _edit_dir: Path  # The path the PXD folder is editable at.
+
+    _compressed: bool  # True iff the original PXD is a .zip file.
+    _edit_tmp_dir: str  # The temporary directory (if any)
 
     _closed: bool  # True iff open for editing
     _db = sqlite3.Connection  # Always held open for reading
@@ -34,8 +40,25 @@ class PXDFile:
         '''
 
         self.path = Path(path)
+        self._edit_dir = self.path
+        self._compressed = self.path.is_file()
+
+        if self._compressed:
+            if not is_zipfile(self.path):
+                raise FileNotFoundError("PXD malformed - is neither directory or .zip")
+            
+            # Work in a temporary directory!
+            self._edit_dir = Path(mkdtemp('.pxd'))
+            with ZipFile(self.path) as zf:
+                zf.extractall(self._edit_dir)
+
         self._closed = True
-        self._db = sqlite3.connect(self.path / 'metadata.info')
+
+        db_path = self._edit_dir / 'metadata.info'
+        if not db_path.is_file():
+            raise FileNotFoundError("PXD malformed - has no metadata.info")
+
+        self._db = sqlite3.connect(db_path)
         self._layer_cache = {}
 
         def keyval(table):
@@ -80,6 +103,10 @@ class PXDFile:
         self.close()
 
     def __del__(self):
+        # TODO: PermissionError??? yay...
+        # if self._compressed:
+        #     self._edit_dir.unlink(True)
+
         if hasattr(self, '_db'):
             self._db.close()
 
