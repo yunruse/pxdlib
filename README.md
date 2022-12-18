@@ -27,18 +27,27 @@ with PXDFile('graph.pxd') as pxd:
             l.position = COORDS[l.name]
 ```
 
+## Features
+
+**At the moment, pxdlib can:**
+- Navigate layer structure
+- Modify common properties - size, position, opacity, style, gradients
+
+**In the future, it is intended to be able to:**
+- Read and write raster layers in a convenient interoperable format
+- Modify vector layers
+- Modify common text properties
+- Destroy and create layers
+- Have formal testing and be kept up-to-date
+
+**There is currenty no scope for Pixelmator features such as:**
+- exporting or converting – this is complicated!
+- using any ML/AI features in Pixelmator 
+
 ## Development
 
-As `pxdlib` is available on PyPI, it will be updated in `production` only when a new version is available. The reverse-engineering document, however, will be kept up-to-date in `production` as behaviour is confirmed.
+The `production` branch relates to features available in PyPI; `development` is up-to-date.
 
-Until the library is considered "done", it will not be confirmed to work on any specific Pixelmator version other than "the latest". I will consider `pxdlib` "done" when:
-
-- raster layers are accessible in a format which is compatible with a good raster-manipulating API;
-- vector layers are fully modifiable;
-- text layers can be modified, at least with the common formatting capabilities;
-- all effects and filters are documented and available;
-- layers can be created and destroyed;
-
-and all of the above is formally tested with a specially-created document.
+Any and all issues are completely welcomed -- especially if `pxdlib` breaks on newer versions of Pixelmator!
 
 A changelog is available [here](https://github.com/yunruse/pxdlib/blob/production/docs/changelog.md).
