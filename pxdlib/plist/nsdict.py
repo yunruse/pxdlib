@@ -12,14 +12,18 @@ class NSDict(NSObject):
         return '<NSDict: {}>'.format(', '.join(
             f'{self._deref(k)}: {self._repr_child(v)}' for k, v in self.items()
         ))
+    
+    def __getitem__(self, key: str):
+        index = self.keys().index(key)
+        return self.values()[index]
 
     # TODO: All code below should be changed to use mappingproxy
 
     def keys(self):
-        return self._deref(self['NS.keys'])
+        return self._deref(NSObject.__getitem__(self, 'NS.keys'))
     
     def values(self):
-        return self._deref(self['NS.objects'])
+        return self._deref(NSObject.__getitem__(self, 'NS.objects'))
     
     def items(self):
         return NSDict_items(self)
