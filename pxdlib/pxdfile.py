@@ -122,7 +122,7 @@ class PXDFile:
         self._layer_cache[ID] = layer
         return layer
 
-    def _layers(self, parent=None, recurse=False):
+    def _layers(self, parent=None, recurse=False) -> list[Layer]:
         '''
         Return a list of layers that are children of the ID given.
         Give no ID to get the top-level layers.
@@ -153,13 +153,13 @@ class PXDFile:
             return children
 
     @property
-    def children(self):
+    def children(self) -> list[Layer]:
         return self._layers()
 
-    def all_layers(self) -> list:
+    def all_layers(self) -> list[Layer]:
         return self._layers(recurse=True)
 
-    def find(self, name, recurse=True):
+    def find(self, name: str, recurse=True):
         '''Get the first child found with the given name.'''
         for l in self._layers(None, recurse):
             if l.name == name:

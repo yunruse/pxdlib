@@ -593,7 +593,7 @@ class Layer:
 
 class GroupLayer(Layer):
     @property
-    def children(self):
+    def children(self) -> list[Layer]:
         '''
         The children of the group layer,
         excluding any masks.
