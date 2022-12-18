@@ -509,7 +509,7 @@ class Layer:
                 'Consider setting `layer.parent`.'
             )
 
-        self._flag_set(_LayerFlag.mask, bool(val))
+        self._flag_set(_LayerFlag.mask, bool(masked))
 
     @property
     def styles(self):
