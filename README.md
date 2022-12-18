@@ -31,12 +31,13 @@ with PXDFile('graph.pxd') as pxd:
 
 **At the moment, pxdlib can:**
 - Navigate layer structure
-- Modify common properties - size, position, opacity, style, gradients
+- Read/write common properties - size, position, opacity, style, gradients
+- Read unformatted text from text layers
 
 **In the future, it is intended to be able to:**
-- Read and write raster layers in a convenient interoperable format
-- Modify vector layers
-- Modify common text properties
+- Read/write vector layers
+- Read/write raster layers in a convenient interoperable format
+- Read/write text layers' formatting and text
 - Destroy and create layers
 - Have formal testing and be kept up-to-date
 
