@@ -78,6 +78,7 @@ While some blobs' types appear only once (and are described where they are found
 - `Arry` is an array of other blobs – notably, its length will include these other blobs. It first contains two integers, the first nominally 1 and the second, _n_, the number of items in the array. The array is then followed by _n_ integers giving the starting positions of each entry after this header (i.e. the first is 0).
 
 <a id="json"></a>
+
 ### JSON structures
 
 - A **vercon**, or version container, is a dictionary containing `version` (nominally 1) and the contents inside `versionSpecifiContainer` \[sic\]; the latter is the actual contents.

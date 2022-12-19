@@ -44,8 +44,9 @@ Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`c
 
 ## Raster layers
 
-(unknown)
+The properties of raster layers are unknown.
 
+<a id="text"></a>
 ## Text layers
 
 In addition to shared attributes, text layers share the following attributes:
@@ -56,16 +57,12 @@ In addition to shared attributes, text layers share the following attributes:
 - `text-verticalAlignment` ([`SI16`](/docs/pxd/#blobs)) is either 0 (top), 1 (middle) or 2 (bottom).
 - `text-widthAutosizable` ([`SI16`](/docs/pxd/#blobs)) is another boolean, and it similarly defaults to one and changes to zero when the user has manually sized the textbox (so that text should wrap rather than keep going).
 - `text-insets` ([`PTSz`](/docs/pxd/#blobs)) is the horizontal and vertical padding for wrapping. It is nominally `[4.0, 4.0]` for regular text and `[0.0, 0.0]` for path text.
-- `text-stringData`, a UTF-8 encoded plist. More below.
+- `text-stringData`, a vercon with one entry: `StringNSCodingData`, a base-64 encoded binary PLIST, in which most of the text data is stored. See [text.md](/docs/pxd/stringData.md) for more info.
 
 For path text (`text-layerType` of 2), the following attributes are also found:
 
 - All three of `text-layer{Start,Middle,End}PointOnPath` ([`PTPt`](/docs/pxd/#blobs)) are the locations of the anchors of the text, coordinates in pixels from the bottom left of the bounding box of the path.
 - `text-pathData` is a vercon with one entry: `dataFromCGPath`, a base-64 encoded path object. (unknown)
-
-### String data
-
-The `text-stringData` is a PLIST file. (unknown)
 
 
 ## Vector layers
