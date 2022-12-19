@@ -1,5 +1,12 @@
+'''
+NSBaseObject, NSObject, PlistDerefList, NSDict and NSArray wrappers.
+
+By default, these items will dereference all UIDs in str() but may truncate some in repr() to avoid chaos.
+'''
+
 from plistlib import UID
 from typing import Any, TYPE_CHECKING
+from types import MappingProxyType
 
 if TYPE_CHECKING:
     from .plistfile import PlistFile
@@ -9,6 +16,7 @@ def classname(obj: dict):
 
 def classisinstance(obj: dict, key: str):
     return key in obj.get('$class', {}).get('$classes', [])
+
 
 class NSBaseObject:
     def _deref(self, value):
@@ -35,7 +43,6 @@ class NSBaseObject:
 class PlistDerefList(NSBaseObject, list):
     '''
     Auto-dereferencing list for PlistFile.
-    repr() may show UIDs for complex objects, but str() dereferences them.
     '''
     _super_type = list
     
@@ -53,10 +60,10 @@ class PlistDerefList(NSBaseObject, list):
         for i in list.__iter__(self):
             yield self._deref(i)
 
+
 class NSObject(NSBaseObject, dict):
     '''
     Auto-dereferencing object (aka dict) for PlistFile.
-    repr() may show UIDs for complex objects, but str() dereferences them.
     '''
     _super_type = dict
     
@@ -87,3 +94,49 @@ class NSObject(NSBaseObject, dict):
         if __name in dict.keys(self):
             return self[__name]
         return object.__getattribute__(self, __name)
+    
+
+class NSDictionary(NSObject):
+    '''
+    Auto-dereferencing NSDict for PlistFile.
+    '''
+    
+    def __repr__(self):
+        return '<NSDict: {}>'.format(', '.join(
+            f'{self._deref(k)}: {self._repr_child(v)}' for k, v in self.items()
+        ))
+    
+    def __getitem__(self, key: str):
+        index = self.keys().index(key)
+        return self.values()[index]
+
+    # TODO: All code below should be changed to use mappingproxy
+
+    # These unorthodox class.func(self) calls
+    # are to avoid infinite recursion in __getattribute__
+
+    def __contains__(self, __o: object) -> bool:
+        return __o in NSDictionary.keys(self)
+
+    def keys(self):
+        return NSDictionary._deref(self,
+            NSObject.__getitem__(self, 'NS.keys'))
+    
+    def values(self):
+        return NSDictionary._deref(self,
+            NSObject.__getitem__(self, 'NS.objects'))
+    
+    def items(self):
+        return NSDict_items(self)
+
+class NSDict_items:
+    def __init__(self, dict):
+        self.mapping = MappingProxyType(dict)
+    
+    def __repr__(self):
+        return 'NSDict_items({})'.format(repr(list(self)))
+    
+    def __iter__(self):
+        for k, v in zip(self.mapping.keys(), self.mapping.values()):
+            yield k, v
+    

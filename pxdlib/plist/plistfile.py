@@ -1,7 +1,12 @@
 from plistlib import UID
 
-from .nsobject import NSObject, PlistDerefList, classisinstance
-from .nsdict import NSDict
+from .nsobject import (
+    NSObject,
+    NSDictionary,
+    NSArray,
+    PlistDerefList,
+    classisinstance,
+)
 
 class PlistFile(NSObject):
     '''
@@ -34,6 +39,6 @@ class PlistFile(NSObject):
         if isinstance(value, dict):
             value = NSObject(value, self)
             if classisinstance(value, 'NSDictionary'):
-                return NSDict(value, self)
+                return NSDictionary(value, self)
             
         return value
