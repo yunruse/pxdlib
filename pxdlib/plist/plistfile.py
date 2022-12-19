@@ -40,5 +40,7 @@ class PlistFile(NSObject):
             value = NSObject(value, self)
             if classisinstance(value, 'NSDictionary'):
                 return NSDictionary(value, self)
+            if classisinstance(value, 'NSArray'):
+                return NSArray(value, self)
             
         return value

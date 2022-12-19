@@ -94,6 +94,27 @@ class NSObject(NSBaseObject, dict):
         if __name in dict.keys(self):
             return self[__name]
         return object.__getattribute__(self, __name)
+
+
+class NSArray(NSObject):
+    '''
+    Auto-dereferencing NSArray for PlistFile.
+    '''
+    
+    def __repr__(self):
+        return '<NSArray: [{}]>'.format(', '.join(
+            self._repr_child(i) for i in self
+        ))
+    
+    def __iter__(self):
+        for k in self['NS.objects']:
+            yield k
+    
+    def __getitem__(self, index: int):
+        if isinstance(index, int):
+            return self['NS.objects'][index]
+        else:
+            return NSObject.__getitem__(self, index)
     
 
 class NSDictionary(NSObject):
