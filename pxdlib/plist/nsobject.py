@@ -77,7 +77,7 @@ class NSObject(NSBaseObject, dict):
             classname(self) or 'dict', ', '.join(keys)
         )
     
-    def get(self, key, default: None):
+    def get(self, key, default=None):
         if key in self:
             return self[key]
         else:
