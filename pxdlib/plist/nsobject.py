@@ -84,6 +84,6 @@ class NSObject(NSBaseObject, dict):
             return default
     
     def __getattribute__(self, __name: str) -> Any:
-        if __name in self:
+        if __name in dict.keys(self):
             return self[__name]
         return object.__getattribute__(self, __name)

@@ -19,11 +19,19 @@ class NSDict(NSObject):
 
     # TODO: All code below should be changed to use mappingproxy
 
+    # These unorthodox class.func(self) calls
+    # are to avoid infinite recursion in __getattribute__
+
+    def __contains__(self, __o: object) -> bool:
+        return __o in NSDict.keys(self)
+
     def keys(self):
-        return self._deref(NSObject.__getitem__(self, 'NS.keys'))
+        return NSDict._deref(self,
+            NSObject.__getitem__(self, 'NS.keys'))
     
     def values(self):
-        return self._deref(NSObject.__getitem__(self, 'NS.objects'))
+        return NSDict._deref(self,
+            NSObject.__getitem__(self, 'NS.objects'))
     
     def items(self):
         return NSDict_items(self)
