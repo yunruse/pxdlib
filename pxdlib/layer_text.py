@@ -8,6 +8,7 @@ import plistlib
 
 from .structure import verb
 from .layer import Layer
+from .layer_text_style import TextStyle
 
 from .plist import PlistFile, NSArray
 
@@ -15,8 +16,10 @@ from .plist import PlistFile, NSArray
 class TextLayer(Layer):
     def _repr_info(self):
         yield f'text: {self.raw_text!r}'
-        if self.has_multiple_styles:
+        if len(self.text_styles) > 1:
             yield 'multiple text styles'
+        else:
+            yield from self.text_styles[0]._repr_info()
         yield from Layer._repr_info(self)
 
     @property
@@ -50,5 +53,8 @@ class TextLayer(Layer):
         self._text = _t
     
     @property
-    def has_multiple_styles(self):
-        return isinstance(self._text.NSAttributes, NSArray)
+    def text_styles(self):
+        attrs = self._text.NSAttributes
+        if not isinstance(attrs, NSArray):
+            attrs = [attrs]
+        return [TextStyle(a) for a in attrs]
