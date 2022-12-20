@@ -48,7 +48,7 @@ class TextStyle:
                 col.decode().removesuffix('\x00').split()]
         
         rgb_as_rendered = get_rgba('NSComponents')
-        return Color.from_rgb(*rgb_as_rendered[:3])
+        return Color.from_rgb(*rgb_as_rendered)
     
     @color.setter
     def color(self, color: Color):

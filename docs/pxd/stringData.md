@@ -65,16 +65,16 @@ The `NSAttributes` property is an `NSDict` (or list thereof) with a variety of p
 - `ligature` (`int`): 0 to use no ligatures, 1 to use default ligatures, 2 to use all ligatures.
 
 - `font-scale` (`int`): seems always to be 1 ???
-- `font-style-data` is a JSON-encoded UTF-8 vercon the following properties:
+- `font-style-data` is a JSON-encoded UTF-8 vercon with the following properties:
   - `s` (`number`): The font size (also in `NSFontSizeAttribute` below!)
   - `n` (`str`): The font (also in `NSFontNameAttribute` below!)
-  - `n` (`number`): 1 iff bold.
-  - there is more ???
+  - `b` (`number`): 1 iff bold.
+  - `i` (`number`): 1 iff italic.
 
 
 - `color` is an `NSDict`. It has the following keys:
-  - `NSRGB` (`bytes`): The color in RGB. Space-separated floats (ASCII) suffixed with a null byte.
-  - `NSComponents` (`bytes`): The color in RGB, as rendered in the color space (and as reported by Pixelmator). Space-separated floats (ASCII) suffixed with `1`.
+  - `NSRGB` (`bytes`): The color in RGBA. Space-separated floats (ASCII) suffixed with a null byte.
+  - `NSComponents` (`bytes`): The color in RGBA, as rendered in the color space (and as reported by Pixelmator). Space-separated floats (ASCII).
   - `NSColorSpace` (`int`): Default 1 (IEC 61966-2.1).
   - `NSCustomColorSpace`: The colorspace. See [Apple's guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/DrawColor/Tasks/UsingColorSpaces.html#//apple_ref/doc/uid/TP40001807) for more information.
 - `paragraph-style`: see below
