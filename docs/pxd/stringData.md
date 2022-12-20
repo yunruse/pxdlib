@@ -12,15 +12,15 @@ In general, many objects will have a `$class` key, indicating their nature. Take
 - `NSArray` (`list`), with `NS.objects`
 - `NSDictionary` (`dict`), with `NS.keys` and `NS.objects`
 
-## `StringNSCodingData` root structure
+## Pixelmator's `NSMutableAttributedString` root structure
 
-The root element of this PLIST is an [`NSMutableAttributedString`](https://developer.apple.com/documentation/foundation/nsmutableattributedstring) representing the text element. It is comprised of two or three parts.
+The root element of this PLIST is an [`NSMutableAttributedString`](https://developer.apple.com/documentation/foundation/nsmutableattributedstring) representing the text element, albeit a bit modified for Pixelmator's own purposes.
 
-`NSString` is an `NSMutableString`, the raw text onto which formatting is applied.
+This contains, in and of itself, three properties:
 
-If the text is of a single style, `NSAttribute` is an `NSDict` (see below for details). If the text has *multiple* styles, `NSAttribute` is an `NSArray` of the styles.
-
-`NSAttributeInfo` is present only if there are multiple styles, providing the indexing for applying them. See below for its peculiarities.
+- `NSString` is an `NSMutableString`, the raw text onto which formatting is applied.
+- `NSAttributeInfo` is present iff text has multiple styles. It is a run-length encoded list of styles for each character. See below for details.
+- `NSAttribute` is an `NSDict` with text style, OR a list of `NSDict` iff the text has multiple styles. See below for details.
 
 ### NSAttributeInfo
 
