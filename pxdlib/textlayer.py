@@ -9,10 +9,16 @@ import plistlib
 from .structure import verb
 from .layer import Layer
 
-from .plist.plistfile import PlistFile
+from .plist import PlistFile, NSArray
 
 
 class TextLayer(Layer):
+    def _repr_info(self):
+        yield from Layer._repr_info(self)
+        yield f'text: {self.raw_text!r}'
+        if self.has_multiple_styles:
+            yield 'multiple styles'
+
     @property
     def _text(self):
         store = verb(json.loads(self._info('text-stringData')))
@@ -42,3 +48,7 @@ class TextLayer(Layer):
         _t = self._text
         _t.NSString.value = value
         self._text = _t
+    
+    @property
+    def has_multiple_styles(self):
+        return isinstance(self._text.NSAttributes, NSArray)

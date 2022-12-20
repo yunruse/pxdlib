@@ -289,21 +289,27 @@ class Layer:
             self._copyto(layer, asmask=False, keep_index=True)
 
         return layer
-
+    
+    def _repr_info(self):
+        if self.tag:
+            yield self.tag.name
+        if not self.is_visible:
+            yield 'hidden'
+            
     def __repr__(self):
         typ = type(self).__name__
         if self._id is None:
             return f'<{typ}: deleted layer>'
         name = repr(self.name)
-        info = []
         if self.is_mask:
             name = f'mask of {repr(self.parent.name)}'
-        if self.tag:
-            info.append(self.tag.name)
+        
+        info = list(self._repr_info())
         if info:
             info = f" ({', '.join(info)})"
         else:
             info = ""
+
         return f'<{typ} {name}{info}>'
 
     def _info(self, key, default=None):
