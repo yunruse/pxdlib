@@ -1,9 +1,9 @@
 from plistlib import UID
+from typing import Any
 
 from .nsobject import (
     NSObject,
-    NSDictionary,
-    NSArray,
+    NSDictionary, NSArray, NSStringOrData,
     PlistDerefList,
     classisinstance,
 )
@@ -29,8 +29,15 @@ class PlistFile(NSObject):
         NSObject.__init__(self, root, self)
 
         # root_id is usually 1
+    
+    DEREF_MAPS: dict[str, type] = {
+        'NSDictionary': NSDictionary,
+        'NSArray': NSArray,
+        'NSString': NSStringOrData,
+        'NSData': NSStringOrData,
+    }
 
-    def _deref(self, value):
+    def _deref(self, value) -> NSObject | Any:
         if isinstance(value, UID):
             value = self._object(value)
 
@@ -38,9 +45,8 @@ class PlistFile(NSObject):
             return PlistDerefList(value, self)
         if isinstance(value, dict):
             value = NSObject(value, self)
-            if classisinstance(value, 'NSDictionary'):
-                return NSDictionary(value, self)
-            if classisinstance(value, 'NSArray'):
-                return NSArray(value, self)
+            for NSClass, cls in self.DEREF_MAPS.items():
+                if classisinstance(value, NSClass):
+                    return cls(value, self)
             
         return value
