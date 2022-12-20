@@ -14,10 +14,10 @@ from .plist import PlistFile, NSArray
 
 class TextLayer(Layer):
     def _repr_info(self):
-        yield from Layer._repr_info(self)
         yield f'text: {self.raw_text!r}'
         if self.has_multiple_styles:
-            yield 'multiple styles'
+            yield 'multiple text styles'
+        yield from Layer._repr_info(self)
 
     @property
     def _text(self):

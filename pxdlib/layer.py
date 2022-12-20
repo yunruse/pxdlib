@@ -616,21 +616,14 @@ class GroupLayer(Layer):
             if l.name == name:
                 return l
 
-
-class VectorLayer(Layer):
-    pass
-
-
-class RasterLayer(Layer):
-    pass
-
 if True:
-    from .textlayer import TextLayer
+    from .layer_raster import RasterLayer
+    from .layer_text import TextLayer
+    from .layer_vector import VectorLayer
 
-
-_LAYER_TYPES = {
-    1: RasterLayer,
-    2: TextLayer,
-    3: VectorLayer,
-    4: GroupLayer
-}
+    _LAYER_TYPES = {
+        1: RasterLayer,
+        2: TextLayer,
+        3: VectorLayer,
+        4: GroupLayer
+    }
