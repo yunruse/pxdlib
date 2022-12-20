@@ -65,7 +65,12 @@ The `NSAttributes` property is an `NSDict` (or list thereof) with a variety of p
 - `ligature` (`int`): 0 to use no ligatures, 1 to use default ligatures, 2 to use all ligatures.
 
 - `font-scale` (`int`): seems always to be 1 ???
-- `font-style-data` is a JSON-encoded UTF-8 vercon with `{"s": x}` where `x` is the font size. This is duplicated ???
+- `font-style-data` is a JSON-encoded UTF-8 vercon the following properties:
+  - `s` (`number`): The font size (also in `NSFontSizeAttribute` below!)
+  - `n` (`str`): The font (also in `NSFontNameAttribute` below!)
+  - `n` (`number`): 1 iff bold.
+
+
 - `color` is an `NSDict`. It has the following keys:
   - `NSComponents`: ???
   - `NSRGB`: ???
