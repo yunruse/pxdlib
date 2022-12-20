@@ -20,9 +20,33 @@ The root element of this PLIST is an [`NSMutableAttributedString`](https://devel
 
 If the text is of a single style, `NSAttribute` is an `NSDict` (see below for details). If the text has *multiple* styles, `NSAttribute` is an `NSArray` of the styles.
 
-`NSAttributeInfo` is present only if there are multiple styles, providing the indexing for applying them. It is an `NSMutableData` that must be read serially. In general, _pop_ the number of characters, and then _pop_ the *style index* (from the `NSAttributes` array) that these characters apply unto.
+`NSAttributeInfo` is present only if there are multiple styles, providing the indexing for applying them. See below for its peculiarities.
 
-For simple examples, _pop_ here is just reading a single byte. For example, the string `aabbbaaaa` - where `a` has style 0 and `b` style 1 - would result in the sequence of bytes [2, 0, 3, 1, 4, 0]. In the case that a number (style index or character count) is large enough, _pop_ takes a slightly different form. ???
+### NSAttributeInfo
+
+`NSAttributeInfo` (if present) is a run-length encoding. It is an `NSMutableData` that must be read serially. In general, _pop_ the number of characters, and then _pop_ the *style index* (from the `NSAttributes` array) that these characters apply unto.
+
+This _pop_ encodes arbitrarily large numbers in an intriguing multi-byte method reminiscent of UTF-8 - hence why it is serially encoded and cannot be randomly-accessed.
+
+If the byte's most significant bit is 0, it is the last byte; the next 7 bits encode the number. If the byte's MSB is 1, it is not the last byte. These 7-bit chunks are in reverse order (the smallest chunk is the smallest 7 bits). For example:
+
+```
+#number           pop format, binary
+      3                     00000011
+    128            10000000 00000001
+    129            10000001 00000001
+    256            10000000 00000010
+    516            10000100 00000100
+  16772   10000100 10000011 00000001
+#                4        3        1
+# 16772 = 4 + 3x + 1x^2 where x = 128
+```
+
+For completeness, here are some examples where a digit is styled according to its index (ie `a` has style 0, `b` style 1, etc):
+- The string `001110000` results in [2 0 3 1 4 0]
+- The string `000011` followed by 257 `2`s results in [4 0  2 1 129 2 2], where [129 2] decodes to 257.
+
+(If you want to know how I generated text with more than 128 different styles to test that _pop_ works on style index as well as run-length, a bit of RTF hacking gives us [this image](https://cdn.discordapp.com/attachments/1054061996695367811/1054771575137783859/Screenshot_2022-12-20_at_2.45.29_pm.png) which roughly describes my thoughts on this whole shebang.)
 
 
 ## `NSAttributes`
