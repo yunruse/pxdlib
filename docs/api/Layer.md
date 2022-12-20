@@ -72,5 +72,5 @@ A `TextLayer` contains formatted text. It may also contain a single shape, the p
 Attributes include:
 
 - `size` (also `width` and `height`), the width and height of the layer in pixels. This is currently read-only.
-- `rawText`, the text without formatting. This is currently read-only.
+- `raw_text`, the text without formatting. This is currently read-only.
 
