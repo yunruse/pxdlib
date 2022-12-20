@@ -291,11 +291,20 @@ class Layer:
         return layer
     
     def _repr_info(self):
+        if self.opacity != 100:
+            yield f'{self.opacity}%'
+
+        # these aren't necessarily shown in Pixelmator's layer list
+        # but more is more, right?
+        if self.styles:
+            yield f'{len(self.styles)} styles'
         if self.tag:
             yield self.tag.name
         if not self.is_visible:
-            yield 'hidden'
-            
+            yield 'Hidden'
+        if self.is_locked:
+            yield 'Locked'
+
     def __repr__(self):
         typ = type(self).__name__
         if self._id is None:
@@ -306,7 +315,7 @@ class Layer:
         
         info = list(self._repr_info())
         if info:
-            info = f" ({', '.join(info)})"
+            info = f": {', '.join(info)}"
         else:
             info = ""
 
@@ -615,6 +624,10 @@ class GroupLayer(Layer):
         for l in self.pxd._layers(self, recurse):
             if l.name == name:
                 return l
+    
+    def _repr_info(self):
+        yield '{} Layers'.format(len(self.children))
+        yield from Layer._repr_info(self)
 
 if True:
     from .layer_raster import RasterLayer
