@@ -54,6 +54,11 @@ class NSDictionary(NSObject):
 
     def __contains__(self, __o: object) -> bool:
         return __o in NSDictionary.keys(self)
+    
+    def get(self, key, default=None):
+        if key in self:
+            return self[key]
+        return default
 
     def keys(self):
         return NSDictionary._deref(self,
