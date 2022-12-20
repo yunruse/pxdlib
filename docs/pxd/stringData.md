@@ -69,13 +69,14 @@ The `NSAttributes` property is an `NSDict` (or list thereof) with a variety of p
   - `s` (`number`): The font size (also in `NSFontSizeAttribute` below!)
   - `n` (`str`): The font (also in `NSFontNameAttribute` below!)
   - `n` (`number`): 1 iff bold.
+  - there is more ???
 
 
 - `color` is an `NSDict`. It has the following keys:
-  - `NSComponents`: ???
-  - `NSRGB`: ???
-  - `NSColorSpace` (`int`): Default 1.
-  - `NSCustomColorSpace`: A colorspace (left as an exercise to the reader).
+  - `NSRGB` (`bytes`): The color in RGB. Space-separated floats (ASCII) suffixed with a null byte.
+  - `NSComponents` (`bytes`): The color in RGB, as rendered in the color space (and as reported by Pixelmator). Space-separated floats (ASCII) suffixed with `1`.
+  - `NSColorSpace` (`int`): Default 1 (IEC 61966-2.1).
+  - `NSCustomColorSpace`: The colorspace. See [Apple's guide](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/DrawColor/Tasks/UsingColorSpaces.html#//apple_ref/doc/uid/TP40001807) for more information.
 - `paragraph-style`: see below
 - `font`: see below
 
