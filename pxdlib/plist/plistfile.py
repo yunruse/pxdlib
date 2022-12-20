@@ -2,11 +2,11 @@ from plistlib import UID
 from typing import Any
 
 from .nsobject import (
-    NSObject,
-    NSDictionary, NSArray, NSStringOrData,
+    NSObject,   
     PlistDerefList,
     classisinstance,
 )
+from .nsprimitives import NSDictionary, NSArray, NSStringOrData
 
 class PlistFile(NSObject):
     '''
@@ -48,5 +48,5 @@ class PlistFile(NSObject):
             for NSClass, cls in self.DEREF_MAPS.items():
                 if classisinstance(value, NSClass):
                     return cls(value, self)
-            
+
         return value
