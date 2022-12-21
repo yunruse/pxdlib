@@ -2,6 +2,8 @@
 
 This is a description of the reverse-engineered format of Pixelmator Pro. It is not 100% complete, but will be updated as features are added; the text _(unknown)_ indicates data that needs to be further deciphered.
 
+
+
 ## File format
 
 Pixelmator Pro makes use of files with the `.pxd` extension. In truth, these are sneakily folders in disguise, in the same vein as the `.app` files; macOS' Finder pleasantly treats them as if they are files, albeit with the "Show Package Contents" feature to get right into its contents"
@@ -10,8 +12,10 @@ Pixelmator Pro makes use of files with the `.pxd` extension. In truth, these are
 - `data`, an optional folder containing an amount of files with UUID names, each containing data corresponding to raster (image) layers;
 - a fairly large-ish `metadata.info` file.
 
-<a id="sql"></a>
+
+
 ## SQL format
+<a id="sql"></a>
 
 The `metadata.info` file is an SQLite3 database. It has the following six tables:
 
@@ -57,11 +61,16 @@ This has the effective structure of:
 
 The details for the above can be found in the [Metadata](docs/pxd/metadata.md) and [Layer object](docs/pxd/layer.md) entries, respectively.
 
+
+
 ## Data structures
 
 In the data described above, we may encounter certain structures seemingly unique to the `.pxd` format. They are referenced here.
 
+
+
 ### Pixelmator blobs
+<a id="blobs"></a>
 
 Various "Pixelmator blobs" may be encountered in the `.pxd` format. They are little-endian, and have a twelve-byte header:
 - 4 bytes for their magic number, `4-tP`.
@@ -76,9 +85,12 @@ Below are common blob types (see `__FORMAT` in `structure.py` for specifics:):
 - `PTFl` and `LDop` are big-endian double-precision floats.
 - `Arry` is an array of other blobs – notably, its length will include these other blobs. It first contains two integers, the first nominally 1 and the second, _n_, the number of items in the array. The array is then followed by _n_ integers giving the starting positions of each entry after this header (i.e. the first is 0).
 
-<a id="json"></a>
+
 
 ### JSON structures
+<a id="json"></a>
+
+Various versionable structures can be found embedded in a variety of JSON strings in a Pixelmator document:
 
 - A **vercon**, or version container, is a dictionary containing `version` (nominally 1) and the contents inside `versionSpecifiContainer` \[sic\]; the latter is the actual contents.
 - A **verstruct** is like a vercon albeit with the tags `structureVersion` and `versionSpecificInfo`.

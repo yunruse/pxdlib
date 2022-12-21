@@ -15,7 +15,10 @@ It's not too hard to construct a tree of layers with `parent_identifier` and `in
 
 Below are a list of attributes which can be obtained from `layer_info`.
 
+
+
 ## Common attributes
+<a id='common' />
 
 Every layer will have the following attributes:
 
@@ -28,27 +31,38 @@ Every layer will have the following attributes:
   - The third bit is unknown;
   - The fourth bit defines if a layer is a clipping mask (i.e. will mask onto the layer below);
   - The fifth bit defines if a layer is a mask (i.e. defines the mask of its parent layer);
-  - The sixth bit is unknown;
+  - The sixth bit is unknown ???;
   - The seventh bit is on iff the layer is a raster;
 - `color-value` is a raw integer (i.e. _not_ a blob) defining the color (aka tag) given to the layer: 0 if untagged, or 1-7 for various tags.
 - `blendMode` (`Blnd`) are four characters (in reverse order) which define the blend mode. (See `BlendMode` under [`enums.py`](/pxdlib/enums.py) for a list of values.)
 - `position` ([`PTPt`](/docs/pxd/#blobs)) points to the center of the layer.
 - `size` ([`PTSz`](/docs/pxd/#blobs)) is the size of the layer in pixels.
-- `scale` ([`PTPt`](/docs/pxd/#blobs)), (unknown).
-- `backingScale` ([`PTFl`](/docs/pxd/#blobs)), (unknown).
-- `anchorPoint` ([`PTPt`](/docs/pxd/#blobs)), (unknown).
+- `scale` ([`PTPt`](/docs/pxd/#blobs)), ???
+- `backingScale` ([`PTFl`](/docs/pxd/#blobs)), ???
+- `anchorPoint` ([`PTPt`](/docs/pxd/#blobs)), ???
 - `angle` ([`PTFl`](/docs/pxd/#blobs)), in degrees from -360 to 0. Nominally 0 except for text layers.
-- `transform` (`Trns`), (unknown).
+- `transform` (`Trns`), ???
+
 - `user-info-data`, a UTF-8 encoded PLIST file, nominally empty.
 
-Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`color-adjustments`](/docs/pxd/styles.md#color-adjustments) and [`effects-data`](/docs/pxd/styles.md#effects-data) attributes (unknown).
+- `content-rep-data`, UTF-8 encoded JSON verlist, nominally `{"s": 1, "b": false, "r": false}`
+
+Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`color-adjustments`](/docs/pxd/styles.md#color-adjustments) and [`effects-data`](/docs/pxd/styles.md#effects-data) attributes ???
+
+
 
 ## Raster layers
+<a id="raster" />
 
-The properties of raster layers are unknown.
+The properties of raster layers are:
+- `opct-nrm` ???
 
-<a id="text"></a>
+these may also be in non-raster layers ???
+
+
+
 ## Text layers
+<a id="text" />
 
 In addition to shared attributes, text layers share the following attributes:
 
@@ -66,7 +80,9 @@ For path text (`text-layerType` of 2), the following attributes are also found:
 - `text-pathData` is a vercon with one entry: `dataFromCGPath`, a base-64 encoded path object. (unknown)
 
 
+
 ## Vector layers
+<a href='vector' />
 
 In addition to almost certainly containing a [`styles-data`](/docs/pxd/styles.md#styles-data) tag, vector layers contain one added `shape-shapeData`, a vercon containing the following tags:
 
