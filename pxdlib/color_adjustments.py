@@ -104,23 +104,24 @@ class Attribute(property):
     to provide general getter and setter.
     '''
     def __init__(
-        attr, key,
+        self,
+        key,
         limits=(-1, +1),  # min, max limits
         limitdoc=None,  # names for minmax limits
-        default=0,  # for documenting only
-        factor=1,  # if data varies more than
-        doc='',  # docs if not a regular slider
+        default: float | int = 0,  # for documenting only
+        factor: float | int = 1,  # if data varies more than
+        doc: str = '',  # docs if not a regular slider
     ):
-        attr._key = key
+        self._key = key
 
-        def fget(self):
-            return self._get(key) / factor
+        def fget(moi):
+            return moi._get(key) / factor
 
-        def fset(self, x):
+        def fset(moi, x):
             if limits is not None:
                 if not a <= x <= b:
                     raise ValueError(f'attribute must be between {a} and {b}.')
-            self._set(key, x * factor)
+            moi._set(key, x * factor)
 
         if default is not None:
             doc = f'{doc}, default {default}'
@@ -134,7 +135,7 @@ class Attribute(property):
                 doc = f'{a} to {b}{doc}'
         fget.__doc__ = doc
 
-        property.__init__(attr, fget, fset)
+        property.__init__(self, fget, fset)
 
 
 def adjustment(key, name):
@@ -257,7 +258,7 @@ class Sepia(Intensity):
 
 
 @adjustment('f', 'fade')
-class Sepia(Intensity):
+class Fade(Intensity):
     pass
 
 

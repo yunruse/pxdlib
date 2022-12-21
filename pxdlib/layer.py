@@ -5,6 +5,7 @@ Layer objects, bound to a PXD file.
 import enum
 import json
 from io import UnsupportedOperation
+from typing import Optional
 
 from .helpers import uuid, BoundList, add_tuple_shortcuts
 from .structure import blob, make_blob, verb
@@ -325,7 +326,7 @@ class Layer:
 
         return f'<{typ} {name}{info}>'
 
-    def _info(self, key, default=None):
+    def _info(self, key: str, default: Optional[bytes] = None) -> Optional[bytes]:
         self._assert()
         value = self.pxd._db.execute(
             "select value from layer_info"
@@ -388,7 +389,6 @@ class Layer:
             raise TypeError('Opacity must be an integer in range [0, 100].')
 
     @property
-    def position(self) -> tuple:
     def position(self):
         '''
         The center of the layer, defined in (x, y) pixels such that

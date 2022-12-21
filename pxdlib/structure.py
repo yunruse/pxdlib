@@ -11,15 +11,15 @@ _LENGTH = Struct('<i')
 
 
 def _bare(fmt: str, mul=None) -> tuple:
-    fmt = Struct(fmt)
+    s = Struct(fmt)
 
     def packer(*data) -> bytes:
         if mul is not None:
             data = [x / mul for x in data]
-        return fmt.pack(*data)
+        return s.pack(*data)
 
     def unpacker(data: bytes):
-        result = fmt.unpack(data)
+        result = s.unpack(data)
         if mul is not None:
             result = [x * mul for x in result]
         if len(result) == 1:
@@ -33,8 +33,8 @@ def string_unpack(data: bytes) -> str:
     return data[4:4+length].decode().replace('\x00', '')
 
 
-def string_pack(data: str) -> bytes:
-    data = data.encode()
+def string_pack(string: str) -> bytes:
+    data = string.encode()
     buffer_bytes = -len(data) % 4
     return _LENGTH.pack(len(data)) + data + b'\x00' * buffer_bytes
 

@@ -3,10 +3,14 @@ Color and Gradient structures for interacting with PXDFiles.
 '''
 
 import colorsys
+from typing import Any, Iterable
 
 from .structure import verb
 from .enums import GradientType
 from .helpers import num, hexbyte, add_tuple_shortcuts, add_shortcuts
+
+Number = int | float
+ColorInput = str | Number | tuple
 
 @add_tuple_shortcuts('hsv', ('h', 'sv', 'v'))
 @add_tuple_shortcuts('hls', ('h', 'l', 'sl'))
@@ -33,7 +37,13 @@ class Color:
     def __hash__(self):
         return hash(str(self))
 
-    def __init__(self, R=0, G=0, B=0, A=255):
+    def __init__(
+        self,
+        R: ColorInput = 0,
+        G: Number = 0,
+        B: Number = 0,
+        A: Number = 255
+    ):
         '''
         Accepts a hex string, or RGBA values in [0, 255]-space.
         '''
@@ -65,7 +75,7 @@ class Color:
         self.A = num(A)
 
     @classmethod
-    def from_rgb(cls, r, g, b, a=1):
+    def from_rgb(cls, r: Number, g: Number, b: Number, a: Number = 1):
         return cls(r*255, g*255, b*255, a*255)
 
     @property
@@ -88,7 +98,7 @@ class Color:
         return cls.from_rgb(*colorsys.hsv_to_rgb(h, s, v), a)
 
     @property
-    def hsv(self, val):
+    def hsv(self):
         return colorsys.rgb_to_hsv(*self.rgb)
 
     @hsv.setter
@@ -100,7 +110,7 @@ class Color:
         return cls.from_rgb(*colorsys.hls_to_rgb(h, l, s), a)
 
     @property
-    def hls(self, val):
+    def hls(self):
         return colorsys.rgb_to_hls(*self.rgb)
 
     @hls.setter
@@ -163,7 +173,12 @@ class Gradient:
 
     _default_cols = ['48a0f8' '48a0f800']
 
-    def __init__(self, *colors, midpoints=None, kind=GradientType.linear):
+    def __init__(
+        self,
+        *colors: Iterable[tuple[ColorInput, float]],
+        midpoints = None,
+        kind = GradientType.linear
+    ):
         if len(colors) == 1 and isinstance(colors[0], (list, tuple)):
             colors = colors[0]
         self.kind = GradientType(kind)
@@ -245,7 +260,7 @@ class Gradient:
         ], midpoints=data['m'], kind=data['t'])
 
     def _to_data(self):
-        data = {'csr': 0}
+        data: dict[str, Any] = {'csr': 0}
         data['m'] = list(self.midpoints)
         data['s'] = [
             [1, [c.rgb, x]]

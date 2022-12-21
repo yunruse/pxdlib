@@ -5,12 +5,12 @@ By default, these items will dereference all UIDs in str() but may truncate some
 '''
 
 from plistlib import UID
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Optional, Type
 
 if TYPE_CHECKING:
     from .plistfile import PlistFile
 
-def classname(obj: dict):
+def classname(obj: dict) -> Optional[str]:
     return obj.get('$class', {}).get('$classname', None)
 
 def classisinstance(obj: dict, key: str):
@@ -18,6 +18,8 @@ def classisinstance(obj: dict, key: str):
 
 
 class NSBaseObject:
+    _super_type: Type
+
     def _deref(self, value):
         return self._parent._deref(value)
     
@@ -35,7 +37,7 @@ class NSBaseObject:
         self._parent = parent
         self._super_type.__init__(self, value)
     
-    def __getitem__(self, key: int) -> Any:
+    def __getitem__(self, key: int | str) -> Any:
         return self._deref(self._super_type.__getitem__(self, key))
 
 

@@ -5,7 +5,9 @@ A TextStyle is currently a little bit bound to its TextLayer
 via some internal PLIST nonsense.
 '''
 
-from .plist import NSDictionary
+from typing import Optional, TypeVar
+
+from .plist import NSObject, NSDictionary
 from .color import Color
 
 TEXTKIT_PREFIX = 'com.pixelmatorteam.textkit.attribute.'
@@ -16,19 +18,20 @@ class TextStyle:
     def __init__(self, style_dict: NSDictionary):
         self._info = style_dict
     
-    def _get(self, key, default=None):
+    T = TypeVar('T')
+    def _get(self, key: str, default: Optional[T] = None) -> Optional[T]:
         return self._info.get(TEXTKIT_PREFIX + key, default)
     
     @property
-    def _font(self):
-        return self._get('font')['NSFontDescriptorAttributes']
+    def _font(self) -> NSDictionary:
+        return self._get('font')['NSFontDescriptorAttributes']  # type: ignore
     
     @property
-    def font_family(self):
+    def font_family(self) -> str:
         return self._font['NSFontFamilyAttribute']
     
     @property
-    def font_face(self):
+    def font_face(self) -> str:
         return self._font['NSFontFaceAttribute']
     
     @property
@@ -42,7 +45,7 @@ class TextStyle:
     @property
     def color(self):
         def get_rgba(tag):
-            col: bytes = self._get('color').get(tag)
+            col: bytes = self._get('color').get(tag)  # type: ignore
             return [
                 float(x) for x in
                 col.decode().removesuffix('\x00').split()]

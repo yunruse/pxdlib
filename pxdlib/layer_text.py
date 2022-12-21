@@ -24,18 +24,23 @@ class TextLayer(Layer):
         else:
             yield from self.text_styles[0]._repr_info()
         yield from Layer._repr_info(self)
+    
+    def __string_data(self) -> dict:
+        js = self._info('text-stringData')
+        assert js, "No text-stringData!"
+        return verb(json.loads(js))
 
     @property
     def _text(self):
-        store = verb(json.loads(self._info('text-stringData')))
+        store = self.__string_data()
         data = base64.b64decode(store['stringNSCodingData'])
         return PlistFile(plistlib.loads(data, fmt=plistlib.FMT_BINARY))
 
     @_text.setter
     def _text(self, val: PlistFile):
-        store = verb(json.loads(self._info('text-stringData')))
         data = plistlib.dumps(val._tree, fmt=plistlib.FMT_BINARY)
         data = base64.b64encode(data).decode()
+        store = self.__string_data()
         store['stringNSCodingData'] = data
         self._setinfo('text-stringData', json.dumps([1, store]))
 

@@ -9,7 +9,7 @@ def uuid():
     return str(uuid1()).upper()
 
 
-def num(number):
+def num(number: int | float):
     '''
     Return float (or int, if an integer)
     '''

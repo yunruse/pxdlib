@@ -26,7 +26,7 @@ class NSArray(NSObject):
         for k in self['NS.objects']:
             yield k
     
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int | str):
         if isinstance(index, int):
             return self['NS.objects'][index]
         else:
@@ -157,11 +157,12 @@ class NSStringOrData(NSObject):
     }
 
     classname: str
-    value: str | bytes
     
     def __init__(self, value, parent: "PlistFile"):
         NSObject.__init__(self, value, parent)
-        self.classname = classname(self)
+        clsname = classname(self)
+        assert clsname
+        self.classname = clsname
         self._type_property = self._TYPE_PROPERTIES[self.type]
 
     @property
@@ -196,3 +197,5 @@ class NSStringOrData(NSObject):
 
     def __str__(self): return str(self.value)
     def __len__(self): return len(self.value)
+    def __eq__(self, other): return self.value == other
+    def __lt__(self, other): return self.value < other

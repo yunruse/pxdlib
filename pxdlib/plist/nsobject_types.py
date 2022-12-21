@@ -9,7 +9,8 @@ Attribute names never contain underlines, but sometimes contain periods.
 In this case, the _ represents a . in the attribute name.
 '''
 
-from .nsobject import NSObject, NSDictionary
+from .nsobject import NSObject
+from .nsprimitives import NSDictionary
 
 class NSString(NSObject):
     NS_string: str
