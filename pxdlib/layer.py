@@ -30,6 +30,10 @@ Styles = BoundList('styles')
 @add_tuple_shortcuts('position', ('x', 'y'))
 class Layer:
     __slots__ = ('pxd', '_id', '_styles')
+    width: int
+    height: int
+    x: int
+    y: int
 
     def __init__(self, parent, ID=None):
         if type(self) is Layer:
@@ -356,6 +360,7 @@ class Layer:
         The layer's given visible name.
         '''
         return blob(self._info('name'))
+        return blob(self._info('name', type=str), type=str)
 
     @name.setter
     def name(self, name: str):
@@ -374,6 +379,7 @@ class Layer:
         '''
         return blob(self._info('opacity'))
 
+    
     @opacity.setter
     def opacity(self, opacity):
         if isinstance(opacity, int) and 0 <= opacity <= 100:
@@ -383,12 +389,13 @@ class Layer:
 
     @property
     def position(self) -> tuple:
+    def position(self):
         '''
         The center of the layer, defined in (x, y) pixels such that
         the origin is at the top left.
         '''
-        x, y = tuple(blob(self._info('position')))
-        return x, self.pxd.height - y
+        x, y = blob(self._info('position'))
+        return int(x), int(self.pxd.height - y)
 
     @position.setter
     def position(self, pos):
@@ -396,11 +403,12 @@ class Layer:
         self._setinfo('position', make_blob(b'PTPt', x, self.pxd.height - y))
 
     @property
-    def size(self) -> int:
+    def size(self):
         '''
         The position of the layer (defined as its center).
         '''
-        return tuple(blob(self._info('size')))
+        w, h = blob(self._info('size'))
+        return int(w), int(h)
 
     @property
     def angle(self) -> float:
