@@ -326,11 +326,20 @@ class Layer:
 
         return f'<{typ} {name}{info}>'
 
+    def _info_keys(self) -> list[str]:
+        self._assert()
+        keys = self.pxd._db.execute(
+            "select key from layer_info"
+            " where layer_id = ? ;",
+            (self._id, )
+        ).fetchall()
+        return [k[0] for k in keys]
+
     def _info(self, key: str, default: Optional[bytes] = None) -> Optional[bytes]:
         self._assert()
         value = self.pxd._db.execute(
             "select value from layer_info"
-            f" where layer_id = ? and key = ?;",
+            " where layer_id = ? and key = ?;",
             (self._id, key)
         ).fetchone()
         if value is None:

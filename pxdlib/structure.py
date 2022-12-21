@@ -95,24 +95,25 @@ _FORMATS = {
     b'Blnd': (kind_pack, kind_unpack),
 }
 
-
-def blob(blob: bytes) -> object:
+def _blob(blob: bytes):
     if not len(blob) > 12:
         raise TypeError('Pixelmator blobs are more than 12 bytes! ')
-
     magic = blob[:4]
     if not magic == _MAGIC:
         raise TypeError('Pixelmator blobs start with the magic number "4-tP".')
 
     kind = blob[4:8][::-1]
-    if kind in _FORMATS:
-        packer, unpacker = _FORMATS[kind]
-    else:
-        raise TypeError(f'Unknown blob type {kind}.')
-
     length, = _LENGTH.unpack(blob[8:12])
     data = blob[12:12+length]
-    return unpacker(data)
+    return kind, data
+
+def blob(blob: bytes) -> object:
+    kind, data = _blob(blob)
+    if kind in _FORMATS:
+        _, unpacker = _FORMATS[kind]
+        return unpacker(data)
+    else:
+        raise TypeError(f'Unknown blob type {kind}.')
 
 
 def make_blob(kind: bytes, *data) -> bytes:
