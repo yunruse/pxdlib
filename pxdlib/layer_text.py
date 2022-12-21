@@ -15,7 +15,10 @@ from .plist import PlistFile, NSArray
 
 class TextLayer(Layer):
     def _repr_info(self):
-        yield f'text: {self.raw_text!r}'
+        if len(self.raw_text) > 20:
+            yield f'{len(self.raw_text)} characters'
+        else:
+            yield repr(self.raw_text)
         if len(self.text_styles) > 1:
             yield 'multiple text styles'
         else:
