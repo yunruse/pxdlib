@@ -86,6 +86,7 @@ _FORMATS = {
     b'PTSz': _bare('>dd', mul=2),
     b'BDSz': _bare('<qq'),
     b'PTFl': _bare('>d'),
+    b'LDOp': _bare('>d'),
     b'Strn': (string_pack, string_unpack),
     b'LOpc': _bare('<H'),
     b'SI16': _bare('<hxx'),

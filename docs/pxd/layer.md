@@ -21,6 +21,7 @@ Every layer will have the following attributes:
 
 - `name` ([`Strn`](/docs/pxd/#blobs)) is the visual name of the layer;
 - `opacity` (`LOpc`) is a big-endian (!) short integer from 0 to 100 giving the layer's opacity from 0 through 100;
+- `opct-nrm` ([`LDOp`](/docs/pxd/#blobs)) is identical to `opacity`, albeit a float from 0 to 1;
 - `flags` (`UI64`) is a 64-bit integer representing a bitmask. From the least significant bit:
   - The first bit defined if a layer is visible;
   - The second bit defines if a layer is locked;

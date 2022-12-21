@@ -66,15 +66,14 @@ In the data described above, we may encounter certain structures seemingly uniqu
 Various "Pixelmator blobs" may be encountered in the `.pxd` format. They are little-endian, and have a twelve-byte header:
 - 4 bytes for their magic number, `4-tP`.
 - 4 bytes for their type, specified as an ASCII string given in reverse order;
-- 4 bytes for an integer specifying the length of the blob in bytes. The end may contain garbage bytes, as this is always padded to the nearest 4 bytes.
+- 4 bytes for an integer specifying the length of the blob in bytes. Take care to make use of this -- blobs may contain up to 3 bits of junk data to align to a multiple of 4 bytes.
 
-<a id="blobs"></a>
-While some blobs' types appear only once (and are described where they are found), many of them are shared. Below are common blob types:
+Below are common blob types (see `__FORMAT` in `structure.py` for specifics:):
 
 - `SI16` is a short integer of 16 bits, followed by two garbage bytes.
 - `Strn` is a string. This starts with 4 bytes for the number of characters, followed by the characters. (There may be garbage bytes at the end.)
 - `PTPt` and `PTSz` are two double-precision floats representing the x and y dimensions of a point or size, respectively. An increase in one pixel corresponds to an increase by 0.5, so you have to double the, uh, double doubles.
-- `PTFl` is a big-endian double-precision float.
+- `PTFl` and `LDop` are big-endian double-precision floats.
 - `Arry` is an array of other blobs – notably, its length will include these other blobs. It first contains two integers, the first nominally 1 and the second, _n_, the number of items in the array. The array is then followed by _n_ integers giving the starting positions of each entry after this header (i.e. the first is 0).
 
 <a id="json"></a>

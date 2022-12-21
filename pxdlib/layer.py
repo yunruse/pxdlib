@@ -392,10 +392,11 @@ class Layer:
     
     @opacity.setter
     def opacity(self, opacity):
-        if isinstance(opacity, int) and 0 <= opacity <= 100:
-            self._setinfo('opacity', make_blob(b'LOpc', opacity))
-        else:
+        if not (isinstance(opacity, int) and 0 <= opacity <= 100):
             raise TypeError('Opacity must be an integer in range [0, 100].')
+        
+        self._setinfo('opacity', make_blob(b'LOpc', opacity))
+        self._setinfo('opct_nrm', make_blob(b'LDOp', opacity / 100.0))
 
     @property
     def position(self):
