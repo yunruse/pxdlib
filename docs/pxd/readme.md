@@ -90,7 +90,7 @@ Below are common blob types (see `__FORMAT` in `structure.py` for specifics:):
 ### JSON structures
 <a id="json"></a>
 
-Various versionable structures can be found embedded in a variety of JSON strings in a Pixelmator document:
+Some structures in a Pixelmator document are encoded in UTF-8 JSON:
 
 - A **vercon**, or version container, is a dictionary containing `version` (nominally 1) and the contents inside `versionSpecifiContainer` \[sic\]; the latter is the actual contents.
 - A **verstruct** is like a vercon albeit with the tags `structureVersion` and `versionSpecificInfo`.

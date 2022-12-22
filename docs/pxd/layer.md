@@ -1,26 +1,37 @@
 # Pixelmator Pro (.pxd) format: Layers
 
-The layer object is exposed in three [tables](/docs/pxd/#sql). `document_layers` contains two identifiers:
-- `id`, an integer, is used to link it to the `layer_tiles` and `layer_info` tables;
-- `identifier`, an UUID string, is used to link the document to other layers.
-
-The `document_layers.type` is an integer indicating the layer's type. It is one of:
-
-1. A raster layer. Only these layers will have a corresponding `layer_tiles` table; if a non-empty layer, the layer’s contents are stored in the data folder.
-2. A text layer.
-3. A vector layer.
-4. A group layer, containing other layers.
-
-It's not too hard to construct a tree of layers with `parent_identifier` and `index_at_parent`; `parent_identifier` is null for top-level layers. However, take note that any layer may have a single child in the form of a raster layer as a visibility mask. (See the `flags` attribute below for how to identify this.)
-
-Below are a list of attributes which can be obtained from `layer_info`.
+The layer object is exposed in three [tables](/docs/pxd/#sql).
 
 
 
-## Common attributes
+## `document_layers` info
+
+The `document_layers` table contains essential shared layer info:
+- `id` (`INTEGER`): An integer, 
+- `identifier` (`TEXT`): the UUID, which is used to uniquely identify the layer, and any other content files it may hold.
+- `parent_identifier` (`TEXT`): `null` if a top-level layer; otherwise the parent layer, typically a group. Mask layers (see `flags` below) use this to indicate what they are masking.
+- `index_at_parent` (`INTEGER`): The ordering index in a group (lower indices appear at the front).
+- `type` (`INTEGER`): One of the following:
+  - `1`: A [raster layer](#raster).
+  - `2`: A [text layer](#text).
+  - `3`: A [vector layer](#vector).
+  - `4`: A group layer, containing other layers.
+
+
+
+## Layer attributes `layer_info`
+
+The `layer_info` table contains three properties, providing attributes to layers:
+- `layer_id` (`INTEGER`), referencing `document_layers`,
+- `key` (`TEXT`),
+- `value` (`BLOB`).
+
+
+
+### Common attributes
 <a id='common' />
 
-Every layer will have the following attributes:
+Every layer has the following `layer_info` attributes:
 
 - `name` ([`Strn`](/docs/pxd/#blobs)) is the visual name of the layer;
 - `opacity` (`LOpc`) is a big-endian (!) short integer from 0 to 100 giving the layer's opacity from 0 through 100;
@@ -51,20 +62,17 @@ Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`c
 
 
 
-## Raster layers
+### Raster layer attributes
 <a id="raster" />
 
-The properties of raster layers are:
-- `opct-nrm` ???
-
-these may also be in non-raster layers ???
+Raster layers do not have any specific `document_info` attributes. Instead, they are referenced by the `layer_tiles` table. Inside the `.pxd` directory structure, the raster data for a layer is stored at `/data/{UUID}` for the given UUID of the layer. See [text.md](/docs/pxd/rasterData.md) for a description of this format.
 
 
 
 ## Text layers
 <a id="text" />
 
-In addition to shared attributes, text layers share the following attributes:
+Text layers also have the following `document_info` attributes:
 
 - `text-version` ([`SI16`](/docs/pxd/#blobs)) is nominally one;
 - `text-layerType` ([`SI16`](/docs/pxd/#blobs)) is either 0 (regular text) or 2 (path text). I haven't observed type 1 in the wild.
@@ -72,20 +80,27 @@ In addition to shared attributes, text layers share the following attributes:
 - `text-verticalAlignment` ([`SI16`](/docs/pxd/#blobs)) is either 0 (top), 1 (middle) or 2 (bottom).
 - `text-widthAutosizable` ([`SI16`](/docs/pxd/#blobs)) is another boolean, and it similarly defaults to one and changes to zero when the user has manually sized the textbox (so that text should wrap rather than keep going).
 - `text-insets` ([`PTSz`](/docs/pxd/#blobs)) is the horizontal and vertical padding for wrapping. It is nominally `[4.0, 4.0]` for regular text and `[0.0, 0.0]` for path text.
-- `text-stringData`, a vercon with one entry: `StringNSCodingData`, a base-64 encoded binary PLIST, in which most of the text data is stored. See [text.md](/docs/pxd/stringData.md) for more info.
+- `text-stringData`, a UTF-8 encoded [vercon](/docs/pxd/#json) with one entry: `StringNSCodingData`, a base-64 encoded binary PLIST, in which most of the text data is stored. See [text.md](/docs/pxd/stringData.md) for more info.
 
 For path text (`text-layerType` of 2), the following attributes are also found:
 
 - All three of `text-layer{Start,Middle,End}PointOnPath` ([`PTPt`](/docs/pxd/#blobs)) are the locations of the anchors of the text, coordinates in pixels from the bottom left of the bounding box of the path.
-- `text-pathData` is a vercon with one entry: `dataFromCGPath`, a base-64 encoded path object. (unknown)
+- `text-pathData` is a [vercon](/docs/pxd/#json) with one entry: `dataFromCGPath`, a base-64 encoded path object. (unknown)
 
 
 
 ## Vector layers
-<a href='vector' />
+<a id='vector' />
 
-In addition to almost certainly containing a [`styles-data`](/docs/pxd/styles.md#styles-data) tag, vector layers contain one added `shape-shapeData`, a vercon containing the following tags:
+Text layers also have the following `document_info` attributes:
 
-- `identifier` and `content-identifier`, both UUIDs;
-- `geometry` (unknown),
-- `pathCodableWrappers`, a vercon (unknown)
+- `shape-shapeData`, a [vercon](/docs/pxd/#json) containing the following tags:
+  - `identifier` and `content-identifier`, both UUIDs;
+  - `geometry` ???,
+  - `pathCodableWrappers`, a [vercon](/docs/pxd/#json) ???
+
+
+
+
+
+The media is stored at ???
