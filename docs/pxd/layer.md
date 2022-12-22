@@ -56,14 +56,16 @@ Every layer has the following `layer_info` attributes:
 - `scale` ([`PTPt`](/docs/pxd/#blobs)), ???
 - `backingScale` ([`PTFl`](/docs/pxd/#blobs)), ???
 - `anchorPoint` ([`PTPt`](/docs/pxd/#blobs)), ???
-- `angle` ([`PTFl`](/docs/pxd/#blobs)), in degrees from -360 to 0. Nominally 0 except for text layers.
-- `transform` (`Trns`), ???
+- `angle` ([`PTFl`](/docs/pxd/#blobs)), in degrees. Pixelmator displays the angle as _360 - θ_.
+- `transform` (`Trns`), the transformation of the layer, independent of its rotation. ???
 
 - `user-info-data`, a UTF-8 encoded PLIST file, nominally empty.
+- `content-rep-data`, UTF-8 encoded JSON verlist, nominally `{"s": 1, "b": false, "r": false}` ???
 
-- `content-rep-data`, UTF-8 encoded JSON verlist, nominally `{"s": 1, "b": false, "r": false}`
-
-Optionally present are the [`styles-data`](/docs/pxd/styles.md#styles-data), [`color-adjustments`](/docs/pxd/styles.md#color-adjustments) and [`effects-data`](/docs/pxd/styles.md#effects-data) attributes ???
+Optionally present are the following attributes:
+- [`styles-data`](/docs/pxd/styles.md#styles-data)
+- [`color-adjustments`](/docs/pxd/styles.md#color-adjustments)
+- [`effects-data`](/docs/pxd/styles.md#effects-data) attributes
 
 
 
