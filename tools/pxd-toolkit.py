@@ -45,12 +45,16 @@ info.add_argument(
 info.add_argument(
     '--layer-position', '-P', action='store_true',
     help='Show layer position and size')
+info.add_argument(
+    '--layer-flags', '-F', action='store_true',
+    help='Show layer flags')
 
 def process_display(args):
     args.do_display = any((
         args.layer_name,
         args.layer_info,
-        args.layer_position
+        args.layer_position,
+        args.layer_flags,
     ))
     def display(layer: Layer | PXDFile):
         if isinstance(layer, Layer):
@@ -59,6 +63,8 @@ def process_display(args):
             if args.layer_position:
                 yield '({}, {}), {}×{}'.format(
                     layer.x, layer.y, layer.width, layer.height)
+            if args.layer_flags:
+                yield repr(layer._flags)
         if args.layer_info:
             yield repr(layer)
     args.display_func = display

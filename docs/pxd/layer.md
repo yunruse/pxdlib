@@ -37,14 +37,15 @@ Every layer has the following `layer_info` attributes:
 - `name` ([`Strn`](/docs/pxd/#blobs)) is the visual name of the layer;
 - `opacity` (`LOpc`) is a big-endian (!) short integer from 0 to 100 giving the layer's opacity from 0 through 100;
 - `opct-nrm` ([`LDOp`](/docs/pxd/#blobs)) is identical to `opacity`, albeit a float from 0 to 1;
-- `flags` (`UI64`) is a 64-bit integer representing a bitmask. From the least significant bit:
-  - The first bit defined if a layer is visible;
-  - The second bit defines if a layer is locked;
-  - The third bit is unknown;
-  - The fourth bit defines if a layer is a clipping mask (i.e. will mask onto the layer below);
-  - The fifth bit defines if a layer is a mask (i.e. defines the mask of its parent layer);
-  - The sixth bit is unknown ???;
-  - The seventh bit is on iff the layer is a raster;
+- `flags` (`UI64`) is a 64-bit integer representing a bitmask. It has the following bits:
+  - `1 << 0`: Iff a layer is visible
+  - `1 << 1`: Iff the layer is locked
+  - `1 << 2`: ???
+  - `1 << 3`: Iff the layer is a clipping mask (will mask onto the layer below)
+  - `1 << 4`: Iff the layer is a mask (defines the mask of its parent)
+  - `1 << 5`: ???
+  - `1 << 6`: Iff the layer is a raster
+
 - `color-value` is a raw integer (i.e. _not_ a blob) defining the color (aka tag) given to the layer: 0 if untagged, or 1-7 for various tags.
 - `blendMode` (`Blnd`) are four characters (in reverse order) which define the blend mode. (See `BlendMode` under [`enums.py`](/pxdlib/enums.py) for a list of values.)
 - `position` ([`PTPt`](/docs/pxd/#blobs)) points to the center of the layer.
