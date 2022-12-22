@@ -7,6 +7,7 @@ import argparse
 from sys import stderr
 from typing import Callable, Generator
 from pxdlib import PXDFile, GroupLayer, Layer
+from pxdlib.structure import blob
 
 _exit = exit
 def exit(code: int, reason: str):
@@ -37,6 +38,9 @@ search.add_argument('--inside',
 
 info = parser.add_argument_group('Display info in a tree')
 info.add_argument(
+    '--no-indent', dest='indent', action='store_false',
+    help='Do not indent to indicate layer structure')
+info.add_argument(
     '--layer-info', '-I', action='store_true',
     help='Show most relevant layer information')
 info.add_argument(
@@ -48,6 +52,10 @@ info.add_argument(
 info.add_argument(
     '--layer-flags', '-F', action='store_true',
     help='Show layer flags')
+info.add_argument(
+    '--layer-keys', '-K',
+    nargs='*', metavar='KEYS', default=None,
+    help='Show layer metadata with KEYS (provide `all` for all)')
 
 def process_display(args):
     args.do_display = any((
@@ -55,6 +63,7 @@ def process_display(args):
         args.layer_info,
         args.layer_position,
         args.layer_flags,
+        args.layer_keys,
     ))
     def display(layer: Layer | PXDFile):
         if isinstance(layer, Layer):
@@ -65,6 +74,22 @@ def process_display(args):
                     layer.x, layer.y, layer.width, layer.height)
             if args.layer_flags:
                 yield repr(layer._flags)
+            if args.layer_keys:
+                def display_blob(k):
+                    v = layer._info(k)
+                    if isinstance(v, bytes) and v.startswith(b'4-tP'):
+                        try:
+                            v = blob(v)
+                        except TypeError:
+                            pass
+                    return v
+                keys = args.layer_keys
+                if keys == ['all']:
+                    keys = list(layer._info_keys())
+                indent = max(map(len, keys))
+                yield '\n'.join(
+                    f'{k.rjust(indent)}: {display_blob(k)!r}' for k in keys
+                )
         if args.layer_info:
             yield repr(layer)
     args.display_func = display
@@ -72,14 +97,18 @@ def process_display(args):
 def display_tree(
     layer: PXDFile | Layer,
     func: Callable[[PXDFile | Layer], Generator[str, None, None]],
-    level: int = 0
+    do_indent = True,
+    level: int = 0,
 ):
     info = ' '.join(func(layer))
     if info:
-        print('    ' * level, info)
+        if do_indent:
+            print('    ' * level, info)
+        else:
+            print(info)
     if isinstance(layer, (PXDFile, GroupLayer)):
         for l in layer.children:
-            display_tree(l, func, level+1)
+            display_tree(l, func, do_indent, level+1)
 
 
 
@@ -125,4 +154,4 @@ if __name__ == '__main__':
 
     process_display(args)
     if args.do_display:
-        display_tree(pxd, args.display_func)
+        display_tree(pxd, args.display_func, args.indent)
