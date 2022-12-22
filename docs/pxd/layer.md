@@ -16,6 +16,7 @@ The `document_layers` table contains essential shared layer info:
   - `2`: A [text layer](#text).
   - `3`: A [vector layer](#vector).
   - `4`: A group layer, containing other layers.
+  - `7`: A [video layer](#video).
 
 
 
@@ -101,6 +102,10 @@ Text layers also have the following `document_info` attributes:
 
 
 
+## Video layers
+<a id='video' />
 
+Video layers have the following `document_info` attributes:
+- `video-params-data`: a UTF-8 encoded [vercon](/docs/pxd/#json) ???
 
 The media is stored at ???

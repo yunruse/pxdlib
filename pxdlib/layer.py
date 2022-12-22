@@ -651,10 +651,12 @@ if True:
     from .layer_raster import RasterLayer
     from .layer_text import TextLayer
     from .layer_vector import VectorLayer
+    from .layer_video import VideoLayer
 
     _LAYER_TYPES = {
         1: RasterLayer,
         2: TextLayer,
         3: VectorLayer,
-        4: GroupLayer
+        4: GroupLayer,
+        7: VideoLayer,
     }
