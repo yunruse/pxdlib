@@ -22,6 +22,7 @@ class _LayerFlag(enum.IntFlag):
     clipping = 1 << 3
     mask = 1 << 4
     raster = 1 << 6
+    placeholder = 1 << 9
 
 
 Styles = BoundList('styles')

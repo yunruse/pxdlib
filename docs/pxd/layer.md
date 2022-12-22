@@ -45,6 +45,9 @@ Every layer has the following `layer_info` attributes:
   - `1 << 4`: Iff the layer is a mask (defines the mask of its parent)
   - `1 << 5`: ???
   - `1 << 6`: Iff the layer is a raster
+  - `1 << 7`: ???
+  - `1 << 8`: ???
+  - `1 << 9`: Iff the layer is a placeholder (raster or video only); will show a + button to insert user media
 
 - `color-value` is a raw integer (i.e. _not_ a blob) defining the color (aka tag) given to the layer: 0 if untagged, or 1-7 for various tags.
 - `blendMode` (`Blnd`) are four characters (in reverse order) which define the blend mode. (See `BlendMode` under [`enums.py`](/pxdlib/enums.py) for a list of values.)
