@@ -2,13 +2,21 @@
 
 The `PXDFile` object contains a variety of metadata about the Pixelmator document, alongside the layers contained that make up the image.
 
+
+
 ## Methods
 
-For editing purposes:
 
-- `open()` starts a transaction to modify the document. Changes will only be made on `close()`.
-- `close()` closes a transaction and commits any changes made. `open()` and `close()` are useful in certain edge cases, but it is recommended to use a `with pxd` block, which handles both a litle easier.
+
+General document opening:
+
+- `reload()` reloads any external changes made to the document. It should not be open for editing.
+- `can_write -> bool` is True iff open for editing. It is recommended you use a `with` block.
+- `open()` opens the document for editing.
+- `close()` closes and applies edits.
 - `copyto(path, overwrite=False) -> PXDfile` copies the PXD file to a new directory and returns it.
+
+
 
 For accessing layers:
 
@@ -17,6 +25,8 @@ For accessing layers:
 - `find(name) -> Layer` will find the first layer with a given name.
 
 In general, layers are ordered as seen visually in the document.
+
+
 
 ## Metadata
 

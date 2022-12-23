@@ -1,7 +1,15 @@
+from io import UnsupportedOperation
+
 class PixelmatorError(Exception):
     '''
     Some change was made which is invalid
     in a Pixelmator document.
+    '''
+
+class ModeError(PixelmatorError, UnsupportedOperation):
+    '''
+    Some IO error. Most likely the document was
+    edited, but not open for editing.
     '''
 
 

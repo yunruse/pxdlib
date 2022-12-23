@@ -4,13 +4,13 @@ Layer objects, bound to a PXD file.
 
 import enum
 import json
-from io import UnsupportedOperation
 from typing import Optional
 
 from .helpers import uuid, BoundList, add_tuple_shortcuts
+from .errors import ChildError, MaskError, ModeError, StyleError
+
 from .structure import blob, make_blob, verb
 from .enums import BlendMode, LayerTag
-from .errors import ChildError, MaskError, StyleError
 
 from .styles import _STYLES
 from .color_adjustments import ColorAdjustments
@@ -101,8 +101,7 @@ class Layer:
             pxd = parent
             parent_UUID = None
 
-        if pxd.closed:
-            raise UnsupportedOperation('not writable')
+        self._assert(write=True)
 
         UUID = uuid()
         for code, kind in _LAYER_TYPES.items():
@@ -126,9 +125,8 @@ class Layer:
 
     def _assert(self, write=False):
         if self._id is None:
-            raise UnsupportedOperation('not readable')
-        if write and self.pxd.closed:
-            raise UnsupportedOperation('not writable')
+            raise ModeError('File not readable.')
+        self.pxd._assert(write)
 
     @property
     def parent(self):
@@ -144,8 +142,9 @@ class Layer:
         return self.pxd._layer(children[self._id])
 
     @parent.setter
-    def parent(self, val):
+    def parent(self, val: "Layer"):
         self._assert(write=True)
+        val._assert(write=True)
         if val is None or val is self.pxd:
             uuid = None
         elif isinstance(val, Layer):
@@ -171,8 +170,6 @@ class Layer:
             )
         else:
             # inter-PXD
-            if val.pxd.closed:
-                raise UnsupportedOperation('not writable')
             new = self._copyto(val, asmask=False, keep_index=False)
             self.delete()
             self.pxd = new.pxd
@@ -213,10 +210,7 @@ class Layer:
 
         Note that no attributes can be read or written after this is done.
         '''
-        if self._id is None:
-            return
-        if self.pxd.closed:
-            raise UnsupportedOperation('not writable')
+        self._assert(write=True)
 
         for child in self.pxd._layers(self):
             child.delete()

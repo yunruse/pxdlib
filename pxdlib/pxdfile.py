@@ -5,12 +5,13 @@ PXDFile class, handling most database access.
 from pathlib import Path
 import shutil
 import sqlite3
-from io import UnsupportedOperation
 from collections import namedtuple
 from tempfile import mkdtemp
 from zipfile import is_zipfile, ZipFile
 
 from .helpers import add_tuple_shortcuts
+from .errors import ModeError
+
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
 
@@ -24,7 +25,7 @@ class PXDFile:
 
     _compressed: bool  # True iff the original PXD is a .zip file.
 
-    _closed: bool  # True iff open for editing
+    _open: bool  # True iff open for editing
     _db = sqlite3.Connection  # Always held open for reading
     _layer_cache = dict
     _meta = dict
@@ -51,11 +52,20 @@ class PXDFile:
             with ZipFile(self.path) as zf:
                 zf.extractall(self._edit_dir)
 
-        self._closed = True
+        self._open = False
 
+        self.reload()
+    
+    def reload(self):
+        '''Reload file after any modification.'''
+        if self._open:
+            raise ModeError('Cannot reload when open. Please use a `with` block or .close()')
+
+        if not self.path.exists():
+            raise FileNotFoundError(f'{self.path} does not exist')
         db_path = self._edit_dir / 'metadata.info'
         if not db_path.is_file():
-            raise FileNotFoundError("PXD malformed - has no metadata.info")
+            raise FileNotFoundError(f"{self.path} is not a valid .pxd file")
 
         self._db = sqlite3.connect(db_path)
         self._layer_cache = {}
@@ -67,11 +77,19 @@ class PXDFile:
         self._meta = keyval('document_meta')
         self._info = keyval('document_info')
 
+    def _assert(self, write=False):
+        '''Assert file is in correct mode.'''
+        if write and (not self.can_write):
+            raise ModeError('File not open for writing. Please use a `with` block or .open()')
+        
+        if hasattr(self, '_db'): return
+        raise ModeError('File not readable.')
+
     # Database management
 
     @property
-    def closed(self):
-        return self._closed
+    def can_write(self):
+        return self._open
 
     def open(self) -> None:
         '''
@@ -79,24 +97,24 @@ class PXDFile:
 
         Changes will only be made on `close()`.
         '''
-        if not self._closed:
+        if self._open:
             return
         self._db.execute('PRAGMA journal_mode=DELETE')
         self._db.execute('begin exclusive')
-        self._closed = False
+        self._open = True
 
     def close(self) -> None:
         '''
         Closes a transaction and commits any changes made.
         '''
-        if self._closed:
+        if not self._open:
             return
-        self._closed = True
         self._db.execute('commit')
         if self._compressed:
             self.path.unlink()
             shutil.make_archive(self.path, 'zip', self._edit_dir)
             shutil.move(self.path + '.zip', self.path)
+        self._open = False
 
     def __enter__(self):
         self.open()
@@ -176,8 +194,9 @@ class PXDFile:
 
         Make sure you pxd.close() so that all changes are saved.
         '''
-        if not self.closed:
-            raise UnsupportedOperation('close file before copying!')
+        self._assert()
+        if self.can_write:
+            raise ModeError('close file before copying!')
 
         path = Path(path)
         if path.is_dir():
@@ -190,8 +209,7 @@ class PXDFile:
         return type(self)(path)
 
     def _set(self, key, data, is_meta=False):
-        if self.closed:
-            raise UnsupportedOperation('not writable')
+        self._assert(write=True)
         table = 'document_meta' if is_meta else 'document_info'
         store = self._meta if is_meta else self._info
 

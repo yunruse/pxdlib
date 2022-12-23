@@ -19,8 +19,10 @@
     - Renamed `.rawText` to `.raw_text` (still read-only)
     - Added `.text_styles` of type `TextStyle` (currently read-only)
 
-- Internal features:
+- Technical changes:
     - ???
+    - Added `pxd.reload()`
+    - Changed `pxd.closed` to `pxd.can_write` (and tightened up database checks).
     - Various re-architecturings of documentation and library for clarity.
     - Added `pxdlib.plist` internal library for manipulating PLISTs (as used by `TextLayer`).
 
