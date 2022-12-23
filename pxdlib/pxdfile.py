@@ -23,7 +23,6 @@ class PXDFile:
     _edit_dir: Path  # The path the PXD folder is editable at.
 
     _compressed: bool  # True iff the original PXD is a .zip file.
-    _edit_tmp_dir: str  # The temporary directory (if any)
 
     _closed: bool  # True iff open for editing
     _db = sqlite3.Connection  # Always held open for reading
@@ -94,6 +93,10 @@ class PXDFile:
             return
         self._closed = True
         self._db.execute('commit')
+        if self._compressed:
+            self.path.unlink()
+            shutil.make_archive(self.path, 'zip', self._edit_dir)
+            shutil.move(self.path + '.zip', self.path)
 
     def __enter__(self):
         self.open()
