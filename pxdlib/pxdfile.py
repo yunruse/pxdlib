@@ -199,13 +199,19 @@ class PXDFile:
             raise ModeError('close file before copying!')
 
         path = Path(path)
-        if path.is_dir():
-            if overwrite:
+        if overwrite:
+            if path.is_dir():
                 shutil.rmtree(path)
-            else:
-                raise FileExistsError(
-                    'The .pxd file already exists. Pass overwrite=True, or delete it.')
-        shutil.copytree(self.path, path)
+            elif path.is_file():
+                path.unlink()
+        elif path.is_dir() or path.is_file():
+            raise FileExistsError(
+                'The .pxd file already exists. Pass overwrite=True, or delete it.')
+            
+        if self.path.is_dir():
+            shutil.copytree(self.path, path)
+        else:
+            shutil.copy(self.path, path)
         return type(self)(path)
 
     def _set(self, key, data, is_meta=False):
