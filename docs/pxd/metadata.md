@@ -1,11 +1,20 @@
 # Pixelmator Pro (.pxd) format: Metadata
 
-The [`document_meta`](/docs/pxd/#sql) table is a dictionary with two pairs known:
+
+## document_meta
+<a id='meta'>
+
+The [`document_meta`](/docs/pxd/#metadata) table has key-value pairs:
 
 - `selected-layers` is an [`Arry`](/docs/pxd/#blobs). Each entry, an [`Strn`](/docs/pxd/#blobs), corresponds to a selected layer's `identifier`.
 - `linked-layers` is an [`Arry`](/docs/pxd/#blobs) (unknown)
 
-Inside the [`document_info`](/docs/pxd/#sql) table, we likewise have:
+
+
+## document_info
+<a id='info'>
+
+The [`document_info`](/docs/pxd/#metadata) table has key-value pairs:
 
 - `size`, `BDSz`, the width and height in pixels.
 - `date` is, quite literally, the date and time – though the format is still a little Byzantine to me. If the last 8 bytes are interpreted as an `unsigned long long`, it is 100% linear to the modification time of metadata.info, but it’s not to any standard I recognise.
@@ -21,5 +30,10 @@ Inside the [`document_info`](/docs/pxd/#sql) table, we likewise have:
 - `guides` is an [`Arry`](/docx/pxd/#blobs) of `Guid` blobs. Each `Guid` blob contains a short (nominally 1), an integer (the coordinate of the guide) and a short (0 if horizontal, 1 if vertical.) The coordinates are given relative to the top-left of the document, rather than the bottom-left as coordinates are given in.
 - `slices-data`, a list of slices specified in JSON. (unknown).
 
-The [`storable_info`](/docs/pxd/#sql) table has the following keys:
+
+
+## document_info
+<a id='storable'>
+
+The [`storable_info`](/docs/pxd/#metadata) table has the following keys:
 - `originalImportedContentDocumentInfo`: present only if a `.pxd` file is imported from a `.pxm` file created by Pixelmator Classic.

@@ -10,14 +10,18 @@ Pixelmator Pro makes use of files with the `.pxd` extension. In truth, these are
 
 - `QuickLook`, a folder containing two auto-generated previews: `Icon.tiff` (small) and `Thumbnail.tiff` (medium);
 - `data`, an optional folder containing an amount of files with UUID names, each containing data corresponding to raster (image) layers;
-- a fairly large-ish `metadata.info` file.
+- A [`metadata.info` file](#metadata).
 
 
 
-## SQL format
-<a id="sql"></a>
+## `metadata.info`
+<a id="metadata"></a>
 
-The `metadata.info` file is an SQLite3 database. It has the following six tables:
+The `metadata.info` file is an SQLite3 database. Outside of large media files, it stores info on:
+- the [**document**](docs/pxd/metadata.md): `document_meta`, `document_info`, and `storable_info`
+- [**layers**](docs/pxd/layer.md): `document_layers`, `layer_info`, and `layer_tiles`
+
+The SQL schema is as follows:
 
 ```sql
 CREATE TABLE document_meta (
@@ -53,13 +57,6 @@ CREATE TABLE storable_info (
   options INTEGER
 );
 ```
-
-This has the effective structure of:
-
-- metadata on the document, in the form of two key-value pairs (aka _dictionaries_), `document_meta` and `document_info`, and a table known as `storable_info`;
-- a series of layer objects in the form of `document_layers`, which may or may not have one `layer_tiles` entry attached, and which has a dictionary attached via `layer_info`.
-
-The details for the above can be found in the [Metadata](docs/pxd/metadata.md) and [Layer object](docs/pxd/layer.md) entries, respectively.
 
 
 

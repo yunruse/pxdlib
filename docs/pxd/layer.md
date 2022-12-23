@@ -1,6 +1,6 @@
 # Pixelmator Pro (.pxd) format: Layers
 
-The layer object is exposed in three [tables](/docs/pxd/#sql).
+The layer object is exposed in three [tables](/docs/pxd/#metadata).
 
 
 
