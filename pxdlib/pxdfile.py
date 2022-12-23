@@ -2,6 +2,7 @@
 PXDFile class, handling most database access.
 '''
 
+from os import popen
 from pathlib import Path
 import shutil
 import sqlite3
@@ -84,6 +85,9 @@ class PXDFile:
         
         if hasattr(self, '_db'): return
         raise ModeError('File not readable.')
+    
+    def open_in_pixelmator(self):
+        popen(f'open -a "Pixelmator Pro" -- "{self.path}"')
 
     # Database management
 

@@ -11,6 +11,10 @@
 
 - Added `python -m pxdlib`, a formalised CLI tool for pxdlib.
 
+- `PXDFile` improvements:
+    - Added `.open_in_pixelmator()` and `.reload()` helper methods.
+    - Changed `pxd.closed` to `pxd.can_write` (and tightened up database checks).
+
 - `Layer` improvements:
     - Vastly improved `repr()` experience
     - Can set the `placeholder` flag for layers considered placeholder assets with a + icon in the layer list.
@@ -20,9 +24,6 @@
     - Added `.text_styles` of type `TextStyle` (currently read-only)
 
 - Technical changes:
-    - ???
-    - Added `pxd.reload()`
-    - Changed `pxd.closed` to `pxd.can_write` (and tightened up database checks).
     - Various re-architecturings of documentation and library for clarity.
     - Added `pxdlib.plist` internal library for manipulating PLISTs (as used by `TextLayer`).
 
