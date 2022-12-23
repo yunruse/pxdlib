@@ -2,6 +2,28 @@
 
 ## Alpha
 
+### 0.1.0 "Update Name ???"
+
+- Various bug fixes and improved typing.
+- Supports Pixelmator Pro updates:
+    - 3.2.0: `VideoLayer` added. (Currently a stub; video-specific details cannot be edited.)
+    - 2.3.6: Modern `.pxd` documents may be compressed. (pxdlib now works with them.)
+
+- Added `python -m pxdlib`, a formalised CLI tool for pxdlib.
+
+- `Layer` improvements:
+    - Vastly improved `repr()` experience
+    - Can set the `placeholder` flag for layers considered placeholder assets with a + icon in the layer list.
+
+- `TextLayer` improvements:
+    - Renamed `.rawText` to `.raw_text` (still read-only)
+    - Added `.text_styles` of type `TextStyle` (currently read-only)
+
+- Internal features:
+    - ???
+    - Various re-architecturings of documentation and library for clarity.
+    - Added `pxdlib.plist` internal library for manipulating PLISTs (as used by `TextLayer`).
+
 ### 0.0.5
 
 This will probably be the last update for a while until I figure out raster and vector stuff. Until then, however, I've been using this in another project, so I've tried to tighten the API as much as possible. 
