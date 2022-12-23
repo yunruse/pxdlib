@@ -1,7 +1,7 @@
 '''
-A little Swiss Army Knife for PXD files.
+A Swiss Army Knife for Pixelmator Pro documents.
 
-Currently needs actual implementation!
+Useful for simple analysis.
 '''
 import argparse
 from sys import stderr
@@ -14,7 +14,7 @@ def exit(code: int, reason: str):
     print(reason, file=stderr)
     _exit(code)
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('file', help='The .pxd file to operate on')
 
 
@@ -30,8 +30,7 @@ search = parser.add_argument_group('Provide a filter that all actions will only 
 #                     choices='all red orange yellow'
 #                             ' green blue purple gray'.split(),
 #                     help='Only operate on a certain layer tag.')
-search.add_argument('--inside',
-                    metavar='layer_name',
+search.add_argument('--inside', metavar='layer_name',
                     help='Only operate on a layer or group by this name.')
 
 
