@@ -55,7 +55,7 @@ info.add_argument(
 info.add_argument(
     '--layer-keys', '-K',
     nargs='*', metavar='KEYS', default=None,
-    help='Show layer metadata with KEYS (provide `all` for all)')
+    help='Show metadata with KEYS (provide `all` for all)')
 
 def process_display(args):
     args.do_display = any((
@@ -74,22 +74,33 @@ def process_display(args):
                     layer.x, layer.y, layer.width, layer.height)
             if args.layer_flags:
                 yield repr(layer._flags)
-            if args.layer_keys:
-                def display_blob(k):
+        
+
+        if args.layer_keys:
+            def display_blob(k):
+                if isinstance(layer, Layer):
                     v = layer._info(k)
-                    if isinstance(v, bytes) and v.startswith(b'4-tP'):
-                        try:
-                            v = blob(v)
-                        except TypeError:
-                            pass
-                    return v
-                keys = args.layer_keys
-                if keys == ['all']:
-                    keys = list(layer._info_keys())
-                indent = max(map(len, keys))
-                yield '\n'.join(
-                    f'{k.rjust(indent)}: {display_blob(k)!r}' for k in keys
-                )
+                else:
+                    v = layer._info.get(k, layer._meta.get(k))
+                if isinstance(v, bytes) and v.startswith(b'4-tP'):
+                    try:
+                        v = blob(v)
+                    except TypeError:
+                        pass
+                return v
+            
+            keys = args.layer_keys
+            if keys == ['all']:
+                if isinstance(layer, Layer):
+                    keys = layer._info_keys()
+                else:
+                    keys = (layer._info | layer._meta).keys()
+            keys = list(keys)
+            indent = max(map(len, keys))
+            yield '\n' + '\n'.join(
+                f'{k.rjust(indent)}: {display_blob(k)!r}' for k in keys
+            ) + '\n'
+        
         if args.layer_info:
             yield repr(layer)
     args.display_func = display
