@@ -32,16 +32,13 @@ class TextLayer(Layer):
 
     @property
     def _text(self):
-        store = self.__string_data()
-        data = base64.b64decode(store['stringNSCodingData'])
-        return PlistFile(plistlib.loads(data, fmt=plistlib.FMT_BINARY))
+        return PlistFile.from_base64(
+            self.__string_data()['stringNSCodingData'])
 
     @_text.setter
-    def _text(self, val: PlistFile):
-        data = plistlib.dumps(val._tree, fmt=plistlib.FMT_BINARY)
-        data = base64.b64encode(data).decode()
+    def _text(self, plist: PlistFile):
         store = self.__string_data()
-        store['stringNSCodingData'] = data
+        store['stringNSCodingData'] = plist.to_base64()
         self._setinfo('text-stringData', json.dumps([1, store]))
 
     @property

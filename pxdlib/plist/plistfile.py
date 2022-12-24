@@ -1,4 +1,5 @@
-from plistlib import UID
+from base64 import b64decode, b64encode
+from plistlib import UID, dumps, loads, FMT_BINARY
 from typing import Any
 
 from .nsobject import (
@@ -14,6 +15,18 @@ class PlistFile(NSObject):
     
     Currently read-only, yay dereferencing!
     '''
+
+    @classmethod
+    def from_bytes(cls, data: bytes):
+        return PlistFile(loads(data, fmt=FMT_BINARY))
+    def to_bytes(self):
+        return dumps(self._tree, fmt=FMT_BINARY)
+
+    @classmethod
+    def from_base64(cls, data: str):
+        return cls.from_bytes(b64decode(data))
+    def to_base64(self):
+        return b64encode(self.to_bytes()).decode()
 
     # TODO: Make writeable!
     # TODO: Add test methods???
