@@ -15,6 +15,21 @@ from .plist import PlistFile, NSArray
 FormattedText = list[tuple[str, TextStyle]]
 
 class TextLayer(Layer):
+    def to_rich(self):
+        text = ''
+        for string, style in self.text:
+            s = style.to_rich()
+            text += f'[{s}]{string}[/]'
+        return text
+
+    def print(self):
+        try:
+            from rich import print as rich_print
+        except ImportError:
+            print(self.raw_text)
+        else:
+            rich_print(self.to_rich())
+
     def _repr_info(self):
         if len(self.raw_text) > 20:
             yield f'{len(self.raw_text)} characters'

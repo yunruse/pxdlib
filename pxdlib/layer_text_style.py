@@ -22,6 +22,19 @@ class TextStyle:
     def _get(self, key: str, default: Optional[T] = None) -> Optional[T]:
         return self._info.get(TEXTKIT_PREFIX + key, default)
     
+    def to_rich(self):
+        '''
+        Return Rich tag for text style.
+        
+        This may be parsed with rich.Style.parse or printed with `[tag]text[/]`
+        '''
+        text = str(self.color)
+        if self.bold: text += ' b'
+        if self.italic: text += ' i'
+        if self.strikethrough: text += ' s'
+        if self.underline: text += ' u'
+        return text
+    
     @property
     def _font(self) -> NSDictionary:
         return self._get('font')['NSFontDescriptorAttributes']  # type: ignore
