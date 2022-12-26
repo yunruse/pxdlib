@@ -195,6 +195,7 @@ class NSStringOrData(NSObject):
             self.classname, self.value
     )
 
+    def __iter__(self): return iter(self.value)
     def __str__(self): return str(self.value)
     def __len__(self): return len(self.value)
     def __eq__(self, other): return self.value == other
