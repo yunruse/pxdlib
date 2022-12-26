@@ -3,15 +3,16 @@ TextLayer object, bound to a PXD file.
 '''
 
 import json
-import base64
-import plistlib
 
-from .structure import verb
+from .helpers import chunk
+from .structure import arbint, verb
+
 from .layer import Layer
 from .layer_text_style import TextStyle
 
 from .plist import PlistFile, NSArray
 
+FormattedText = list[tuple[str, TextStyle]]
 
 class TextLayer(Layer):
     def _repr_info(self):
@@ -19,7 +20,7 @@ class TextLayer(Layer):
             yield f'{len(self.raw_text)} characters'
         else:
             yield repr(self.raw_text)
-        if len(self.text_styles) > 1:
+        if self._multiple_styles():
             yield 'multiple text styles'
         else:
             yield from self.text_styles[0]._repr_info()
@@ -40,26 +41,64 @@ class TextLayer(Layer):
         store = self.__string_data()
         store['stringNSCodingData'] = plist.to_base64()
         self._setinfo('text-stringData', json.dumps([1, store]))
+    
+    # Text style (read)
+
+    def _multiple_styles(self):
+        return isinstance(self._text.NSAttributes, NSArray)
 
     @property
     def raw_text(self):
-        '''
-        Unformatted text contents.
-        '''
+        '''Unformatted text contents.'''
         return self._text.NSString.value
 
-    @raw_text.setter
-    def raw_text(self, value: str):
-        # TODO: Fix this -- it deletes layers
-        raise NotImplementedError(
-            'Cannot set raw_text currently.')
-        _t = self._text
-        _t.NSString.value = value
-        self._text = _t
-    
     @property
-    def text_styles(self):
+    def _text_styles(self):
+        '''Styles in use (by index).'''
         attrs = self._text.NSAttributes
         if not isinstance(attrs, NSArray):
             attrs = [attrs]
         return [TextStyle(a) for a in attrs]
+
+    @property
+    def text(self) -> FormattedText:
+        text = self.raw_text
+        style_index = self._text_styles
+        if not hasattr(self._text, 'NSAttributeInfo'):
+            assert len(style_index) == 1, \
+                "Multiple styles but no NSAttributeInfo!"
+            return [(text, style_index[0])]
+
+            
+        style_rle = arbint(self._text.NSAttributeInfo)
+
+        n_text = 0
+        styles: FormattedText = []
+        for (n, i) in chunk(style_rle, 2):
+            styles.append(
+                (text[n_text:n_text+n], style_index[i]))
+            n_text += n
+        assert n_text == len(text)
+        return styles
+
+
+    # Text style (write)
+
+
+    @raw_text.setter
+    def raw_text(self, value: str):
+        if not isinstance(value, str):
+            raise TypeError('Text must be a string')
+        
+        if self._multiple_styles():
+            # TODO: Only use first style
+            raise AttributeError(
+                'Cannot currently set raw_text.')
+        _t = self._text
+        _t.NSString.value = value
+        self._text = _t
+
+    @text.setter
+    def text(self, value: FormattedText):
+        raise AttributeError(
+            'Cannot set currently set text.')

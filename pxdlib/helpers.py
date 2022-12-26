@@ -2,6 +2,7 @@
 Common functions used in pxdlib.
 '''
 
+from typing import TypeVar
 from uuid import uuid1
 
 
@@ -35,6 +36,12 @@ def dicts(*dicts, **kwargs):
         result.update(d)
     result.update(kwargs)
     return result
+
+T = TypeVar('T')
+def chunk(seq: list[T], n: int) -> list[T]:
+    n_chunks, n_leftover_elements = divmod(len(seq), n)
+    assert n_leftover_elements == 0, "Sequence not equally divided."
+    return [seq[n*i:n*(i+1)] for i in range(n_chunks)]
 
 
 def BoundList(prop):

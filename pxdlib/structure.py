@@ -1,5 +1,5 @@
 '''
-Basic structures for use in PXD access.
+Helper functions for various Pixelmator structures.
 '''
 
 from struct import Struct
@@ -144,3 +144,18 @@ def verb(data, version=1):
             "Try updating `pxdlib`, or otherwise contact developer."
         )
     return con
+
+
+def arbint(data: bytes):
+    '''Pop arbirary-length integers from a byte array.'''
+    numbers: list[int] = []
+    buffer: list[int] = []
+    for d in data:
+        buffer.append(d)
+        if not  (d & 0b10000000):
+            numbers.append(sum(
+                (x & 0b01111111) * (128**i)
+                for i, x in enumerate(buffer)
+            ))
+            buffer.clear()
+    return numbers

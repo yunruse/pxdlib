@@ -73,4 +73,5 @@ Attributes include:
 
 - `size` (also `width` and `height`), the width and height of the layer in pixels. This is currently read-only.
 - `raw_text`, the text without formatting. This is currently read-only.
+- `text`, the text with formatting. This takes the form of a list of 2-tuples, the first element being the text, the second the text style (`TextStyle`).
 
