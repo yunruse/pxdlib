@@ -2,7 +2,7 @@
 
 ## Alpha
 
-### 0.1.0 "Update Name ???"
+### 0.1.0 "Noël" (2022-12-25)
 
 - Various bug fixes and improved typing.
 - Supports Pixelmator Pro updates:
@@ -21,7 +21,7 @@
 
 - `TextLayer` improvements:
     - Renamed `.rawText` to `.raw_text` (still read-only)
-    - Added `.text_styles` of type `TextStyle` (currently read-only)
+    - Added `.text`, a rich-formatted text (currently read-only)
 
 - Technical changes:
     - Various re-architecturings of documentation and library for clarity.

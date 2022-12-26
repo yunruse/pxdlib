@@ -33,14 +33,26 @@ class TextStyle:
     @property
     def font_face(self) -> str:
         return self._font['NSFontFaceAttribute']
-    
+
     @property
-    def is_strikethrough(self):
+    def strikethrough(self):
         return bool(self._get('strikethrough', 0))
     
     @property
-    def is_underline(self):
+    def underline(self):
         return bool(self._get('underline', 0))
+    
+    @property
+    def bold(self):
+        # TODO: This can be more efficient, surely?
+        s = self.font_face
+        return 'Bold' in s
+    
+    @property
+    def italic(self):
+        # TODO: This can be more efficient, surely?
+        s = self.font_face
+        return 'Oblique' in s or 'Italic' in s
     
     @property
     def color(self):
