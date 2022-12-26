@@ -22,16 +22,24 @@ This contains, in and of itself, three properties:
 - `NSAttributeInfo` is present iff text has multiple styles. It is a run-length encoded list of styles for each character. See below for details.
 - `NSAttribute` is an `NSDict` with text style, OR a list of `NSDict` iff the text has multiple styles. See below for details.
 
-### NSAttributeInfo
+### `NSAttributeInfo` (run-length encoding for text styles)
 
-`NSAttributeInfo` (if present) is a run-length encoding. It is an `NSMutableData` that must be read serially. In general, _pop_ the number of characters, and then _pop_ the *style index* (from the `NSAttributes` array) that these characters apply unto.
+`NSAttributeInfo` (if present) is an `NSMutableData` providing an run-length encoding. In order, it interleaves the number of characters, then those characters' style index, and so on. For example:
 
-This _pop_ encodes arbitrarily large numbers in an intriguing multi-byte method reminiscent of UTF-8 - hence why it is serially encoded and cannot be randomly-accessed.
+- The string `001110000` is encoded by [2 0 3 1 4 0]
+- The string `000011` followed by 257 `2`s is encoded as [4 0  2 1 129 2 2], where [129 2] decodes to 257 (see below).
 
-If the byte's most significant bit is 0, it is the last byte; the next 7 bits encode the number. If the byte's MSB is 1, it is not the last byte. These 7-bit chunks are in reverse order (the smallest chunk is the smallest 7 bits). For example:
+Encoders should take care to avoid reading from indices
+
+#### 7-bit arbitrary-length integer format
+
+In this run-length encoding, numbers are presented with a simple 7-bit format. This means numbers can be of an arbitrary byte length, and should be serially decoded.
+
+The most significant bit indicates if it is not the final byte of the number; the remaining 7 bits are the number. The resultant 7-bit chunks are in reverse order such that the most significant 7-bit chunk comes first.
+
+For example, numbers may be encoded as:
 
 ```
-#number           pop format, binary
       3                     00000011
     128            10000000 00000001
     129            10000001 00000001
@@ -43,13 +51,11 @@ If the byte's most significant bit is 0, it is the last byte; the next 7 bits en
 ```
 
 For completeness, here are some examples where a digit is styled according to its index (ie `a` has style 0, `b` style 1, etc):
-- The string `001110000` results in [2 0 3 1 4 0]
-- The string `000011` followed by 257 `2`s results in [4 0  2 1 129 2 2], where [129 2] decodes to 257.
-
-(If you want to know how I generated text with more than 128 different styles to test that _pop_ works on style index as well as run-length, a bit of RTF hacking gives us [this image](https://cdn.discordapp.com/attachments/1054061996695367811/1054771575137783859/Screenshot_2022-12-20_at_2.45.29_pm.png) which roughly describes my thoughts on this whole shebang.)
+- The string `001110000` is encoded by [2 0 3 1 4 0]
+- The string `000011` followed by 257 `2`s is encoded as [4 0  2 1 129 2 2], where [129 2] decodes to 257.
 
 
-## `NSAttributes`
+## `NSAttributes` (text styles)
 
 The `NSAttributes` property is an `NSDict` (or list thereof) with a variety of properties, all of which are prepended with `com.pixelmatorteam.textkit.attribute.`, and:
 
