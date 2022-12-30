@@ -9,7 +9,9 @@
     - 3.2.0: `VideoLayer` added. (Currently a stub; video-specific details cannot be edited.)
     - 2.3.6: Modern `.pxd` documents may be compressed. (pxdlib now works with them.)
 
-- Added `python -m pxdlib`, a formalised CLI tool for pxdlib.
+- Added `python -m pxdlib`, a formalised CLI tool for pxdlib, with arguments:
+  - Tree display: `-INPF`, `-K key`
+  - Layer organisations: `-0`
 
 - `PXDFile` improvements:
     - Added `.open_in_pixelmator()` and `.reload()` helper methods.

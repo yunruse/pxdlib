@@ -118,12 +118,12 @@ def display_tree(
 
 
 
-# organise = parser.add_argument_group('Re-organise layers')
+organise = parser.add_argument_group('Re-organise layers')
 # organise.add_argument('--clean', '-c', action='store_true',
 #                     help='Provides -01ds to clean up a .pxd.')
 
-# organise.add_argument('--empty', '-0', action='store_true',
-#                     help='Remove groups with no contents.')
+organise.add_argument('--empty', '-0', action='store_true',
+                    help='Remove groups with no contents.')
 # organise.add_argument('--single-item', '-1', action='store_true',
 #                     help='Replace single-item groups with their'
 #                     ' contents, automagically ensuring the result'
@@ -161,3 +161,10 @@ if __name__ == '__main__':
     process_display(args)
     if args.do_display:
         display_tree(pxd, args.display_func, args.indent)
+
+    if args.empty:
+        with pxd:
+            for layer in pxd.all_layers():
+                if not isinstance(layer, GroupLayer): continue
+                if len(layer.children): continue
+                layer.delete()
