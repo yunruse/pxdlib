@@ -21,7 +21,7 @@ Errors specific to `pxdlib` – and not, say, an invalid function call type – 
 
 A `VersionError` is raised when Pixelmator has (very likely) released a new version that `pxdlib` does not support.
 
-A `ModeError` is raised when a `pxd` file is not open for editing when it should be (or vice versa). The best way to edit a `pxd` file is inside the `with` block, as shown at the top of the document. You can also use `.open()` and `.close()` and read the mode with `.can_write`, if you wish.
+A `DatabaseModeError` is raised when a `pxd` file is not open for editing when it should be (or vice versa). The best way to edit a `pxd` file is inside the `with` block, as shown at the top of the document. You can also use `.open()` and `.close()` and read the mode with `.can_write`, if you wish.
 
 ## A note on modification
 

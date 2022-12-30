@@ -7,7 +7,7 @@ import json
 from typing import Optional
 
 from .helpers import uuid, BoundList, add_tuple_shortcuts
-from .errors import ChildError, MaskError, ModeError, StyleError
+from .errors import ChildError, MaskError, DatabaseModeError, StyleError
 
 from .structure import blob, make_blob, verb
 from .enums import BlendMode, LayerTag
@@ -123,10 +123,10 @@ class Layer:
             f"select identifier from document_layers where id = {self._id};"
         ).fetchone()[0]
 
-    def _assert(self, write=False):
+    def _assert(self, write: Optional[bool] = None):
         if self._id is None:
-            raise ModeError('File not readable.')
-        self.pxd._assert(write)
+            raise DatabaseModeError('File not readable.')
+        self.pxd._assert(write=write)
 
     @property
     def parent(self):

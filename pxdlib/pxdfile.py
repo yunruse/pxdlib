@@ -10,8 +10,9 @@ from collections import namedtuple
 from tempfile import mkdtemp
 from zipfile import is_zipfile, ZipFile
 
+from .Database import Database
+
 from .helpers import add_tuple_shortcuts
-from .errors import ModeError
 
 from .layer import _LAYER_TYPES, Layer
 from .structure import blob, make_blob
@@ -20,18 +21,19 @@ guides = namedtuple('guides', ('horizontal', 'vertical'))
 
 
 @add_tuple_shortcuts('size', ('width', 'height'))
-class PXDFile:
+class PXDFile(Database):
     path: Path  # The path the PXD file or folder is saved at.
     _edit_dir: Path  # The path the PXD folder is editable at.
 
     _compressed: bool  # True iff the original PXD is a .zip file.
 
-    _open: bool  # True iff open for editing
-    _db = sqlite3.Connection  # Always held open for reading
     _layer_cache = dict
     _meta = dict
     _info = dict
 
+    def open_in_pixelmator(self):
+        popen(f'open -a "Pixelmator Pro" -- "{self.path}"')
+    
     def __repr__(self):
         return f"PXDFile({repr(str(self.path))})"
 
@@ -53,22 +55,23 @@ class PXDFile:
             with ZipFile(self.path) as zf:
                 zf.extractall(self._edit_dir)
 
-        self._open = False
-
+        Database.__init__(self, self.db_path)
         self.reload()
-    
-    def reload(self):
-        '''Reload file after any modification.'''
-        if self._open:
-            raise ModeError('Cannot reload when open. Please use a `with` block or .close()')
 
+    # Database management
+    
+    @property
+    def db_path(self):
         if not self.path.exists():
             raise FileNotFoundError(f'{self.path} does not exist')
         db_path = self._edit_dir / 'metadata.info'
         if not db_path.is_file():
             raise FileNotFoundError(f"{self.path} is not a valid .pxd file")
-
-        self._db = sqlite3.connect(db_path)
+        return db_path
+    
+    def reload(self):
+        '''Reload any modifications.'''
+        self._assert(write=False)        
         self._layer_cache = {}
 
         def keyval(table):
@@ -78,54 +81,12 @@ class PXDFile:
         self._meta = keyval('document_meta')
         self._info = keyval('document_info')
 
-    def _assert(self, write=False):
-        '''Assert file is in correct mode.'''
-        if write and (not self.can_write):
-            raise ModeError('File not open for writing. Please use a `with` block or .open()')
-        
-        if hasattr(self, '_db'): return
-        raise ModeError('File not readable.')
-    
-    def open_in_pixelmator(self):
-        popen(f'open -a "Pixelmator Pro" -- "{self.path}"')
-
-    # Database management
-
-    @property
-    def can_write(self):
-        return self._open
-
-    def open(self) -> None:
-        '''
-        Starts a transaction to modify the document.
-
-        Changes will only be made on `close()`.
-        '''
-        if self._open:
-            return
-        self._db.execute('PRAGMA journal_mode=DELETE')
-        self._db.execute('begin exclusive')
-        self._open = True
-
-    def close(self) -> None:
-        '''
-        Closes a transaction and commits any changes made.
-        '''
-        if not self._open:
-            return
-        self._db.execute('commit')
+    def close(self):
+        super().close()
         if self._compressed:
             self.path.unlink()
             shutil.make_archive(self.path, 'zip', self._edit_dir)
             shutil.move(self.path + '.zip', self.path)
-        self._open = False
-
-    def __enter__(self):
-        self.open()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.close()
 
     def __del__(self):
         # TODO: PermissionError??? yay...
@@ -198,9 +159,7 @@ class PXDFile:
 
         Make sure you pxd.close() so that all changes are saved.
         '''
-        self._assert()
-        if self.can_write:
-            raise ModeError('close file before copying!')
+        self._assert(write=False)
 
         path = Path(path)
         if overwrite:

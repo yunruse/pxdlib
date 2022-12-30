@@ -26,7 +26,8 @@
     - Added `.text`, a rich-formatted text (currently read-only)
 
 - Technical changes:
-    - Various re-architecturings of documentation and library for clarity.
+    - Various internal rearchitecturing.
+    - Added underlying (and reusable) `Database.py` library
     - Added `pxdlib.plist` internal library for manipulating PLISTs (as used by `TextLayer`).
 
 ### 0.0.5
