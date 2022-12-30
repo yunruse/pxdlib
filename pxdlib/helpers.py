@@ -2,8 +2,15 @@
 Common functions used in pxdlib.
 '''
 
+from sys import stderr
 from typing import TypeVar
 from uuid import uuid1
+
+
+_exit = exit
+def exit(code: int, reason: str):
+    print(reason, file=stderr)
+    _exit(code)
 
 
 def uuid():

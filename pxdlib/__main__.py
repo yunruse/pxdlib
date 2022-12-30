@@ -4,15 +4,11 @@ A Swiss Army Knife for Pixelmator Pro documents.
 Useful for simple analysis.
 '''
 import argparse
-from sys import stderr
 from typing import Callable, Generator
-from pxdlib import PXDFile, GroupLayer, Layer
-from pxdlib.structure import blob
 
-_exit = exit
-def exit(code: int, reason: str):
-    print(reason, file=stderr)
-    _exit(code)
+from . import PXDFile, GroupLayer, Layer
+from .structure import blob
+from .helpers import exit
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('file', help='The .pxd file to operate on')
