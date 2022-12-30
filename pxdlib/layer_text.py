@@ -38,7 +38,7 @@ class TextLayer(Layer):
         if self._multiple_styles():
             yield 'multiple text styles'
         else:
-            yield from self.text_styles[0]._repr_info()
+            yield from self._text_styles[0]._repr_info()
         yield from Layer._repr_info(self)
     
     def __string_data(self) -> dict:
