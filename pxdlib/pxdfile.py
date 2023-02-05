@@ -33,7 +33,7 @@ class PXDFile(Database):
 
     def open_in_pixelmator(self):
         popen(f'open -a "Pixelmator Pro" -- "{self.path}"')
-    
+
     def __repr__(self):
         return f"PXDFile({repr(str(self.path))})"
 
@@ -48,8 +48,9 @@ class PXDFile(Database):
 
         if self._compressed:
             if not is_zipfile(self.path):
-                raise FileNotFoundError("PXD malformed - is neither directory or .zip")
-            
+                raise FileNotFoundError(
+                    "PXD malformed - is neither directory or .zip")
+
             # Work in a temporary directory!
             self._edit_dir = Path(mkdtemp('.pxd'))
             with ZipFile(self.path) as zf:
@@ -59,7 +60,7 @@ class PXDFile(Database):
         self.reload()
 
     # Database management
-    
+
     @property
     def db_path(self):
         if not self.path.exists():
@@ -68,10 +69,10 @@ class PXDFile(Database):
         if not db_path.is_file():
             raise FileNotFoundError(f"{self.path} is not a valid .pxd file")
         return db_path
-    
+
     def reload(self):
         '''Reload any modifications.'''
-        self._assert(write=False)        
+        self._assert(write=False)
         self._layer_cache = {}
 
         def keyval(table):
@@ -150,7 +151,7 @@ class PXDFile(Database):
         for l in self._layers(None, recurse):
             if l.name == name:
                 return l
-    
+
     # Misc helpers
 
     def copyto(self, path, overwrite=False):
@@ -170,7 +171,7 @@ class PXDFile(Database):
         elif path.is_dir() or path.is_file():
             raise FileExistsError(
                 'The .pxd file already exists. Pass overwrite=True, or delete it.')
-            
+
         if self.path.is_dir():
             shutil.copytree(self.path, path)
         else:

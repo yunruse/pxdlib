@@ -1,6 +1,6 @@
-# pxdlib (Alpha 0.0.4)
+# pxdlib (Alpha 0.1.0)
 
-`pxdlib` is a library intended for deciphering and manipulating `.pxd` files, used by the image editor [Pixelmator Pro]. Grab Python 3.6 or above and `pip install pxdlib`!
+`pxdlib` is a library intended for deciphering and manipulating `.pxd` files, used by the image editor [Pixelmator Pro]. Grab Python 3 and `pip install pxdlib`!
 
 Documentation exists for the [API], and a much longer set of documentation exists for the [reverse-engineering] of the `.pxd` format.
 
@@ -47,7 +47,11 @@ with PXDFile('graph.pxd') as pxd:
 
 ## Development
 
-The `production` branch relates to features available in PyPI; `development` is up-to-date.
+Branch `production` is that which is released on PyPi, and `development` is, well, in development.
+
+I tend to update this as I use it for my own projects.
+
+No stability is guaranteed, but please raise issues as soon as you see them and I'll try my best to fix them.
 
 Any and all issues are completely welcomed -- especially if `pxdlib` breaks on newer versions of Pixelmator!
 
