@@ -96,6 +96,7 @@ _FORMATS = {
     b'Blnd': (kind_pack, kind_unpack),
 }
 
+
 def _blob(blob: bytes):
     if not len(blob) > 12:
         raise TypeError('Pixelmator blobs are more than 12 bytes! ')
@@ -107,6 +108,7 @@ def _blob(blob: bytes):
     length, = _LENGTH.unpack(blob[8:12])
     data = blob[12:12+length]
     return kind, data
+
 
 def blob(blob: bytes) -> object:
     kind, data = _blob(blob)
@@ -129,12 +131,17 @@ def make_blob(kind: bytes, *data) -> bytes:
 def verb(data, version=1):
     '''vercon, verstruct or verlist extractor'''
     if isinstance(data, dict):
-        if 'version' in data:
-            ver = data['version']
-            con = data['versionSpecifiContainer']
+        ver = data['version' if 'version' in data else 'structureVersion']
+        con_name = 'Container' if 'version' in data else 'Info'
+        for k in 'c', '':
+            key = 'versionSpecifi{}{}'.format(k, con_name)
+            if key in data:
+                con = data[key]
+                break
         else:
-            ver = data['structureVersion']
-            con = data['versionSpecificInfo']
+            raise VersionError(
+                "Could not decipher structure in Pixelmator."
+                " Try updating `pxdlib` or contacting developer.")
     else:
         ver, con = data
     if ver != version:
@@ -152,7 +159,7 @@ def arbint(data: bytes):
     buffer: list[int] = []
     for d in data:
         buffer.append(d)
-        if not  (d & 0b10000000):
+        if not (d & 0b10000000):
             numbers.append(sum(
                 (x & 0b01111111) * (128**i)
                 for i, x in enumerate(buffer)
