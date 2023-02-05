@@ -87,7 +87,7 @@ class PXDFile(Database):
         if self._compressed:
             self.path.unlink()
             shutil.make_archive(self.path, 'zip', self._edit_dir)
-            shutil.move(self.path + '.zip', self.path)
+            shutil.move(str(self.path) + '.zip', self.path)
 
     def __del__(self):
         # TODO: PermissionError??? yay...
